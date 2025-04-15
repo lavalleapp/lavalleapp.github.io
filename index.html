@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirección a Lavalle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Cambiado a flex-start */
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 15vh; /* Añadido para posicionar más arriba */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px; /* Reducido el margen inferior */
+            text-align: center;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Reducido el espacio entre botones */
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .redirect-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 16px 25px; /* Ajustado el padding */
+            font-size: 1.1rem;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .redirect-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .redirect-button:active {
+            transform: translateY(1px);
+        }
+        
+        .micros {
+            background: linear-gradient(135deg, #2196F3 0%, #0d8bf2 100%);
+        }
+        
+        .tienda {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+        
+        .icon {
+            font-size: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding-top: 20vh; /* Ajuste para desktop */
+            }
+            
+            .button-container {
+                flex-direction: row;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>¿A dónde deseas ir?</h1>
+    <div class="button-container">
+        <a href="micros.html" class="redirect-button micros">
+            <i class="fas fa-bus icon"></i>
+            <span>Micros Lavalle</span>
+        </a>
+        <a href="tienda.html" class="redirect-button tienda">
+            <i class="fas fa-store icon"></i>
+            <span>Tienda Lavalle</span>
+        </a>
+    </div>
+</body>
+</html>  
+<br> <p style="text-align: center;">© 2025 Elian Mamani. Todos los derechos reservados. Descarga 
+    <a href="https://play.google.com/store/apps/details?id=somos.lavalle&hl=es_AR" style="text-decoration: none; color: #00BFFF;">Lavalle App</a>
+</p>
