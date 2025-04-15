@@ -17,15 +17,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Cambiado a flex-start */
             min-height: 100vh;
             padding: 20px;
+            padding-top: 15vh; /* Añadido para posicionar más arriba */
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         
         h1 {
             color: #2c3e50;
-            margin-bottom: 40px;
+            margin-bottom: 30px; /* Reducido el margen inferior */
             text-align: center;
             font-size: 1.8rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -34,7 +35,7 @@
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px; /* Reducido el espacio entre botones */
             width: 100%;
             max-width: 400px;
         }
@@ -44,7 +45,7 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            padding: 18px 25px;
+            padding: 16px 25px; /* Ajustado el padding */
             font-size: 1.1rem;
             color: white;
             border: none;
@@ -78,13 +79,17 @@
         }
         
         @media (min-width: 768px) {
+            body {
+                padding-top: 20vh; /* Ajuste para desktop */
+            }
+            
             .button-container {
                 flex-direction: row;
             }
             
             h1 {
                 font-size: 2.2rem;
-                margin-bottom: 50px;
+                margin-bottom: 40px;
             }
         }
     </style>
@@ -92,11 +97,11 @@
 <body>
     <h1>¿A dónde deseas ir?</h1>
     <div class="button-container">
-        <a href="micros.html" class="redirect-button micros">
+        <a href="micros_lavalle.html" class="redirect-button micros">
             <i class="fas fa-bus icon"></i>
             <span>Micros Lavalle</span>
         </a>
-        <a href="tienda.html" class="redirect-button tienda">
+        <a href="tienda_lavalle.html" class="redirect-button tienda">
             <i class="fas fa-store icon"></i>
             <span>Tienda Lavalle</span>
         </a>
