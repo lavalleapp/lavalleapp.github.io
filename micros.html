@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Ruta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        h1 {
+            color: #333;
+            margin: 20px 0 30px 0;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .route-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .route-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        .route-button:active {
+            transform: translateY(1px);
+        }
+        
+        .ruta24 {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .ruta40 {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .icon {
+            font-size: 1.4rem;
+        }
+        
+        @media (min-width: 768px) {
+            .buttons-container {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            h1 {
+                margin: 30px 0;
+                font-size: 2rem;
+            }
+            
+            .route-button {
+                padding: 20px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Selecciona una ruta</h1>
+    
+    <div class="buttons-container">
+        <a href="24.html" class="route-button ruta24">
+            <i class="fas fa-bus icon"></i>
+            <span>Ruta 24</span>
+        </a>
+        
+        <a href="40.html" class="route-button ruta40">
+            <i class="fas fa-bus icon"></i>
+            <span>Ruta 40</span>
+        </a>
+    </div>
+</body>
+</html>

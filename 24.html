@@ -1,0 +1,796 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios de Micros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Estilo para el reloj */
+        .current-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+        .clock-icon {
+            font-size: 1.2em;
+        }
+        .time-text {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        /* Estilo para los botones de día */
+        .day-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .day-btn {
+            flex: 1;
+            max-width: 120px;
+            padding: 12px 5px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .day-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .day-btn.active {
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .day-name {
+            font-size: 0.85em;
+            margin-bottom: 3px;
+        }
+        .day-short {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .weekday.active {
+            background-color: #3498db; /* Azul */
+        }
+        .saturday.active {
+            background-color: #e67e22; /* Naranja */
+        }
+        .sunday.active {
+            background-color: #2ecc71; /* Verde */
+        }
+        .day-btn.current-day {
+            border: 2px solid #2c3e50;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #3498db;
+            font-size: 1rem;
+        }
+        .no-results {
+            text-align: center;
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .schedule-container {
+            margin-top: 15px;
+            display: none;
+        }
+        .schedule-item {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+            background-color: white;
+        }
+        .schedule-item.next-bus {
+            background-color: #FFEB3B;
+            border-left: 4px solid #FFC107;
+        }
+        .schedule-time {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        .schedule-tag {
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: white;
+            background-color: #2E86C1;
+        }
+        .tag-proximo {
+            background-color: #E74C3C !important;
+        }
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
+        
+        @media (min-width: 600px) {
+            .container {
+                max-width: 600px;
+                padding: 20px;
+            }
+            .controls {
+                flex-direction: row;
+            }
+            .schedule-item {
+                padding: 15px;
+            }
+            .schedule-tag {
+                font-size: 0.8rem;
+                padding: 3px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Horarios de Micros</h1>
+        <div class="subtitle">Ruta: 24</div>
+        
+        <div class="current-time">
+            <span class="clock-icon">🕒</span>
+            <span class="time-text" id="time-text">--:--:--</span>
+        </div>
+        
+        <div class="day-selector">
+            <button class="day-btn weekday" data-day="weekday">
+                <span class="day-name">Entre semana</span>
+                <span class="day-short">LUN-VIE</span>
+            </button>
+            <button class="day-btn saturday" data-day="saturday">
+                <span class="day-name">Sábado</span>
+                <span class="day-short">SÁBADO</span>
+            </button>
+            <button class="day-btn sunday" data-day="sunday">
+                <span class="day-name">Domingo</span>
+                <span class="day-short">DOMINGO</span>
+            </button>
+        </div>
+        
+        <div class="controls">
+            <select id="origen">
+                <option value="">Seleccione origen</option>
+                <option value="asuncion">Asunción</option>
+                <option value="15">El 15</option>
+                <option value="gustavo">Gustavo André</option>
+                <option value="costa">Costa Araujo</option>
+                <option value="lavalle">Lavalle</option>
+                <option value="mendoza">Mendoza</option>                
+                
+            </select>
+            
+            <select id="destino">
+                <option value="">Seleccione origen</option>
+                <option value="asuncion">Asunción</option>
+                <option value="15">El 15</option>
+                <option value="gustavo">Gustavo André</option>
+                <option value="costa">Costa Araujo</option>
+                <option value="lavalle">Lavalle</option>
+                <option value="mendoza">Mendoza</option>
+            </select>
+        </div>
+        
+        <div class="no-results" id="no-results">No hay servicios disponibles para esta ruta</div>
+        
+        <div id="schedule-results" class="schedule-container">
+            <!-- Horarios se cargarán aquí -->
+        </div>
+        
+        <div class="note">
+            Nota: Los horarios son aproximados. Llegue 10 minutos antes.
+          <br> <p style="text-align: center;">© 2025 Elian Mamani. Todos los derechos reservados. Descarga 
+    <a href="https://play.google.com/store/apps/details?id=somos.lavalle&hl=es_AR" style="text-decoration: none; color: #00BFFF;">Lavalle App</a>
+</p>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos de horarios
+        const horarios = {
+            weekday: {
+              ida: [
+                {  asuncion: "", "15": "", gustavo: "", costa: "", lavalle: "", mendoza: "", },
+                {  asuncion: "", "15": "", gustavo: "", costa: "4:40", lavalle: "5:00", mendoza: "5:50", },
+                { asuncion: "", "15": "", gustavo: "4:40", costa: "4:57", lavalle: "5:20", mendoza: "6:20", tags: ["H.NOTTI" ] },
+                { asuncion: "", "15": "5:10", gustavo: "5:15", costa: "5:32", lavalle: "5:55", mendoza: "6:55" },
+                { asuncion: "", "15": "", gustavo: "", costa: "6:00", lavalle: "6:25", mendoza: "07:35", },  
+                {asuncion: "", "15": "", gustavo: "5:55", costa: "6:15", lavalle: "6:40", mendoza: "7:50", },
+                {asuncion: "", "15": "", gustavo: "6:10", costa: "6:30", lavalle: "6:55", mendoza: "8:05", },
+                {asuncion: "", "15": "6:20", gustavo: "6:25", costa: "6:45", lavalle: "7:10", mendoza: "8:20", },
+                {asuncion: "", "15": "", gustavo: "", costa: "6:45", lavalle: "7:10", mendoza: "8:10", tags: [ "CALLE TIRASO" ] },
+                {asuncion: "", "15": "", gustavo: "6:40", costa: "7:00", lavalle: "7:25", mendoza: "8:35", },
+                {asuncion: "", "15": "7:00", gustavo: "7:05", costa: "7:25", lavalle: "7:50", mendoza: "9:00", },
+                {asuncion: "6:50", "15": "7:00", gustavo: "7:05", costa: "7:25", lavalle: "7:50", mendoza: "9:00", },
+                {asuncion: "", "15": "", gustavo: "", costa: "7:55", lavalle: "8:20", mendoza: "9:30", },
+                {asuncion: "", "15": "", gustavo: "8:00", costa: "8:20", lavalle: "8:45", mendoza: "9:55", },
+                {asuncion: "", "15": "8:25", gustavo: "8:30", costa: "8:50", lavalle: "9:15", mendoza: "10:25", },
+                {asuncion: "", "15": "", gustavo: "9:05", costa: "9:25", lavalle: "9:50", mendoza: "11:00", },
+{asuncion: "", "15": "", gustavo: "9:40", costa: "10:00", lavalle: "10:25", mendoza: "11:35", },
+{asuncion: "", "15": "10:05", gustavo: "10:10", costa: "10:30", lavalle: "10:55", mendoza: "12:05", },
+{asuncion: "", "15": "", gustavo: "10:35", costa: "10:55", lavalle: "11:20", mendoza: "12:30", },
+{asuncion: "", "15": "", gustavo: "11:05", costa: "11:25", lavalle: "11:50", mendoza: "13:00", },
+{asuncion: "", "15": "", gustavo: "11:35", costa: "11:55", lavalle: "12:20", mendoza: "13:30", },
+{asuncion: "", "15": "", gustavo: "12:05", costa: "12:25", lavalle: "12:50", mendoza: "14:00", },
+{asuncion: "", "15": "", gustavo: "12:35", costa: "12:55", lavalle: "13:20", mendoza: "14:30", },
+{asuncion: "", "15": "", gustavo: "12:35", costa: "12:55", lavalle: "13:20", mendoza: "14:30", },
+{asuncion: "", "15": "13:00", gustavo: "13:05", costa: "13:25", lavalle: "13:50", mendoza: "15:00", },
+{asuncion: "", "15": "", gustavo: "13:35", costa: "13:55", lavalle: "14:20", mendoza: "15:30", },
+{asuncion: "", "15": "", gustavo: "14:05", costa: "14:25", lavalle: "14:50", mendoza: "16:00", },
+{asuncion: "", "15": "14:30", gustavo: "14:35", costa: "14:55", lavalle: "15:20", mendoza: "16:30", },
+{asuncion: "", "15": "", gustavo: "15:05", costa: "15:25", lavalle: "15:50", mendoza: "17:00", },
+{asuncion: "", "15": "", gustavo: "15:25", costa: "15:45", lavalle: "16:10", mendoza: "17:20", },
+{asuncion: "", "15": "", gustavo: "15:45", costa: "16:05", lavalle: "16:30", mendoza: "17:40", },
+{asuncion: "", "15": "16:00", gustavo: "16:05", costa: "16:25", lavalle: "16:50", mendoza: "18:00", },
+{asuncion: "", "15": "", gustavo: "16:35", costa: "16:55", lavalle: "17:20", mendoza: "18:30", },
+{asuncion: "", "15": "", gustavo: "17:05", costa: "17:25", lavalle: "17:50", mendoza: "19:00", },
+{asuncion: "17:10", "15": "17:20", gustavo: "17:25", costa: "17:45", lavalle: "18:10", mendoza: "19:20", },
+{asuncion: "", "15": "", gustavo: "17:45", costa: "18:05", lavalle: "18:30", mendoza: "19:40", },
+{asuncion: "", "15": "", gustavo: "18:00", costa: "18:20", lavalle: "18:45", mendoza: "19:55", tags: [ "CALLE TALET" ] },
+{asuncion: "", "15": "", gustavo: "18:35", costa: "18:55", lavalle: "19:20", mendoza: "20:30", },
+{asuncion: "", "15": "", gustavo: "19:05", costa: "19:25", lavalle: "19:50", mendoza: "21:00", },
+{asuncion: "", "15": "", gustavo: "19:35", costa: "19:55", lavalle: "20:20", mendoza: "21:30", },
+{asuncion: "", "15": "", gustavo: "20:15", costa: "20:35", lavalle: "21:00", mendoza: "22:10", },
+{asuncion: "", "15": "", gustavo: "20:55", costa: "21:15", lavalle: "21:40", mendoza: "22:50", },
+{asuncion: "", "15": "", gustavo: "", costa: "21:55", lavalle: "22:20", mendoza: "23:30", },
+{asuncion: "", "15": "", gustavo: "22:30", costa: "22:50", lavalle: "23:10", mendoza: "0:00", }
+            ],
+                vuelta: [
+                {mendoza: "5:20", lavalle: "6:10", costa: "6:30", gustavo: "6:50", "15": "6:55", asuncion: "", },
+                {mendoza: "", lavalle: "", costa: "7:05", gustavo: "7:55", "15": "", asuncion: "",tags: ["CALLE TALET"] },
+                {mendoza: "6:00", lavalle: "7:10", costa: "7:35", gustavo: "7:55", "15": "8:00", asuncion: "", },
+
+{mendoza: "6:00", lavalle: "7:10", costa: "7:35", gustavo: "", "15": "", asuncion: "", },
+{mendoza: "6:50", lavalle: "8:00", costa: "8:25", gustavo: "8:45", "15": "", asuncion: "", },
+{mendoza: "7:20", lavalle: "8:30", costa: "8:55", gustavo: "9:15", "15": "", asuncion: "", },
+
+{mendoza: "7:50", lavalle: "9:00", costa: "9:25", gustavo: "9:45", "15": "9:50", asuncion: "", },
+
+{mendoza: "8:20", lavalle: "9:30", costa: "9:55", gustavo: "10:15", "15": "", asuncion: "", },
+
+{mendoza: "8:50", lavalle: "10:00", costa: "10:25", gustavo: "10:45", "15": "", asuncion: "", },
+
+{mendoza: "9:20", lavalle: "10:30", costa: "10:55", gustavo: "11:15", "15": "", asuncion: "", },
+
+{mendoza: "9:40", lavalle: "10:50", costa: "11:15", gustavo: "11:35", "15": "", asuncion: "", },
+
+{mendoza: "10:10", lavalle: "11:20", costa: "11:45", gustavo: "12:05", "15": "", asuncion: "", },
+
+{mendoza: "10:40", lavalle: "11:50", costa: "12:15", gustavo: "12:35", "15": "", asuncion: "", },
+
+{mendoza: "11:00", lavalle: "12:10", costa: "12:35", gustavo: "12:55", "15": "13:00", asuncion: "", },
+
+{mendoza: "11:00", lavalle: "12:10", costa: "12:35", gustavo: "12:55", "15": "13:00", asuncion: "", },
+
+{mendoza: "11:40", lavalle: "12:50", costa: "13:15", gustavo: "13:35", "15": "", asuncion: "", },
+
+{mendoza: "12:00", lavalle: "13:10", costa: "13:35", gustavo: "13:55", "15": "14:00", asuncion: "", },
+
+{mendoza: "12:20", lavalle: "13:30", costa: "13:55", gustavo: "14:15", "15": "", asuncion: "", },
+
+{mendoza: "12:40", lavalle: "13:50", costa: "14:15", gustavo: "14:35", "15": "", asuncion: "", },
+
+{mendoza: "13:00", lavalle: "14:10", costa: "14:35", gustavo: "14:55", "15": "", asuncion: "", },
+
+{mendoza: "13:20", lavalle: "14:30", costa: "14:55", gustavo: "15:15", "15": "15:20", asuncion: "", },
+
+{mendoza: "13:40", lavalle: "14:50", costa: "15:15", gustavo: "15:35", "15": "", asuncion: "", },
+
+{mendoza: "14:00", lavalle: "15:10", costa: "15:35", gustavo: "15:55", "15": "", asuncion: "", },
+
+{mendoza: "14:30", lavalle: "15:40", costa: "16:05", gustavo: "16:25", "15": "16:30", asuncion: "16:40", },
+
+{mendoza: "15:00", lavalle: "16:10", costa: "16:35", gustavo: "16:55", "15": "", asuncion: "", },
+
+{mendoza: "15:30", lavalle: "16:40", costa: "17:05", gustavo: "17:25", "15": "", asuncion: "", },
+
+{mendoza: "16:00", lavalle: "17:10", costa: "17:35", gustavo: "17:55", "15": "", asuncion: "", },
+
+{mendoza: "16:20", lavalle: "17:30", costa: "17:55", gustavo: "18:15", "15": "", asuncion: "", },
+
+{mendoza: "16:40", lavalle: "17:50", costa: "18:15", gustavo: "18:35", "15": "", asuncion: "", },
+
+{mendoza: "17:00", lavalle: "18:10", costa: "18:35", gustavo: "18:55", "15": "", asuncion: "", },
+
+{mendoza: "17:20", lavalle: "18:30", costa: "18:55", gustavo: "19:15", "15": "", asuncion: "", },
+
+{mendoza: "17:40", lavalle: "18:50", costa: "19:15", gustavo: "19:35", "15": "", asuncion: "", },
+
+{mendoza: "18:00", lavalle: "19:10", costa: "19:35", gustavo: "19:55", "15": "", asuncion: "", },
+
+{mendoza: "18:20", lavalle: "19:30", costa: "19:55", gustavo: "20:15", "15": "", asuncion: "", },
+
+{mendoza: "18:40", lavalle: "19:50", costa: "20:15", gustavo: "20:35", "15": "", asuncion: "", },
+
+{mendoza: "19:00", lavalle: "20:10", costa: "20:35", gustavo: "20:55", "15": "", asuncion: "", },
+
+{mendoza: "19:30", lavalle: "20:40", costa: "21:05", gustavo: "21:25", "15": "", asuncion: "", },
+
+{mendoza: "20:00", lavalle: "21:10", costa: "21:35", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "20:30", lavalle: "21:40", costa: "22:05", gustavo: "22:25", "15": "22:30", asuncion: "22:40", },
+
+{mendoza: "21:00", lavalle: "22:10", costa: "22:35", gustavo: "22:55", "15": "", asuncion: "", },
+
+{mendoza: "21:40", lavalle: "22:40", costa: "23:05", gustavo: "23:25", "15": "", asuncion: "", },
+
+{mendoza: "22:20", lavalle: "23:30", costa: "23:55", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "23:00", lavalle: "0:00", costa: "0:20", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "23:40", lavalle: "0:40", costa: "", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "0:30", lavalle: "1:20", costa: "1:35", gustavo: "", "15": "", asuncion: "", },
+                
+                
+                { mendoza: "", lavalle: "", costa: "", gustavo: "", "15": "", asuncion: "", }
+            ]
+            },
+            saturday: {
+               ida: [{asuncion: "", "15": "", gustavo: "", costa: "", lavalle: "5:10", mendoza: "6:00", },
+{asuncion: "", "15": "", gustavo: "", costa: "5:10", lavalle: "5:30", mendoza: "6:30", },
+{asuncion: "", "15": "5:10", gustavo: "5:15", costa: "5:35", lavalle: "6:00", mendoza: "7:00", },
+{asuncion: "", "15": "", gustavo: "", costa: "5:45", lavalle: "6:10", mendoza: "7:20", },
+{asuncion: "", "15": "", gustavo: "5:45", costa: "6:05", lavalle: "6:30", mendoza: "7:40", },
+{asuncion: "", "15": "", gustavo: "6:05", costa: "6:25", lavalle: "6:50", mendoza: "8:00", },
+{asuncion: "6:10", "15": "6:20", gustavo: "6:25", costa: "6:45", lavalle: "7:10", mendoza: "8:20", },
+{asuncion: "", "15": "", gustavo: "6:45", costa: "7:05", lavalle: "7:30", mendoza: "8:40", },
+{asuncion: "", "15": "", gustavo: "7:05", costa: "7:25", lavalle: "7:50", mendoza: "9:00", },
+{asuncion: "", "15": "", gustavo: "7:35", costa: "7:55", lavalle: "8:20", mendoza: "9:30", },
+{asuncion: "", "15": "", gustavo: "8:05", costa: "8:25", lavalle: "8:50", mendoza: "10:00", },
+{asuncion: "", "15": "8:30", gustavo: "8:35", costa: "8:55", lavalle: "9:20", mendoza: "10:30", },
+{asuncion: "", "15": "", gustavo: "9:15", costa: "9:35", lavalle: "10:00", mendoza: "11:10", },
+{asuncion: "", "15": "", gustavo: "9:55", costa: "10:15", lavalle: "10:40", mendoza: "11:50", },
+{asuncion: "", "15": "", gustavo: "10:25", costa: "10:45", lavalle: "11:10", mendoza: "12:20", },
+{asuncion: "", "15": "10:50", gustavo: "10:55", costa: "11:15", lavalle: "11:40", mendoza: "12:50", },
+{asuncion: "", "15": "", gustavo: "11:25", costa: "11:45", lavalle: "12:10", mendoza: "13:20", },
+{asuncion: "", "15": "", gustavo: "11:55", costa: "12:15", lavalle: "12:40", mendoza: "13:50", },
+{asuncion: "", "15": "", gustavo: "12:25", costa: "12:45", lavalle: "13:10", mendoza: "14:20", },
+{asuncion: "", "15": "", gustavo: "12:55", costa: "13:15", lavalle: "13:40", mendoza: "14:50", },
+{asuncion: "", "15": "", gustavo: "", costa: "13:45", lavalle: "14:10", mendoza: "15:20", },
+{asuncion: "", "15": "", gustavo: "13:55", costa: "14:15", lavalle: "14:40", mendoza: "15:50", },
+{asuncion: "", "15": "", gustavo: "14:25", costa: "14:45", lavalle: "15:10", mendoza: "16:20", },
+{asuncion: "", "15": "", gustavo: "14:45", costa: "15:05", lavalle: "15:30", mendoza: "16:40", },
+{asuncion: "", "15": "", gustavo: "15:05", costa: "15:25", lavalle: "15:50", mendoza: "17:00", },
+{asuncion: "", "15": "", gustavo: "15:25", costa: "15:45", lavalle: "16:10", mendoza: "17:20", },
+{asuncion: "", "15": "", gustavo: "15:45", costa: "16:05", lavalle: "16:30", mendoza: "17:40", },
+{asuncion: "", "15": "", gustavo: "16:15", costa: "16:35", lavalle: "17:00", mendoza: "18:10", },
+{asuncion: "", "15": "", gustavo: "16:45", costa: "17:05", lavalle: "17:30", mendoza: "18:40", },
+{asuncion: "", "15": "", gustavo: "", costa: "17:35", lavalle: "18:00", mendoza: "19:10", },
+{asuncion: "17:30", "15": "17:40", gustavo: "17:45", costa: "18:05", lavalle: "18:30", mendoza: "19:40", },
+{asuncion: "", "15": "", gustavo: "18:15", costa: "18:35", lavalle: "19:00", mendoza: "20:10", },
+{asuncion: "", "15": "", gustavo: "18:45", costa: "19:05", lavalle: "19:30", mendoza: "20:40", },
+{asuncion: "", "15": "19:10", gustavo: "19:15", costa: "19:35", lavalle: "20:00", mendoza: "21:10", },
+{asuncion: "", "15": "", gustavo: "19:45", costa: "20:05", lavalle: "20:30", mendoza: "21:40", },
+{asuncion: "", "15": "", gustavo: "0:00", costa: "20:35", lavalle: "21:00", mendoza: "22:10", },
+{asuncion: "", "15": "", gustavo: "20:45", costa: "21:05", lavalle: "21:30", mendoza: "22:40", },
+{asuncion: "", "15": "", gustavo: "21:45", costa: "22:05", lavalle: "22:30", mendoza: "23:30", },
+{asuncion: "", "15": "", gustavo: "22:40", costa: "23:00", lavalle: "23:20", mendoza: "0:10", },],
+                vuelta: [{mendoza: "5:50", lavalle: "6:40", costa: "7:00", gustavo: "7:20", "15": "", asuncion: "", },
+
+{mendoza: "6:20", lavalle: "7:20", costa: "7:43", gustavo: "8:03", "15": "8:08", asuncion: "", },
+
+{mendoza: "7:00", lavalle: "8:10", costa: "8:35", gustavo: "8:55", "15": "", asuncion: "", },
+
+{mendoza: "7:30", lavalle: "8:40", costa: "9:05", gustavo: "9:25", "15": "", asuncion: "", },
+
+{mendoza: "8:00", lavalle: "9:10", costa: "9:35", gustavo: "9:55", "15": "", asuncion: "", },
+
+{mendoza: "8:30", lavalle: "9:40", costa: "10:05", gustavo: "10:25", "15": "10:30", asuncion: "", },
+
+{mendoza: "9:00", lavalle: "10:10", costa: "10:35", gustavo: "10:55", "15": "", asuncion: "", },
+
+{mendoza: "9:30", lavalle: "10:40", costa: "11:05", gustavo: "11:25", "15": "", asuncion: "", },
+
+{mendoza: "10:00", lavalle: "11:10", costa: "11:35", gustavo: "11:55", "15": "", asuncion: "", },
+
+{mendoza: "10:30", lavalle: "11:40", costa: "12:05", gustavo: "12:25", "15": "", asuncion: "", },
+
+{mendoza: "11:00", lavalle: "12:10", costa: "12:35", gustavo: "12:55", "15": "", asuncion: "", },
+
+{mendoza: "11:30", lavalle: "12:40", costa: "13:05", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "12:00", lavalle: "13:10", costa: "13:35", gustavo: "13:55", "15": "", asuncion: "", },
+
+{mendoza: "12:20", lavalle: "13:30", costa: "13:55", gustavo: "14:15", "15": "", asuncion: "", },
+
+{mendoza: "12:40", lavalle: "13:50", costa: "14:15", gustavo: "14:35", "15": "", asuncion: "", },
+
+{mendoza: "13:00", lavalle: "14:10", costa: "14:35", gustavo: "14:55", "15": "", asuncion: "", },
+
+{mendoza: "13:30", lavalle: "14:40", costa: "15:05", gustavo: "15:25", "15": "", asuncion: "", },
+
+{mendoza: "14:00", lavalle: "15:10", costa: "15:35", gustavo: "15:55", "15": "", asuncion: "", },
+
+{mendoza: "14:30", lavalle: "15:40", costa: "16:05", gustavo: "16:25", "15": "", asuncion: "", },
+
+{mendoza: "15:00", lavalle: "16:10", costa: "16:35", gustavo: "16:55", "15": "17:00", asuncion: "17:10", },
+
+{mendoza: "15:30", lavalle: "16:40", costa: "17:05", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "16:00", lavalle: "17:10", costa: "17:35", gustavo: "17:55", "15": "", asuncion: "", },
+
+{mendoza: "16:30", lavalle: "17:40", costa: "18:05", gustavo: "18:25", "15": "", asuncion: "", },
+
+{mendoza: "17:00", lavalle: "18:10", costa: "18:35", gustavo: "18:55", "15": "19:00", asuncion: "", },
+
+{mendoza: "17:30", lavalle: "18:40", costa: "19:05", gustavo: "19:25", "15": "", asuncion: "", },
+
+{mendoza: "18:00", lavalle: "19:10", costa: "19:35", gustavo: "19:55", "15": "", asuncion: "", },
+
+{mendoza: "18:20", lavalle: "19:30", costa: "19:55", gustavo: "20:15", "15": "", asuncion: "", },
+
+{mendoza: "18:40", lavalle: "19:50", costa: "20:15", gustavo: "20:35", "15": "", asuncion: "", },
+
+{mendoza: "19:00", lavalle: "20:10", costa: "20:35", gustavo: "20:55", "15": "", asuncion: "", },
+
+{mendoza: "19:30", lavalle: "20:40", costa: "21:05", gustavo: "21:25", "15": "", asuncion: "", },
+
+{mendoza: "20:00", lavalle: "21:10", costa: "21:35", gustavo: "21:55", "15": "", asuncion: "", },
+
+{mendoza: "20:30", lavalle: "21:40", costa: "22:05", gustavo: "22:25", "15": "", asuncion: "", },
+
+{mendoza: "21:00", lavalle: "22:10", costa: "22:35", gustavo: "22:55", "15": "23:00", asuncion: "23:10", },
+
+{mendoza: "21:30", lavalle: "22:40", costa: "23:05", gustavo: "23:25", "15": "", asuncion: "", },
+
+{mendoza: "22:00", lavalle: "23:10", costa: "23:35", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "22:30", lavalle: "23:40", costa: "0:05", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "23:00", lavalle: "0:00", costa: "0:20", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "23:40", lavalle: "0:30", costa: "", gustavo: "", "15": "", asuncion: "", },
+
+{mendoza: "0:30", lavalle: "1:20", costa: "1:35", gustavo: "", "15": "", asuncion: "", },]
+            },
+            sunday: {
+                ida: [
+                  {"15": "", gustavo: "", costa: "", lavalle: "5:20", mendoza: "6:20", },
+{"15": "", gustavo: "5:35", costa: "5:55", lavalle: "6:15", mendoza: "7:20", },
+{"15": "", gustavo: "6:15", costa: "6:35", lavalle: "7:00", mendoza: "8:00", },
+{"15": "7:00", gustavo: "7:05", costa: "7:25", lavalle: "7:50", mendoza: "8:50", },
+{"15": "", gustavo: "7:55", costa: "8:15", lavalle: "8:40", mendoza: "9:50", },
+{"15": "", gustavo: "8:45", costa: "9:05", lavalle: "9:30", mendoza: "10:40", },
+{"15": "9:20", gustavo: "9:25", costa: "9:45", lavalle: "10:10", mendoza: "11:20", },
+{"15": "", gustavo: "10:15", costa: "10:35", lavalle: "11:00", mendoza: "12:10", },
+{"15": "", gustavo: "11:05", costa: "11:25", lavalle: "11:50", mendoza: "13:00", },
+{"15": "", gustavo: "11:45", costa: "12:05", lavalle: "12:30", mendoza: "13:40", },
+{"15": "", gustavo: "12:35", costa: "12:55", lavalle: "13:20", mendoza: "14:30", },
+{"15": "", gustavo: "13:15", costa: "13:35", lavalle: "14:00", mendoza: "15:10", },
+{"15": "", gustavo: "", costa: "14:15", lavalle: "14:40", mendoza: "15:50", },
+{"15": "", gustavo: "14:35", costa: "14:55", lavalle: "15:20", mendoza: "16:30", },
+{"15": "", gustavo: "15:15", costa: "15:35", lavalle: "16:00", mendoza: "17:10", },
+{"15": "", gustavo: "15:55", costa: "16:15", lavalle: "16:40", mendoza: "17:50", },
+{"15": "16:30", gustavo: "16:35", costa: "16:55", lavalle: "17:20", mendoza: "18:30", },
+{"15": "", gustavo: "17:15", costa: "17:35", lavalle: "18:00", mendoza: "19:10", },
+{"15": "", gustavo: "17:55", costa: "18:15", lavalle: "18:40", mendoza: "19:50", },
+{"15": "", gustavo: "18:35", costa: "18:55", lavalle: "19:20", mendoza: "20:30", },
+{"15": "19:10", gustavo: "19:15", costa: "19:35", lavalle: "20:00", mendoza: "21:10", },
+{"15": "", gustavo: "19:55", costa: "20:15", lavalle: "20:40", mendoza: "21:50", },
+{"15": "", gustavo: "20:45", costa: "21:05", lavalle: "21:30", mendoza: "22:40", },
+{"15": "", gustavo: "21:35", costa: "21:55", lavalle: "22:20", mendoza: "23:20", },
+{"15": "", gustavo: "", costa: "22:45", lavalle: "23:10", mendoza: "0:05", },],
+                vuelta: [{mendoza: "6:20", lavalle: "7:10", costa: "7:30", gustavo: "7:50", "15": "", },
+
+{mendoza: "7:10", lavalle: "8:10", costa: "8:33", gustavo: "8:53", "15": "8:58", },
+
+{mendoza: "8:00", lavalle: "9:10", costa: "9:35", gustavo: "9:55", "15": "", },
+
+{mendoza: "8:50", lavalle: "10:00", costa: "10:25", gustavo: "10:45", "15": "", },
+
+{mendoza: "9:40", lavalle: "10:50", costa: "11:15", gustavo: "11:35", "15": "", },
+
+{mendoza: "10:30", lavalle: "11:40", costa: "12:05", gustavo: "12:25", "15": "", },
+
+{mendoza: "11:10", lavalle: "12:20", costa: "12:45", gustavo: "13:05", "15": "", },
+
+{mendoza: "11:50", lavalle: "13:00", costa: "13:25", gustavo: "13:45", "15": "", },
+
+{mendoza: "12:40", lavalle: "13:40", costa: "14:05", gustavo: "14:25", "15": "", },
+
+{mendoza: "13:20", lavalle: "14:30", costa: "14:55", gustavo: "15:15", "15": "", },
+
+{mendoza: "14:00", lavalle: "15:10", costa: "15:35", gustavo: "15:55", "15": "16:00", },
+
+{mendoza: "15:00", lavalle: "16:10", costa: "16:35", gustavo: "16:55", "15": "", },
+
+{mendoza: "15:50", lavalle: "17:00", costa: "17:25", gustavo: "17:45", "15": "", },
+
+{mendoza: "16:30", lavalle: "17:40", costa: "18:05", gustavo: "18:25", "15": "", },
+
+{mendoza: "17:10", lavalle: "18:20", costa: "18:45", gustavo: "19:05", "15": "19:10", },
+
+{mendoza: "17:50", lavalle: "19:00", costa: "19:25", gustavo: "19:45", "15": "", },
+
+{mendoza: "18:30", lavalle: "19:40", costa: "20:05", gustavo: "20:25", "15": "", },
+
+{mendoza: "19:10", lavalle: "20:20", costa: "20:45", gustavo: "21:05", "15": "", },
+
+{mendoza: "19:50", lavalle: "21:00", costa: "21:25", gustavo: "21:45", "15": "21:50", },
+
+{mendoza: "20:30", lavalle: "21:40", costa: "22:05", gustavo: "", "15": "", },
+
+{mendoza: "21:10", lavalle: "22:20", costa: "22:45", gustavo: "23:05", "15": "", },
+
+{mendoza: "21:50", lavalle: "23:00", costa: "23:25", gustavo: "", "15": "", },
+
+{mendoza: "22:40", lavalle: "23:40", costa: "0:00", gustavo: "", "15": "", },
+
+{mendoza: "23:30", lavalle: "0:30", costa: "", gustavo: "", "15": "", },
+
+{mendoza: "0:30", lavalle: "1:20", costa: "1:35", gustavo: "", "15": "", },]
+            }
+        };
+
+        // Orden de las paradas
+        const ordenParadas = ["asuncion", "15", "gustavo", "costa", "lavalle", "mendoza"];
+
+        // Variables globales
+        let selectedDay = "weekday";
+        let currentDay = "weekday"; // Día actual según la fecha del sistema
+
+        // Función para convertir tiempo a minutos
+        function timeToMinutes(timeStr) {
+            if (!timeStr) return Infinity;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Función para actualizar el reloj y determinar el día actual
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time-text').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Determinar día actual
+            const dayOfWeek = now.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+            let newCurrentDay = "weekday";
+            
+            if(dayOfWeek === 6) newCurrentDay = "saturday";
+            else if(dayOfWeek === 0) newCurrentDay = "sunday";
+            
+            // Actualizar solo si cambió el día actual
+            if(newCurrentDay !== currentDay) {
+                currentDay = newCurrentDay;
+                // Si no se ha seleccionado manualmente otro día, actualizar la selección
+                if(selectedDay !== "weekday" && selectedDay !== "saturday" && selectedDay !== "sunday") {
+                    cambiarDia(currentDay);
+                }
+            }
+            
+            // Resaltar visualmente el día actual
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('current-day');
+                if (btn.dataset.day === currentDay) {
+                    btn.classList.add('current-day');
+                }
+            });
+        }
+
+        // Función para determinar dirección del viaje
+        function determinarDireccion(origen, destino) {
+            const indiceOrigen = ordenParadas.indexOf(origen);
+            const indiceDestino = ordenParadas.indexOf(destino);
+            
+            if (indiceOrigen === -1 || indiceDestino === -1) return null;
+            
+            return indiceOrigen < indiceDestino ? "ida" : "vuelta";
+        }
+
+        // Función principal para mostrar horarios
+        function mostrarHorarios() {
+            const origen = document.getElementById('origen').value;
+            const destino = document.getElementById('destino').value;
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            
+            // Validaciones básicas
+            if (!origen || !destino) {
+                document.getElementById('schedule-results').style.display = 'none';
+                document.getElementById('no-results').style.display = 'none';
+                return;
+            }
+            
+            if (origen === destino) {
+                document.getElementById('no-results').textContent = 'Origen y destino no pueden ser iguales';
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            const direccion = determinarDireccion(origen, destino);
+            
+            if (!direccion) {
+                document.getElementById('no-results').textContent = 'Ruta no válida';
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            // Obtener horarios para el día seleccionado
+            const rutaHorarios = horarios[selectedDay][direccion];
+            
+            // Filtrar horarios válidos para la ruta seleccionada
+            const horariosFiltrados = rutaHorarios
+                .filter(h => h[origen] && h[destino])
+                .map(h => ({
+                    ...h,
+                    salidaMin: timeToMinutes(h[origen])
+                }));
+            
+            // Mostrar mensaje si no hay horarios
+            if (horariosFiltrados.length === 0) {
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            // Solo buscar próximo horario si estamos viendo el día actual
+            let nextIndex = -1;
+            if (selectedDay === currentDay) {
+                let minDiff = Infinity;
+                
+                horariosFiltrados.forEach((horario, index) => {
+                    const diff = horario.salidaMin - currentMinutes;
+                    if (diff >= 0 && diff < minDiff) {
+                        minDiff = diff;
+                        nextIndex = index;
+                    }
+                });
+            }
+            
+            // Generar HTML para mostrar los horarios
+            let scheduleHTML = '';
+            
+            horariosFiltrados.forEach((horario, index) => {
+                const isNext = (selectedDay === currentDay) && (index === nextIndex);
+                const tags = horario.tags || [];
+                
+                let tagsHTML = '';
+                if (tags.length > 0) {
+                    tagsHTML = '<div class="tags-container">';
+                    tags.forEach(tag => {
+                        tagsHTML += `<span class="schedule-tag">${tag.toUpperCase()}</span>`;
+                    });
+                    tagsHTML += '</div>';
+                }
+                
+                if (isNext) {
+                    tagsHTML += '<div class="tags-container"><span class="schedule-tag tag-proximo">PRÓXIMO</span></div>';
+                }
+                
+                scheduleHTML += `
+                    <div class="schedule-item ${isNext ? 'next-bus' : ''}">
+                        <div class="schedule-time">Partida: ${horario[origen]}</div>
+                        <div class="schedule-time">Llegada: ${horario[destino]}</div>
+                        ${tagsHTML}
+                    </div>
+                `;
+            });
+            
+            // Mostrar resultados
+            document.getElementById('schedule-results').innerHTML = scheduleHTML;
+            document.getElementById('schedule-results').style.display = 'block';
+            document.getElementById('no-results').style.display = 'none';
+        }
+
+        // Función para cambiar el día seleccionado
+        function cambiarDia(dia) {
+            selectedDay = dia;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.day === dia) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Actualizar horarios si ya hay una selección
+            if (document.getElementById('origen').value && document.getElementById('destino').value) {
+                mostrarHorarios();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('origen').addEventListener('change', mostrarHorarios);
+        document.getElementById('destino').addEventListener('change', mostrarHorarios);
+        
+        // Event listeners para los botones de día
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                cambiarDia(btn.dataset.day);
+            });
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configurar el día actual al cargar la página
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            
+            if(dayOfWeek === 6) {
+                cambiarDia("saturday");
+            } else if(dayOfWeek === 0) {
+                cambiarDia("sunday");
+            } else {
+                cambiarDia("weekday");
+            }
+            
+            // Iniciar el reloj
+            setInterval(updateClock, 1000);
+            updateClock();
+        });
+    </script>
+</body>
+</html>

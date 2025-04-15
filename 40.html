@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios de Micros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Estilo para el reloj */
+        .current-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+        .clock-icon {
+            font-size: 1.2em;
+        }
+        .time-text {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        /* Estilo para los botones de día */
+        .day-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .day-btn {
+            flex: 1;
+            max-width: 120px;
+            padding: 12px 5px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .day-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .day-btn.active {
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .day-name {
+            font-size: 0.85em;
+            margin-bottom: 3px;
+        }
+        .day-short {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .weekday.active {
+            background-color: #3498db; /* Azul */
+        }
+        .saturday.active {
+            background-color: #e67e22; /* Naranja */
+        }
+        .sunday.active {
+            background-color: #2ecc71; /* Verde */
+        }
+        .day-btn.current-day {
+            border: 2px solid #2c3e50;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #3498db;
+            font-size: 1rem;
+        }
+        .no-results {
+            text-align: center;
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .schedule-container {
+            margin-top: 15px;
+            display: none;
+        }
+        .schedule-item {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+            background-color: white;
+        }
+        .schedule-item.next-bus {
+            background-color: #FFEB3B;
+            border-left: 4px solid #FFC107;
+        }
+        .schedule-time {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        .schedule-tag {
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: white;
+            background-color: #2E86C1;
+        }
+        .tag-proximo {
+            background-color: #E74C3C !important;
+        }
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
+        
+        @media (min-width: 600px) {
+            .container {
+                max-width: 600px;
+                padding: 20px;
+            }
+            .controls {
+                flex-direction: row;
+            }
+            .schedule-item {
+                padding: 15px;
+            }
+            .schedule-tag {
+                font-size: 0.8rem;
+                padding: 3px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Horarios de Micros</h1>
+        <div class="subtitle">Ruta: 40</div>
+        
+        <div class="current-time">
+            <span class="clock-icon">🕒</span>
+            <span class="time-text" id="time-text">--:--:--</span>
+        </div>
+        
+        <div class="day-selector">
+            <button class="day-btn weekday" data-day="weekday">
+                <span class="day-name">Entre semana</span>
+                <span class="day-short">LUN-VIE</span>
+            </button>
+            <button class="day-btn saturday" data-day="saturday">
+                <span class="day-name">Sábado</span>
+                <span class="day-short">SÁBADO</span>
+            </button>
+            <button class="day-btn sunday" data-day="sunday">
+                <span class="day-name">Domingo</span>
+                <span class="day-short">DOMINGO</span>
+            </button>
+        </div>
+        
+        <div class="controls">
+            <select id="origen">
+                <option value="">Seleccione origen</option>
+                <option value="km56">KM 56</option>
+                <option value="km47">KM 47 ESC.</option>
+                <option value="jocoli">JOCOLI</option>
+                <option value="andacollo">ANDACOLLO</option>
+                <option value="oscar">OSCAR MENDOZA</option>
+                <option value="croco">CROCO</option>
+                <option value="sguazini">SGUAZINI</option>
+                <option value="3demayo">3 DE MAYO</option>
+                <option value="sanfrancisco">SAN FRANCISCO</option>
+                <option value="citalia">C.ITALIA</option>
+                <option value="colmena">BARRIO LA COLMENA</option>
+                <option value="salvatierra">SALVATIERRA</option>
+                <option value="verjel">VERJEL</option>
+                <option value="lavalle">LAVALLE</option>
+                <option value="cruce">CRUCE</option>
+                <option value="paramillo">PARAMILLO</option>
+                <option value="pastal">PASTAL</option>
+                <option value="borbollon">BORBOLLON</option>
+                <option value="mendoza">MENDOZA</option>
+            </select>
+            
+            <select id="destino">
+                <option value="">Seleccione destino</option>
+                <option value="km56">KM 56</option>
+                <option value="km47">KM 47 ESC.</option>
+                <option value="jocoli">JOCOLI</option>
+                <option value="andacollo">ANDACOLLO</option>
+                <option value="oscar">OSCAR MENDOZA</option>
+                <option value="croco">CROCO</option>
+                <option value="sguazini">SGUAZINI</option>
+                <option value="3demayo">3 DE MAYO</option>
+                <option value="sanfrancisco">SAN FRANCISCO</option>
+                <option value="citalia">C.ITALIA</option>
+                <option value="colmena">BARRIO LA COLMENA</option>
+                <option value="salvatierra">SALVATIERRA</option>
+                <option value="verjel">VERJEL</option>
+                <option value="lavalle">LAVALLE</option>
+                <option value="cruce">CRUCE</option>
+                <option value="paramillo">PARAMILLO</option>
+                <option value="pastal">PASTAL</option>
+                <option value="borbollon">BORBOLLON</option>
+                <option value="mendoza">MENDOZA</option>
+            </select>
+        </div>
+        
+        <div class="no-results" id="no-results">No hay servicios disponibles para esta ruta</div>
+        
+        <div id="schedule-results" class="schedule-container">
+            <!-- Horarios se cargarán aquí -->
+        </div>
+        
+        <div class="note">
+            Nota: Los horarios son aproximados. Llegue 10 minutos antes.
+          <br> © 2025 Elian Mamani. Todos los derechos reservados.
+        </div>
+    </div>
+
+    <script>
+        // Base de datos de horarios
+        const horarios = {
+            weekday: {
+              vuelta: [
+                { km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "7:10", citalia: "", colmena: "", salvatierra: "7:00", verjel: "", lavalle: "6:50", cruce: "6:27", pastal: "", borbollon: "6:10", mendoza: "5:40", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "", verjel: "7:30", lavalle: "7:20", cruce: "7:00", pastal: "6:50", borbollon: "6:30", mendoza: "", },
+
+{ km56: "", km47: "", jocoli: "8:15", andacollo: "", oscar: "", croco: "8:05", sguazini: "8:00", "3demayo": "7:50", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "7:40", verjel: "", lavalle: "7:30", cruce: "7:07", pastal: "", borbollon: "6:50", mendoza: "6:20", },
+              
+{ km56: "8:40", km47: "8:35", jocoli: "8:30", andacollo: "8:20", oscar: "", croco: "", sguazini: "", "3demayo": "8:10", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "8:00", verjel: "", lavalle: "7:50", cruce: "7:27", pastal: "", borbollon: "7:10", mendoza: "6:40", },
+
+{ km56: "", km47: "", jocoli: "9:25", andacollo: "", oscar: "", croco: "9:15", sguazini: "9:10", "3demayo": "9:00", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "8:50", verjel: "", lavalle: "8:40", cruce: "8:20", pastal: "8:10", borbollon: "7:50", mendoza: "7:20", },
+
+{ km56: "", km47: "", jocoli: "9:55", andacollo: "9:40", oscar: "", croco: "", sguazini: "", "3demayo": "9:30", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "9:20", verjel: "", lavalle: "9:10", cruce: "8:47", pastal: "", borbollon: "8:30", mendoza: "8:00", },
+
+{ km56: "", km47: "", jocoli: "10:25", andacollo: "", oscar: "", croco: "10:15", sguazini: "9:10", "3demayo": "10:00", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "9:50", verjel: "", lavalle: "9:40", cruce: "9:17", pastal: "", borbollon: "9:00", mendoza: "8:30", },
+
+{ km56: "11:05", km47: "11:00", jocoli: "10:55", andacollo: "10:40", oscar: "", croco: "", sguazini: "", "3demayo": "10:30", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "10:20", verjel: "", lavalle: "10:10", cruce: "9:47", pastal: "", borbollon: "9:30", mendoza: "9:00", },
+
+{ km56: "", km47: "", jocoli: "11:35", andacollo: "", oscar: "", croco: "11:25", sguazini: "11:20", "3demayo": "11:10", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "11:00", verjel: "", lavalle: "10:50", cruce: "10:27", pastal: "", borbollon: "10:10", mendoza: "9:40", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "12:00", citalia: "11:40", colmena: "", salvatierra: "11:30", verjel: "", lavalle: "11:20", cruce: "10:57", pastal: "", borbollon: "10:40", mendoza: "10:10", },
+
+{ km56: "", km47: "", jocoli: "12:25", andacollo: "12:10", oscar: "", croco: "", sguazini: "", "3demayo": "12:00", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "11:50", verjel: "", lavalle: "11:40", cruce: "11:17", pastal: "", borbollon: "11:00", mendoza: "10:30", },
+
+{ km56: "13:15", km47: "13:10", jocoli: "13:05", andacollo: "", oscar: "", croco: "12:55", sguazini: "12:50", "3demayo": "12:40", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "12:30", verjel: "", lavalle: "12:20", cruce: "12:00", pastal: "11:50", borbollon: "11:30", mendoza: "11:00", },
+
+{ km56: "", km47: "", jocoli: "13:25", andacollo: "13:10", oscar: "", croco: "", sguazini: "", "3demayo": "13:00", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "12:50", verjel: "", lavalle: "12:40", cruce: "12:17", pastal: "", borbollon: "12:00", mendoza: "11:30", },
+
+{ km56: "", km47: "", jocoli: "13:55", andacollo: "", oscar: "", croco: "13:45", sguazini: "13:40", "3demayo": "13:30", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "13:20", verjel: "", lavalle: "13:10", cruce: "12:47", pastal: "", borbollon: "12:30", mendoza: "12:00", },
+
+{ km56: "", km47: "", jocoli: "14:50", andacollo: "", oscar: "14:40", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "14:30", citalia: "14:10", colmena: "", salvatierra: "14:00", verjel: "", lavalle: "13:50", cruce: "13:30", pastal: "13:20", borbollon: "13:00", mendoza: "12:30", },
+
+{ km56: "", km47: "", jocoli: "14:55", andacollo: "", oscar: "", croco: "14:45", sguazini: "14:40", "3demayo": "14:30", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "14:20", verjel: "", lavalle: "14:10", cruce: "13:47", pastal: "", borbollon: "13:30", mendoza: "13:00", },
+
+{ km56: "15:40", km47: "15:35", jocoli: "15:30", andacollo: "15:15", oscar: "", croco: "", sguazini: "", "3demayo": "15:05", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "14:55", verjel: "", lavalle: "14:45", cruce: "14:22", pastal: "", borbollon: "14:05", mendoza: "13:35", },
+
+{ km56: "", km47: "", jocoli: "16:05", andacollo: "", oscar: "", croco: "15:55", sguazini: "15:50", "3demayo": "15:40", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "15:30", verjel: "", lavalle: "15:20", cruce: "14:57", pastal: "", borbollon: "14:40", mendoza: "14:10", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "16:20", citalia: "16:00", colmena: "", salvatierra: "15:50", verjel: "", lavalle: "15:40", cruce: "15:17", pastal: "", borbollon: "15:00", mendoza: "14:30", },
+
+{ km56: "", km47: "", jocoli: "17:15", andacollo: "17:05", oscar: "", croco: "", sguazini: "", "3demayo": "16:55", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "16:45", verjel: "", lavalle: "16:35", cruce: "16:15", pastal: "16:05", borbollon: "15:45", mendoza: "15:15", },
+
+{ km56: "", km47: "", jocoli: "17:40", andacollo: "", oscar: "", croco: "17:30", sguazini: "17:25", "3demayo": "17:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "17:05", verjel: "", lavalle: "16:55", cruce: "16:32", pastal: "", borbollon: "16:15", mendoza: "15:45", },
+
+{ km56: "", km47: "", jocoli: "18:10", andacollo: "17:55", oscar: "", croco: "", sguazini: "", "3demayo": "17:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "17:35", verjel: "", lavalle: "17:25", cruce: "17:02", pastal: "", borbollon: "16:45", mendoza: "16:15", },
+
+{ km56: "", km47: "", jocoli: "18:40", andacollo: "", oscar: "", croco: "18:30", sguazini: "18:25", "3demayo": "18:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "18:05", verjel: "", lavalle: "17:55", cruce: "17:32", pastal: "", borbollon: "17:15", mendoza: "16:45", },
+
+{ km56: "", km47: "", jocoli: "19:10", andacollo: "18:55", oscar: "", croco: "", sguazini: "", "3demayo": "18:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "18:35", verjel: "", lavalle: "18:25", cruce: "18:02", pastal: "", borbollon: "16:45", mendoza: "17:15", },
+
+{ km56: "", km47: "", jocoli: "19:50", andacollo: "", oscar: "", croco: "19:40", sguazini: "19:35", "3demayo": "19:25", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "19:15", verjel: "", lavalle: "19:05", cruce: "18:45", pastal: "18:35", borbollon: "18:15", mendoza: "17:45", },
+
+{ km56: "", km47: "", jocoli: "20:10", andacollo: "19:55", oscar: "", croco: "", sguazini: "", "3demayo": "19:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "19:35", verjel: "", lavalle: "19:25", cruce: "19:02", pastal: "", borbollon: "18:45", mendoza: "18:15", },
+
+{ km56: "", km47: "", jocoli: "20:40", andacollo: "", oscar: "", croco: "20:30", sguazini: "20:25", "3demayo": "20:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "20:05", verjel: "", lavalle: "19:55", cruce: "19:32", pastal: "", borbollon: "19:15", mendoza: "18:45", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "21:25", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "21:15", citalia: "20:55", colmena: "", salvatierra: "20:45", verjel: "", lavalle: "20:35", cruce: "20:15", pastal: "20:05", borbollon: "19:45", mendoza: "19:15", },
+
+{ km56: "21:50", km47: "21:45", jocoli: "21:40", andacollo: "21:25", oscar: "", croco: "", sguazini: "", "3demayo": "21:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "21:05", verjel: "", lavalle: "20:55", cruce: "20:32", pastal: "", borbollon: "20:15", mendoza: "19:45", },
+
+{ km56: "", km47: "", jocoli: "22:10", andacollo: "", oscar: "", croco: "22:00", sguazini: "21:55", "3demayo": "21:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "21:35", verjel: "", lavalle: "21:25", cruce: "21:02", pastal: "", borbollon: "20:45", mendoza: "20:15", },
+
+{ km56: "", km47: "", jocoli: "22:00", andacollo: "21:50", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "", citalia: "", colmena: "21:35", salvatierra: "", verjel: "", lavalle: "", cruce: "21:30", pastal: "", borbollon: "21:15", mendoza: "20:45", },
+
+{ km56: "", km47: "", jocoli: "23:20", andacollo: "", oscar: "", croco: "23:10", sguazini: "23:05", "3demayo": "22:55", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "22:45", verjel: "", lavalle: "22:35", cruce: "22:15", pastal: "22:05", borbollon: "21:45", mendoza: "21:15", },
+
+{ km56: "", km47: "", jocoli: "23:40", andacollo: "23:25", oscar: "", croco: "", sguazini: "", "3demayo": "23:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "23:05", verjel: "", lavalle: "22:55", cruce: "22:32", pastal: "", borbollon: "22:15", mendoza: "21:45", },
+
+{ km56: "", km47: "", jocoli: "0:10", andacollo: "", oscar: "", croco: "0:00", sguazini: "23:55", "3demayo": "23:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "23:35", verjel: "", lavalle: "23:25", cruce: "23:02", pastal: "", borbollon: "22:45", mendoza: "22:15", },
+
+{ km56: "", km47: "", jocoli: "0:40", andacollo: "0:25", oscar: "", croco: "", sguazini: "", "3demayo": "0:15", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "0:05", verjel: "", lavalle: "23:55", cruce: "23:32", pastal: "", borbollon: "23:15", mendoza: "22:45", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "0:45", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "0:35", verjel: "", lavalle: "0:25", cruce: "0:02", pastal: "", borbollon: "23:45", mendoza: "23:15", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "", verjel: "", lavalle: "0:55", cruce: "0:32", pastal: "", borbollon: "0:15", mendoza: "23:45", },
+
+{ km56: "", km47: "", jocoli: "", andacollo: "", oscar: "", croco: "", sguazini: "", "3demayo": "", sanfrancisco: "", citalia: "", colmena: "", salvatierra: "", verjel: "", lavalle: "1:30", cruce: "1:15", pastal: "", borbollon: "1:00", mendoza: "0:30", }
+                // Agrega más horarios según sea necesario
+            ],
+                ida: [
+                { mendoza: "5:50", borbollon: "5:20", pastal: "", cruce: "5:13", lavalle: "5:00", verjel: "", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "",tags: [ "Hospital Notti y Carrillo" ] },
+
+{ mendoza: "6:25", borbollon: "6:00", pastal: "", cruce: "5:45", lavalle: "5:35", verjel: "", salvatierra: "5:25", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "5:15", sguazini: "5:05", croco: "5:00", oscar: "", andacollo: "", jocoli: "4:50", km47: "", km56: "", },
+
+{ mendoza: "7:10", borbollon: "6:40", pastal: "6:20", cruce: "6:10", lavalle: "6:00", verjel: "", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "",tags: [ "B° SOlares/ Por pastal" ] },
+
+{ mendoza: "7:55", borbollon: "7:25", pastal: "", cruce: "7:05", lavalle: "6:45", verjel: "", salvatierra: "6:35", colmena: "", citalia: "6:25", sanfrancisco: "6:05", "3demayo": "", sguazini: "", croco: "", oscar: "5:55", andacollo: "", jocoli: "5:45", km47: "", km56: "",tags: [ "Santa Cecilia" ] },
+
+{ mendoza: "7:10", borbollon: "6:40", pastal: "", cruce: "6:20", lavalle: "", verjel: "", salvatierra: "", colmena: "6:15", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "6:10", jocoli: "6:00", km47: "5:55", km56: "5:50", tags: [ "Barrio" ]},
+
+{ mendoza: "7:55", borbollon: "7:20", pastal: "", cruce: "7:00", lavalle: "6:45", verjel: "", salvatierra: "6:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "6:25", sguazini: "6:15", croco: "6:10", oscar: "", andacollo: "", jocoli: "6:00", km47: "", km56: "", },
+
+{ mendoza: "", borbollon: "", pastal: "", cruce: "", lavalle: "6:55", verjel: "7:20", salvatierra: "6:40", colmena: "", citalia: "", sanfrancisco: "6:35", "3demayo": "6:25", sguazini: "6:20", croco: "", oscar: "", andacollo: "6:10", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "8:20", borbollon: "7:50", pastal: "", cruce: "7:30", lavalle: "7:10", verjel: "", salvatierra: "7:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "6:50", sguazini: "", croco: "", oscar: "", andacollo: "6:40", jocoli: "6:30", km47: "6:25", km56: "", },
+
+{ mendoza: "8:50", borbollon: "8:20", pastal: "", cruce: "8:00", lavalle: "7:40", verjel: "", salvatierra: "7:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "7:20", sguazini: "7:10", croco: "7:05", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "9:10", borbollon: "8:40", pastal: "", cruce: "8:20", lavalle: "8:00", verjel: "", salvatierra: "7:50", colmena: "", citalia: "7:40", sanfrancisco: "7:20", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "6:55", km47: "", km56: "", },
+
+{ mendoza: "9:25", borbollon: "8:55", pastal: "", cruce: "8:35", lavalle: "8:15", verjel: "", salvatierra: "8:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "7:55", sguazini: "7:45", croco: "7:40", oscar: "", andacollo: "", jocoli: "7:30", km47: "", km56: "", },
+
+{ mendoza: "10:10", borbollon: "9:40", pastal: "9:20", cruce: "9:10", lavalle: "8:50", verjel: "", salvatierra: "8:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "8:30", sguazini: "", croco: "", oscar: "", andacollo: "8:20", jocoli: "8:10", km47: "", km56: "", },
+
+{ mendoza: "10:30", borbollon: "10:00", pastal: "", cruce: "9:40", lavalle: "9:20", verjel: "", salvatierra: "9:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:00", sguazini: "8:50", croco: "8:45", oscar: "", andacollo: "", jocoli: "8:35", km47: "", km56: "", },
+
+{ mendoza: "11:00", borbollon: "10:30", pastal: "", cruce: "10:10", lavalle: "9:50", verjel: "", salvatierra: "9:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:30", sguazini: "", croco: "", oscar: "", andacollo: "9:20", jocoli: "9:10", km47: "9:05", km56: "9:00", },
+
+{ mendoza: "11:45", borbollon: "11:15", pastal: "10:55", cruce: "10:45", lavalle: "10:30", verjel: "", salvatierra: "10:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:10", sguazini: "10:00", croco: "9:55", oscar: "", andacollo: "", jocoli: "9:45", km47: "", km56: "",tags: [ "Por Pastal" ]},
+
+{ mendoza: "12:10", borbollon: "11:40", pastal: "", cruce: "11:20", lavalle: "11:00", verjel: "", salvatierra: "10:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:40", sguazini: "", croco: "", oscar: "", andacollo: "10:30", jocoli: "10:20", km47: "", km56: "", },
+
+{ mendoza: "12:50", borbollon: "12:20", pastal: "", cruce: "12:00", lavalle: "11:40", verjel: "", salvatierra: "11:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "11:20", sguazini: "11:10", croco: "11:05", oscar: "", andacollo: "", jocoli: "10:55", km47: "", km56: "", },
+
+{ mendoza: "13:20", borbollon: "12:50", pastal: "", cruce: "12:30", lavalle: "12:10", verjel: "", salvatierra: "12:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "11:50", sguazini: "", croco: "", oscar: "", andacollo: "11:40", jocoli: "11:30", km47: "11:25", km56: "11:20", },
+
+{ mendoza: "14:00", borbollon: "13:30", pastal: "", cruce: "13:00", lavalle: "12:45", verjel: "", salvatierra: "12:35", colmena: "", citalia: "", sanfrancisco: "12:15", "3demayo": "", sguazini: "", croco: "", oscar: "12:25", andacollo: "", jocoli: "", km47: "", km56: "",tags: [ "Por Pastal" ] },
+
+{ mendoza: "14:00", borbollon: "13:30", pastal: "13:10", cruce: "13:10", lavalle: "12:50", verjel: "", salvatierra: "12:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "12:30", sguazini: "12:20", croco: "12:15", oscar: "", andacollo: "", jocoli: "12:05", km47: "", km56: "", },
+
+{ mendoza: "14:40", borbollon: "14:10", pastal: "", cruce: "13:50", lavalle: "13:30", verjel: "", salvatierra: "13:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "13:10", sguazini: "", croco: "", oscar: "", andacollo: "13:00", jocoli: "12:50", km47: "", km56: "", },
+
+{ mendoza: "15:25", borbollon: "14:55", pastal: "", cruce: "14:35", lavalle: "14:15", verjel: "", salvatierra: "14:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "13:55", sguazini: "13:45", croco: "13:40", oscar: "", andacollo: "", jocoli: "13:30", km47: "13:25", km56: "13:20", },
+
+{ mendoza: "15:50", borbollon: "15:20", pastal: "", cruce: "15:00", lavalle: "14:40", verjel: "", salvatierra: "14:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "14:20", sguazini: "", croco: "", oscar: "", andacollo: "14:10", jocoli: "14:00", km47: "", km56: "", },
+
+{ mendoza: "16:30", borbollon: "16:00", pastal: "", cruce: "15:40", lavalle: "15:20", verjel: "", salvatierra: "15:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:00", sguazini: "14:50", croco: "14:45", oscar: "", andacollo: "", jocoli: "14:35", km47: "", km56: "", },
+
+{ mendoza: "17:00", borbollon: "16:30", pastal: "16:10", cruce: "16:00", lavalle: "15:45", verjel: "", salvatierra: "15:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:25", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "15:05", km47: "", km56: "",tags: [ "Por Pastal" ] },
+
+{ mendoza: "17:30", borbollon: "17:00", pastal: "", cruce: "16:40", lavalle: "16:20", verjel: "", salvatierra: "16:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "16:00", sguazini: "15:50", croco: "15:45", oscar: "", andacollo: "15:15", jocoli: "15:35", km47: "", km56: "", },
+
+{ mendoza: "17:55", borbollon: "17:25", pastal: "", cruce: "17:05", lavalle: "16:45", verjel: "", salvatierra: "16:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "16:25", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "16:05", km47: "16:00", km56: "15:55", },
+
+{ mendoza: "18:35", borbollon: "18:05", pastal: "17:45", cruce: "17:35", lavalle: "17:20", verjel: "", salvatierra: "17:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:00", sguazini: "16:50", croco: "16:45", oscar: "", andacollo: "16:15", jocoli: "16:35", km47: "", km56: "",tags: [ "Por Pastal" ] },
+
+{ mendoza: "19:15", borbollon: "18:45", pastal: "", cruce: "18:25", lavalle: "18:05", verjel: "", salvatierra: "17:55", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:45", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "17:25", km47: "", km56: "", },
+
+{ mendoza: "18:20", borbollon: "17:50", pastal: "", cruce: "17:30", lavalle: "17:10", verjel: "", salvatierra: "17:00", colmena: "", citalia: "16:50", sanfrancisco: "16:20", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "17:35", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "19:50", borbollon: "19:20", pastal: "", cruce: "19:00", lavalle: "18:40", verjel: "", salvatierra: "18:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:20", sguazini: "18:10", croco: "18:05", oscar: "16:30", andacollo: "", jocoli: "17:55", km47: "", km56: "", },
+
+{ mendoza: "20:20", borbollon: "19:50", pastal: "", cruce: "19:30", lavalle: "19:10", verjel: "", salvatierra: "19:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:50", sguazini: "", croco: "", oscar: "", andacollo: "18:40", jocoli: "18:30", km47: "", km56: "", },
+
+{ mendoza: "21:00", borbollon: "20:30", pastal: "20:10", cruce: "20:00", lavalle: "19:45", verjel: "", salvatierra: "19:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:25", sguazini: "19:15", croco: "19:10", oscar: "", andacollo: "", jocoli: "19:00", km47: "", km56: "", tags: [ "Por Pastal" ]},
+
+{ mendoza: "21:20", borbollon: "20:50", pastal: "", cruce: "20:30", lavalle: "20:10", verjel: "", salvatierra: "20:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:50", sguazini: "", croco: "", oscar: "", andacollo: "19:40", jocoli: "19:30", km47: "", km56: "", tags: [ "Por Pastal" ]},
+
+{ mendoza: "22:00", borbollon: "21:30", pastal: "21:10", cruce: "21:00", lavalle: "20:45", verjel: "", salvatierra: "20:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "20:25", sguazini: "20:15", croco: "20:10", oscar: "", andacollo: "", jocoli: "20:00", km47: "", km56: "", tags: [ "Por Pastal" ]},
+
+{ mendoza: "22:20", borbollon: "21:50", pastal: "", cruce: "21:30", lavalle: "21:10", verjel: "", salvatierra: "21:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "20:50", sguazini: "", croco: "", oscar: "", andacollo: "20:40", jocoli: "20:30", km47: "", km56: "", },
+
+{ mendoza: "22:55", borbollon: "22:25", pastal: "", cruce: "22:05", lavalle: "21:45", verjel: "", salvatierra: "21:35", colmena: "", citalia: "", sanfrancisco: "21:15", "3demayo": "", sguazini: "", croco: "", oscar: "21:25", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "23:25", borbollon: "22:55", pastal: "", cruce: "22:35", lavalle: "22:15", verjel: "", salvatierra: "22:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "21:55", sguazini: "21:45", croco: "21:40", oscar: "", andacollo: "", jocoli: "21:30", km47: "", km56: "", },
+
+{ mendoza: "0:00", borbollon: "23:30", pastal: "23:10", cruce: "23:00", lavalle: "22:45", verjel: "", salvatierra: "22:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "22:25", sguazini: "", croco: "", oscar: "", andacollo: "22:15", jocoli: "22:05", km47: "22:00", km56: "21:55",tags: [ "Por Pastal" ] }
+              
+                // Agrega más horarios según sea necesario
+            ]
+            },
+            saturday: {
+               ida: [
+                { mendoza: "6:00", borbollon: "5:30", pastal: "", cruce: "5:13", paramillo: "", lavalle: "5:00", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "6:35", borbollon: "6:05", pastal: "", cruce: "5:48", paramillo: "", lavalle: "5:35", salvatierra: "5:25", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "5:15", sguazini: "5:05", croco: "5:00", oscar: "", andacollo: "", jocoli: "4:50", km47: "", km56: "", },
+
+{ mendoza: "7:15", borbollon: "6:45", pastal: "6:25", cruce: "6:15", paramillo: "", lavalle: "6:00", salvatierra: "5:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "5:40", sguazini: "5:30", croco: "5:25", oscar: "", andacollo: "", jocoli: "5:15", km47: "", km56: "", },
+
+{ mendoza: "7:40", borbollon: "7:10", pastal: "", cruce: "6:50", paramillo: "", lavalle: "6:30", salvatierra: "6:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "6:10", sguazini: "", croco: "", oscar: "", andacollo: "6:00", jocoli: "5:50", km47: "", km56: "", },
+
+{ mendoza: "7:10", borbollon: "6:40", pastal: "", cruce: "5:25", paramillo: "", lavalle: "", salvatierra: "", colmena: "6:20", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "6:10", jocoli: "6:00", km47: "5:55", km56: "5:50", },
+
+{ mendoza: "8:20", borbollon: "7:50", pastal: "", cruce: "7:30", paramillo: "", lavalle: "7:10", salvatierra: "7:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "6:50", sguazini: "6:40", croco: "6:35", oscar: "", andacollo: "", jocoli: "6:25", km47: "", km56: "", },
+
+{ mendoza: "8:50", borbollon: "8:20", pastal: "", cruce: "8:00", paramillo: "", lavalle: "7:40", salvatierra: "7:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "7:20", sguazini: "", croco: "", oscar: "", andacollo: "7:10", jocoli: "7:00", km47: "", km56: "", },
+
+{ mendoza: "9:10", borbollon: "8:40", pastal: "", cruce: "8:20", paramillo: "", lavalle: "8:00", salvatierra: "7:50", colmena: "", citalia: "7:40", sanfrancisco: "7:20", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "9:50", borbollon: "9:20", pastal: "9:00", cruce: "8:30", paramillo: "", lavalle: "8:35", salvatierra: "8:25", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "8:15", sguazini: "8:05", croco: "8:00", oscar: "", andacollo: "", jocoli: "7:50", km47: "", km56: "", },
+
+{ mendoza: "10:10", borbollon: "9:40", pastal: "", cruce: "9:20", paramillo: "", lavalle: "9:00", salvatierra: "8:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "8:40", sguazini: "", croco: "", oscar: "", andacollo: "8:30", jocoli: "8:20", km47: "", km56: "", },
+
+{ mendoza: "10:50", borbollon: "10:20", pastal: "", cruce: "10:00", paramillo: "", lavalle: "9:40", salvatierra: "9:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:20", sguazini: "9:10", croco: "9:05", oscar: "", andacollo: "", jocoli: "8:55", km47: "", km56: "", },
+
+{ mendoza: "11:25", borbollon: "10:55", pastal: "10:53", cruce: "10:25", paramillo: "", lavalle: "10:10", salvatierra: "10:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:50", sguazini: "", croco: "", oscar: "", andacollo: "9:40", jocoli: "9:30", km47: "9:25", km56: "9:20", },
+
+{ mendoza: "11:50", borbollon: "11:20", pastal: "", cruce: "11:00", paramillo: "", lavalle: "10:40", salvatierra: "10:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:20", sguazini: "10:10", croco: "10:05", oscar: "", andacollo: "", jocoli: "9:55", km47: "", km56: "", },
+
+{ mendoza: "12:20", borbollon: "11:50", pastal: "", cruce: "11:30", paramillo: "", lavalle: "11:10", salvatierra: "11:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:50", sguazini: "", croco: "", oscar: "", andacollo: "10:40", jocoli: "10:30", km47: "", km56: "", },
+
+{ mendoza: "13:00", borbollon: "12:30", pastal: "", cruce: "12:10", paramillo: "", lavalle: "11:50", salvatierra: "11:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "11:30", sguazini: "11:20", croco: "12:15", oscar: "", andacollo: "", jocoli: "11:05", km47: "", km56: "", },
+
+{ mendoza: "13:30", borbollon: "13:00", pastal: "", cruce: "12:40", paramillo: "", lavalle: "12:20", salvatierra: "12:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "12:00", sguazini: "", croco: "", oscar: "", andacollo: "11:50", jocoli: "11:40", km47: "11:35", km56: "11:30", },
+
+{ mendoza: "14:00", borbollon: "13:30", pastal: "13:10", cruce: "18:00", paramillo: "", lavalle: "12:45", salvatierra: "12:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "12:25", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "14:10", borbollon: "13:40", pastal: "", cruce: "18:20", paramillo: "", lavalle: "13:00", salvatierra: "12:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "12:40", sguazini: "12:30", croco: "12:25", oscar: "", andacollo: "", jocoli: "12:15", km47: "", km56: "", },
+
+{ mendoza: "14:50", borbollon: "14:20", pastal: "", cruce: "14:00", paramillo: "", lavalle: "13:40", salvatierra: "13:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "13:20", sguazini: "", croco: "", oscar: "", andacollo: "13:10", jocoli: "13:00", km47: "", km56: "", },
+
+{ mendoza: "15:35", borbollon: "15:05", pastal: "", cruce: "14:45", paramillo: "", lavalle: "14:25", salvatierra: "14:15", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "14:05", sguazini: "13:55", croco: "13:50", oscar: "", andacollo: "", jocoli: "13:40", km47: "13:35", km56: "13:30", },
+
+{ mendoza: "16:10", borbollon: "15:40", pastal: "", cruce: "15:20", paramillo: "", lavalle: "15:00", salvatierra: "14:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "14:40", sguazini: "", croco: "", oscar: "", andacollo: "14:30", jocoli: "14:20", km47: "", km56: "", },
+
+{ mendoza: "16:40", borbollon: "16:10", pastal: "", cruce: "15:50", paramillo: "", lavalle: "15:30", salvatierra: "15:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:10", sguazini: "15:00", croco: "14:55", oscar: "", andacollo: "", jocoli: "14:45", km47: "", km56: "", },
+
+{ mendoza: "17:05", borbollon: "16:35", pastal: "", cruce: "16:15", paramillo: "", lavalle: "15:55", salvatierra: "15:45", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:35", sguazini: "", croco: "", oscar: "", andacollo: "15:25", jocoli: "15:15", km47: "", km56: "", },
+
+{ mendoza: "17:40", borbollon: "17:10", pastal: "", cruce: "16:30", paramillo: "", lavalle: "16:30", salvatierra: "16:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "16:10", sguazini: "16:00", croco: "15:55", oscar: "", andacollo: "", jocoli: "15:45", km47: "", km56: "", },
+
+{ mendoza: "1:12", borbollon: "17:35", pastal: "", cruce: "17:15", paramillo: "", lavalle: "16:55", salvatierra: "16:45", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "16:35", sguazini: "", croco: "", oscar: "", andacollo: "16:25", jocoli: "16:15", km47: "16:10", km56: "16:05", },
+
+{ mendoza: "18:45", borbollon: "18:15", pastal: "17:55", cruce: "17:45", paramillo: "", lavalle: "17:30", salvatierra: "17:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:10", sguazini: "17:00", croco: "16:55", oscar: "", andacollo: "", jocoli: "16:45", km47: "", km56: "", },
+
+{ mendoza: "19:15", borbollon: "18:45", pastal: "", cruce: "18:25", paramillo: "", lavalle: "18:05", salvatierra: "17:55", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:45", sguazini: "", croco: "", oscar: "", andacollo: "17:35", jocoli: "17:25", km47: "", km56: "", },
+
+{ mendoza: "", borbollon: "", pastal: "", cruce: "", paramillo: "17:30", lavalle: "17:10", salvatierra: "17:00", colmena: "", citalia: "16:50", sanfrancisco: "16:20", "3demayo": "", sguazini: "", croco: "", oscar: "16:30", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "19:10", borbollon: "18:40", pastal: "", cruce: "18:20", paramillo: "", lavalle: "18:00", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "19:50", borbollon: "19:20", pastal: "", cruce: "19:00", paramillo: "", lavalle: "18:40", salvatierra: "18:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:20", sguazini: "18:10", croco: "18:05", oscar: "", andacollo: "", jocoli: "17:55", km47: "", km56: "", },
+
+{ mendoza: "20:20", borbollon: "19:50", pastal: "", cruce: "19:30", paramillo: "", lavalle: "19:10", salvatierra: "19:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:50", sguazini: "", croco: "", oscar: "", andacollo: "18:40", jocoli: "18:30", km47: "", km56: "", },
+
+{ mendoza: "21:00", borbollon: "20:30", pastal: "20:10", cruce: "20:00", paramillo: "", lavalle: "19:45", salvatierra: "19:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:25", sguazini: "19:15", croco: "19:10", oscar: "", andacollo: "", jocoli: "19:00", km47: "", km56: "", },
+
+{ mendoza: "21:20", borbollon: "20:50", pastal: "", cruce: "20:30", paramillo: "", lavalle: "20:30", salvatierra: "20:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:50", sguazini: "", croco: "", oscar: "", andacollo: "19:40", jocoli: "19:30", km47: "", km56: "", },
+
+{ mendoza: "22:00", borbollon: "21:30", pastal: "21:10", cruce: "21:00", paramillo: "", lavalle: "20:45", salvatierra: "20:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "20:25", sguazini: "20:15", croco: "20:10", oscar: "", andacollo: "", jocoli: "20:00", km47: "", km56: "", },
+
+{ mendoza: "22:20", borbollon: "21:50", pastal: "", cruce: "21:30", paramillo: "", lavalle: "21:10", salvatierra: "21:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "20:50", sguazini: "", croco: "", oscar: "", andacollo: "20:40", jocoli: "20:30", km47: "", km56: "", },
+
+{ mendoza: "23:00", borbollon: "22:30", pastal: "", cruce: "22:10", paramillo: "", lavalle: "21:50", salvatierra: "20:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "21:30", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+{ mendoza: "23:25", borbollon: "22:55", pastal: "", cruce: "22:35", paramillo: "", lavalle: "22:15", salvatierra: "22:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "21:55", sguazini: "21:45", croco: "21:40", oscar: "", andacollo: "", jocoli: "21:30", km47: "", km56: "", },
+
+{ mendoza: "0:00", borbollon: "23:30", pastal: "", cruce: "23:10", paramillo: "", lavalle: "22:30", salvatierra: "22:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "22:30", sguazini: "", croco: "", oscar: "", andacollo: "22:20", jocoli: "22:10", km47: "22:05", km56: "22:00", }
+                  ],
+                vuelta: [
+                     { mendoza: "5:40", borbollon: "6:10", pastal: "6:30", cruce: "6:40", paramillo: "", lavalle: "6:50", salvatierra: "7:00", colmena: "", citalia: "", sanfrancisco: "7:10", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "", borbollon: "", pastal: "", cruce: "", paramillo: "", lavalle: "6:50", salvatierra: "7:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "7:10", sguazini: "", croco: "", oscar: "", andacollo: "7:20", jocoli: "7:35", km47: "", km56: "", },
+{ mendoza: "6:20", borbollon: "6:50", pastal: "", cruce: "7:07", paramillo: "", lavalle: "7:30", salvatierra: "7:40", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "7:50", sguazini: "8:00", croco: "8:05", oscar: "", andacollo: "", jocoli: "8:15", km47: "", km56: "", },
+{ mendoza: "6:50", borbollon: "7:20", pastal: "", cruce: "7:37", paramillo: "", lavalle: "8:00", salvatierra: "8:10", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "8:20", sguazini: "", croco: "", oscar: "", andacollo: "8:30", jocoli: "8:45", km47: "8:50", km56: "8:55", },
+{ mendoza: "7:20", borbollon: "7:50", pastal: "8:10", cruce: "8:20", paramillo: "", lavalle: "8:40", salvatierra: "8:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:00", sguazini: "9:10", croco: "9:15", oscar: "", andacollo: "", jocoli: "9:25", km47: "", km56: "", },
+{ mendoza: "8:00", borbollon: "8:30", pastal: "", cruce: "8:47", paramillo: "", lavalle: "9:10", salvatierra: "9:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "9:30", sguazini: "", croco: "", oscar: "", andacollo: "9:40", jocoli: "9:55", km47: "", km56: "", },
+{ mendoza: "8:30", borbollon: "9:00", pastal: "", cruce: "9:37", paramillo: "", lavalle: "9:40", salvatierra: "9:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:00", sguazini: "10:10", croco: "10:15", oscar: "", andacollo: "", jocoli: "10:25", km47: "", km56: "", },
+{ mendoza: "9:00", borbollon: "9:30", pastal: "", cruce: "9:47", paramillo: "", lavalle: "10:10", salvatierra: "10:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "10:30", sguazini: "", croco: "", oscar: "", andacollo: "10:40", jocoli: "10:55", km47: "11:00", km56: "11:05", },
+{ mendoza: "9:40", borbollon: "10:10", pastal: "", cruce: "10:27", paramillo: "", lavalle: "10:50", salvatierra: "11:00", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "11:10", sguazini: "11:20", croco: "11:25", oscar: "", andacollo: "", jocoli: "11:35", km47: "", km56: "", },
+{ mendoza: "10:10", borbollon: "10:40", pastal: "", cruce: "10:57", paramillo: "", lavalle: "11:20", salvatierra: "11:30", colmena: "", citalia: "11:40", sanfrancisco: "12:00", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "10:30", borbollon: "11:00", pastal: "", cruce: "11:17", paramillo: "", lavalle: "11:40", salvatierra: "11:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "12:00", sguazini: "", croco: "", oscar: "", andacollo: "12:10", jocoli: "12:25", km47: "", km56: "", },
+{ mendoza: "11:00", borbollon: "11:30", pastal: "11:50", cruce: "12:00", paramillo: "", lavalle: "12:20", salvatierra: "12:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "12:40", sguazini: "12:50", croco: "12:55", oscar: "", andacollo: "", jocoli: "13:05", km47: "13:10", km56: "13:15", },
+{ mendoza: "11:30", borbollon: "12:00", pastal: "", cruce: "12:17", paramillo: "", lavalle: "12:40", salvatierra: "12:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "13:00", sguazini: "", croco: "", oscar: "", andacollo: "13:10", jocoli: "13:25", km47: "", km56: "", },
+{ mendoza: "12:00", borbollon: "12:30", pastal: "12:50", cruce: "13:00", paramillo: "", lavalle: "13:20", salvatierra: "13:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "13:40", sguazini: "13:50", croco: "13:55", oscar: "", andacollo: "", jocoli: "14:05", km47: "", km56: "", },
+{ mendoza: "12:30", borbollon: "13:00", pastal: "", cruce: "13:17", paramillo: "", lavalle: "13:40", salvatierra: "13:50", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "14:00", sguazini: "", croco: "", oscar: "", andacollo: "14:10", jocoli: "14:25", km47: "", km56: "", },
+{ mendoza: "13:00", borbollon: "13:30", pastal: "", cruce: "13:47", paramillo: "", lavalle: "14:10", salvatierra: "14:20", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "14:30", sguazini: "14:40", croco: "14:45", oscar: "", andacollo: "", jocoli: "14:55", km47: "", km56: "", },
+{ mendoza: "13:35", borbollon: "14:05", pastal: "", cruce: "14:22", paramillo: "", lavalle: "14:45", salvatierra: "14:55", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:05", sguazini: "", croco: "", oscar: "", andacollo: "15:15", jocoli: "15:30", km47: "15:35", km56: "15:40", },
+{ mendoza: "14:10", borbollon: "14:40", pastal: "", cruce: "14:57", paramillo: "", lavalle: "15:20", salvatierra: "15:30", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "15:40", sguazini: "15:50", croco: "15:55", oscar: "", andacollo: "", jocoli: "16:05", km47: "", km56: "", },
+{ mendoza: "14:30", borbollon: "15:00", pastal: "", cruce: "15:17", paramillo: "", lavalle: "15:40", salvatierra: "15:50", colmena: "", citalia: "16:00", sanfrancisco: "16:20", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "15:15", borbollon: "15:45", pastal: "16:05", cruce: "16:15", paramillo: "", lavalle: "16:35", salvatierra: "16:45", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "16:55", sguazini: "", croco: "", oscar: "", andacollo: "17:05", jocoli: "17:20", km47: "", km56: "", },
+{ mendoza: "15:45", borbollon: "16:15", pastal: "", cruce: "16:32", paramillo: "", lavalle: "16:55", salvatierra: "17:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:15", sguazini: "17:25", croco: "17:30", oscar: "", andacollo: "", jocoli: "17:40", km47: "", km56: "", },
+{ mendoza: "16:15", borbollon: "16:45", pastal: "", cruce: "17:02", paramillo: "", lavalle: "17:25", salvatierra: "17:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "17:45", sguazini: "", croco: "", oscar: "", andacollo: "17:55", jocoli: "18:10", km47: "", km56: "", },
+{ mendoza: "16:45", borbollon: "17:15", pastal: "", cruce: "17:32", paramillo: "", lavalle: "17:55", salvatierra: "18:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:15", sguazini: "18:25", croco: "18:30", oscar: "", andacollo: "", jocoli: "18:40", km47: "", km56: "", },
+{ mendoza: "17:15", borbollon: "16:45", pastal: "", cruce: "18:02", paramillo: "", lavalle: "18:25", salvatierra: "18:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "18:45", sguazini: "", croco: "", oscar: "", andacollo: "18:55", jocoli: "19:10", km47: "", km56: "", },
+{ mendoza: "", borbollon: "", pastal: "", cruce: "", paramillo: "17:30", lavalle: "17:50", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "17:45", borbollon: "18:15", pastal: "18:35", cruce: "18:45", paramillo: "", lavalle: "19:05", salvatierra: "19:15", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:25", sguazini: "19:35", croco: "19:40", oscar: "", andacollo: "", jocoli: "19:50", km47: "", km56: "", },
+{ mendoza: "18:15", borbollon: "18:45", pastal: "", cruce: "19:02", paramillo: "", lavalle: "19:25", salvatierra: "19:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "19:45", sguazini: "", croco: "", oscar: "", andacollo: "19:55", jocoli: "20:10", km47: "", km56: "", },
+{ mendoza: "18:45", borbollon: "19:15", pastal: "", cruce: "19:32", paramillo: "", lavalle: "19:55", salvatierra: "20:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "20:15", sguazini: "20:25", croco: "20:30", oscar: "", andacollo: "", jocoli: "20:40", km47: "", km56: "", },
+{ mendoza: "19:30", borbollon: "20:00", pastal: "", cruce: "20:17", paramillo: "", lavalle: "20:40", salvatierra: "20:50", colmena: "", citalia: "21:00", sanfrancisco: "21:20", "3demayo": "", sguazini: "", croco: "", oscar: "21:30", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "19:45", borbollon: "20:15", pastal: "20:35", cruce: "20:45", paramillo: "", lavalle: "21:05", salvatierra: "21:15", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "21:25", sguazini: "", croco: "", oscar: "", andacollo: "21:35", jocoli: "21:50", km47: "21:55", km56: "22:00", },
+{ mendoza: "20:15", borbollon: "20:45", pastal: "", cruce: "21:02", paramillo: "", lavalle: "21:25", salvatierra: "21:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "21:45", sguazini: "21:55", croco: "22:00", oscar: "", andacollo: "", jocoli: "22:10", km47: "", km56: "", },
+{ mendoza: "20:45", borbollon: "21:15", pastal: "21:35", cruce: "21:55", paramillo: "", lavalle: "22:05", salvatierra: "22:15", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "22:25", sguazini: "", croco: "", oscar: "", andacollo: "22:35", jocoli: "22:50", km47: "", km56: "", },
+{ mendoza: "21:15", borbollon: "21:45", pastal: "", cruce: "22:02", paramillo: "", lavalle: "22:25", salvatierra: "22:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "22:45", sguazini: "22:55", croco: "23:00", oscar: "", andacollo: "", jocoli: "23:10", km47: "", km56: "", },
+{ mendoza: "21:45", borbollon: "22:15", pastal: "", cruce: "22:32", paramillo: "", lavalle: "22:55", salvatierra: "23:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "23:15", sguazini: "", croco: "", oscar: "", andacollo: "23:25", jocoli: "23:40", km47: "", km56: "", },
+{ mendoza: "22:15", borbollon: "22:45", pastal: "", cruce: "23:02", paramillo: "", lavalle: "23:25", salvatierra: "23:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "23:45", sguazini: "23:55", croco: "0:00", oscar: "", andacollo: "", jocoli: "0:10", km47: "", km56: "", },
+{ mendoza: "22:45", borbollon: "23:15", pastal: "", cruce: "23:32", paramillo: "", lavalle: "23:55", salvatierra: "0:05", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "0:15", sguazini: "", croco: "", oscar: "", andacollo: "0:25", jocoli: "0:40", km47: "", km56: "", },
+{ mendoza: "23:15", borbollon: "23:45", pastal: "", cruce: "0:02", paramillo: "", lavalle: "0:25", salvatierra: "0:35", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "0:45", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "23:45", borbollon: "0:15", pastal: "", cruce: "0:32", paramillo: "", lavalle: "0:55", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+{ mendoza: "0:30", borbollon: "1:00", pastal: "", cruce: "1:15", paramillo: "", lavalle: "1:30", salvatierra: "", colmena: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km47: "", km56: "", },
+
+                   
+                ]
+            },
+            sunday: {
+                ida: [
+                    { mendoza: "6:45", borbollon: "6:15", pastal: "", cruce: "5:58", lavalle: "5:45", salvatierra: "5:35", citalia: "", sanfrancisco: "", "3demayo": "5:25", sguazini: "5:15", croco: "5:10", oscar: "", andacollo: "5:00", jocoli: "", km56: "", },
+{ mendoza: "8:00", borbollon: "7:20", pastal: "7:10", cruce: "7:00", lavalle: "6:50", salvatierra: "6:40", citalia: "", sanfrancisco: "", "3demayo": "6:30", sguazini: "", croco: "", oscar: "6:20", andacollo: "6:10", jocoli: "", km56: "", },
+{ mendoza: "8:45", borbollon: "8:15", pastal: "", cruce: "7:58", lavalle: "7:45", salvatierra: "7:35", citalia: "", sanfrancisco: "", "3demayo": "7:25", sguazini: "", croco: "", oscar: "7:15", andacollo: "7:05", jocoli: "6:55", km56: "", },
+{ mendoza: "10:00", borbollon: "9:30", pastal: "", cruce: "9:10", lavalle: "8:50", salvatierra: "8:40", citalia: "", sanfrancisco: "", "3demayo": "8:30", sguazini: "8:20", croco: "8:15", oscar: "", andacollo: "8:05", jocoli: "", km56: "", },
+{ mendoza: "10:25", borbollon: "9:55", pastal: "9:35", cruce: "9:25", lavalle: "9:10", salvatierra: "9:00", citalia: "8:50", sanfrancisco: "8:30", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "10:50", borbollon: "10:20", pastal: "", cruce: "10:00", lavalle: "9:40", salvatierra: "9:30", citalia: "", sanfrancisco: "", "3demayo": "9:20", sguazini: "", croco: "", oscar: "9:10", andacollo: "9:00", jocoli: "", km56: "", },
+{ mendoza: "11:45", borbollon: "11:15", pastal: "", cruce: "10:55", lavalle: "10:35", salvatierra: "10:25", citalia: "", sanfrancisco: "", "3demayo": "10:15", sguazini: "10:05", croco: "10:00", oscar: "", andacollo: "9:50", jocoli: "9:40", km56: "", },
+{ mendoza: "12:35", borbollon: "12:05", pastal: "11:45", cruce: "11:35", lavalle: "11:20", salvatierra: "11:10", citalia: "", sanfrancisco: "", "3demayo": "11:00", sguazini: "", croco: "", oscar: "10:50", andacollo: "10:40", jocoli: "", km56: "", },
+{ mendoza: "13:20", borbollon: "12:50", pastal: "", cruce: "12:30", lavalle: "12:10", salvatierra: "12:00", citalia: "", sanfrancisco: "", "3demayo": "11:50", sguazini: "11:40", croco: "11:35", oscar: "", andacollo: "11:25", jocoli: "", km56: "", },
+{ mendoza: "14:00", borbollon: "13:30", pastal: "", cruce: "13:10", lavalle: "12:50", salvatierra: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "14:50", borbollon: "14:20", pastal: "14:00", cruce: "13:50", lavalle: "13:35", salvatierra: "13:25", citalia: "", sanfrancisco: "", "3demayo": "13:15", sguazini: "", croco: "", oscar: "13:05", andacollo: "12:55", jocoli: "", km56: "", },
+{ mendoza: "15:30", borbollon: "15:00", pastal: "", cruce: "14:40", lavalle: "14:20", salvatierra: "14:10", citalia: "14:00", sanfrancisco: "13:40", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "16:10", borbollon: "15:40", pastal: "", cruce: "15:20", lavalle: "15:00", salvatierra: "14:50", citalia: "", sanfrancisco: "", "3demayo": "14:40", sguazini: "14:30", croco: "14:25", oscar: "", andacollo: "14:15", jocoli: "", km56: "", },
+{ mendoza: "16:50", borbollon: "16:20", pastal: "", cruce: "16:00", lavalle: "15:40", salvatierra: "15:30", citalia: "", sanfrancisco: "", "3demayo": "15:20", sguazini: "", croco: "", oscar: "15:10", andacollo: "15:00", jocoli: "", km56: "", },
+{ mendoza: "17:50", borbollon: "17:20", pastal: "", cruce: "17:00", lavalle: "16:40", salvatierra: "16:30", citalia: "", sanfrancisco: "", "3demayo": "16:20", sguazini: "16:10", croco: "16:05", oscar: "", andacollo: "15:55", jocoli: "", km56: "", },
+{ mendoza: "18:10", borbollon: "17:40", pastal: "", cruce: "17:20", lavalle: "17:00", salvatierra: "16:50", citalia: "", sanfrancisco: "", "3demayo": "16:40", sguazini: "", croco: "", oscar: "16:30", andacollo: "16:20", jocoli: "", km56: "", },
+{ mendoza: "18:55", borbollon: "18:25", pastal: "18:05", cruce: "17:55", lavalle: "17:40", salvatierra: "17:30", citalia: "", sanfrancisco: "", "3demayo": "17:20", sguazini: "17:10", croco: "17:05", oscar: "", andacollo: "16:55", jocoli: "16:45", km56: "", },
+{ mendoza: "19:30", borbollon: "19:00", pastal: "", cruce: "18:40", lavalle: "18:20", salvatierra: "18:10", citalia: "", sanfrancisco: "", "3demayo": "18:00", sguazini: "", croco: "", oscar: "17:50", andacollo: "17:40", jocoli: "", km56: "", },
+{ mendoza: "20:10", borbollon: "19:40", pastal: "", cruce: "19:20", lavalle: "19:00", salvatierra: "18:50", citalia: "", sanfrancisco: "", "3demayo": "18:40", sguazini: "13:30", croco: "18:25", oscar: "", andacollo: "18:15", jocoli: "", km56: "", },
+{ mendoza: "20:50", borbollon: "20:20", pastal: "", cruce: "20:00", lavalle: "19:40", salvatierra: "19:30", citalia: "", sanfrancisco: "", "3demayo": "19:20", sguazini: "", croco: "", oscar: "19:10", andacollo: "19:00", jocoli: "", km56: "", },
+{ mendoza: "21:40", borbollon: "21:10", pastal: "", cruce: "20:50", lavalle: "20:30", salvatierra: "20:20", citalia: "", sanfrancisco: "", "3demayo": "20:10", sguazini: "20:00", croco: "19:55", oscar: "", andacollo: "19:45", jocoli: "", km56: "", },
+{ mendoza: "22:30", borbollon: "22:00", pastal: "21:40", cruce: "21:30", lavalle: "21:20", salvatierra: "21:10", citalia: "", sanfrancisco: "", "3demayo": "21:00", sguazini: "", croco: "", oscar: "20:50", andacollo: "20:40", jocoli: "", km56: "", },
+{ mendoza: "23:20", borbollon: "22:50", pastal: "", cruce: "22:30", lavalle: "22:10", salvatierra: "22:00", citalia: "", sanfrancisco: "", "3demayo": "21:50", sguazini: "21:40", croco: "21:35", oscar: "", andacollo: "21:25", jocoli: "", km56: "", },
+{ mendoza: "23:50", borbollon: "23:20", pastal: "", cruce: "23:03", lavalle: "22:50", salvatierra: "22:40", citalia: "", sanfrancisco: "22:30", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "0:10", borbollon: "23:40", pastal: "", cruce: "23:23", lavalle: "23:10", salvatierra: "23:00", citalia: "", sanfrancisco: "", "3demayo": "22:50", sguazini: "", croco: "", oscar: "22:40", andacollo: "22:30", jocoli: "", km56: "", },
+
+                ],
+                vuelta: [
+                    { mendoza: "6:30", borbollon: "7:00", pastal: "", cruce: "7:17", lavalle: "7:30", salvatierra: "7:40", citalia: "", sanfrancisco: "7:50", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "7:30", borbollon: "8:00", pastal: "8:20", cruce: "8:30", lavalle: "8:40", salvatierra: "8:50", citalia: "", sanfrancisco: "", "3demayo": "9:00", sguazini: "9:10", croco: "9:15", oscar: "", andacollo: "9:25", jocoli: "9:35", km56: "", },
+{ mendoza: "8:30", borbollon: "9:00", pastal: "", cruce: "9:17", lavalle: "9:40", salvatierra: "9:50", citalia: "", sanfrancisco: "", "3demayo": "10:00", sguazini: "", croco: "", oscar: "10:10", andacollo: "10:20", jocoli: "", km56: "", },
+{ mendoza: "9:30", borbollon: "10:00", pastal: "10:20", cruce: "10:30", lavalle: "10:40", salvatierra: "10:50", citalia: "", sanfrancisco: "", "3demayo": "11:00", sguazini: "11:10", croco: "11:15", oscar: "", andacollo: "11:25", jocoli: "", km56: "", },
+{ mendoza: "10:30", borbollon: "11:00", pastal: "", cruce: "11:17", lavalle: "11:40", salvatierra: "11:50", citalia: "", sanfrancisco: "", "3demayo": "12:00", sguazini: "", croco: "", oscar: "12:10", andacollo: "12:20", jocoli: "", km56: "", },
+{ mendoza: "11:10", borbollon: "11:40", pastal: "", cruce: "11:57", lavalle: "12:20", salvatierra: "12:30", citalia: "", sanfrancisco: "", "3demayo": "12:40", sguazini: "12:50", croco: "12:55", oscar: "", andacollo: "13:05", jocoli: "", km56: "", },
+{ mendoza: "11:30", borbollon: "12:00", pastal: "12:20", cruce: "12:30", lavalle: "12:50", salvatierra: "13:00", citalia: "13:10", sanfrancisco: "13:30", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "12:10", borbollon: "12:40", pastal: "", cruce: "12:57", lavalle: "13:20", salvatierra: "13:30", citalia: "", sanfrancisco: "", "3demayo": "13:40", sguazini: "", croco: "", oscar: "13:50", andacollo: "14:00", jocoli: "", km56: "", },
+{ mendoza: "13:00", borbollon: "13:30", pastal: "", cruce: "13:47", lavalle: "14:10", salvatierra: "14:20", citalia: "", sanfrancisco: "", "3demayo": "14:30", sguazini: "14:40", croco: "14:45", oscar: "", andacollo: "14:55", jocoli: "", km56: "", },
+{ mendoza: "13:50", borbollon: "14:20", pastal: "", cruce: "14:37", lavalle: "15:00", salvatierra: "15:10", citalia: "", sanfrancisco: "", "3demayo": "15:20", sguazini: "", croco: "", oscar: "15:30", andacollo: "15:40", jocoli: "", km56: "", },
+{ mendoza: "14:40", borbollon: "15:10", pastal: "", cruce: "15:27", lavalle: "15:50", salvatierra: "16:00", citalia: "", sanfrancisco: "", "3demayo": "16:10", sguazini: "16:20", croco: "16:25", oscar: "", andacollo: "16:35", jocoli: "16:45", km56: "", },
+{ mendoza: "15:40", borbollon: "16:10", pastal: "16:30", cruce: "16:40", lavalle: "17:00", salvatierra: "17:10", citalia: "", sanfrancisco: "", "3demayo": "17:20", sguazini: "", croco: "", oscar: "17:30", andacollo: "17:40", jocoli: "", km56: "", },
+{ mendoza: "16:20", borbollon: "16:50", pastal: "", cruce: "17:07", lavalle: "17:30", salvatierra: "17:40", citalia: "", sanfrancisco: "", "3demayo": "17:50", sguazini: "18:00", croco: "18:05", oscar: "", andacollo: "18:15", jocoli: "", km56: "", },
+{ mendoza: "17:00", borbollon: "17:30", pastal: "", cruce: "17:47", lavalle: "18:10", salvatierra: "18:20", citalia: "", sanfrancisco: "", "3demayo": "18:30", sguazini: "", croco: "", oscar: "18:40", andacollo: "18:50", jocoli: "", km56: "", },
+{ mendoza: "17:40", borbollon: "18:10", pastal: "", cruce: "18:27", lavalle: "18:50", salvatierra: "19:00", citalia: "", sanfrancisco: "", "3demayo": "19:10", sguazini: "19:20", croco: "19:25", oscar: "", andacollo: "19:35", jocoli: "", km56: "", },
+{ mendoza: "18:20", borbollon: "18:50", pastal: "", cruce: "19:07", lavalle: "19:30", salvatierra: "19:40", citalia: "", sanfrancisco: "", "3demayo": "19:50", sguazini: "", croco: "", oscar: "20:00", andacollo: "20:10", jocoli: "", km56: "", },
+{ mendoza: "19:00", borbollon: "19:30", pastal: "", cruce: "19:47", lavalle: "20:10", salvatierra: "20:20", citalia: "", sanfrancisco: "", "3demayo": "20:30", sguazini: "20:40", croco: "20:45", oscar: "", andacollo: "20:55", jocoli: "", km56: "", },
+{ mendoza: "19:30", borbollon: "20:00", pastal: "", cruce: "20:17", lavalle: "20:40", salvatierra: "20:50", citalia: "", sanfrancisco: "", "3demayo": "21:00", sguazini: "", croco: "", oscar: "21:10", andacollo: "21:20", jocoli: "21:30", km56: "", },
+{ mendoza: "20:00", borbollon: "20:30", pastal: "20:50", cruce: "21:00", lavalle: "21:20", salvatierra: "21:30", citalia: "", sanfrancisco: "", "3demayo": "21:40", sguazini: "21:50", croco: "21:55", oscar: "", andacollo: "22:05", jocoli: "", km56: "", },
+{ mendoza: "20:40", borbollon: "21:10", pastal: "", cruce: "21:27", lavalle: "21:50", salvatierra: "22:00", citalia: "22:10", sanfrancisco: "22:30", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "21:30", borbollon: "22:00", pastal: "", cruce: "22:17", lavalle: "22:40", salvatierra: "22:50", citalia: "", sanfrancisco: "", "3demayo": "23:00", sguazini: "", croco: "", oscar: "23:10", andacollo: "23:20", jocoli: "", km56: "", },
+{ mendoza: "22:10", borbollon: "22:40", pastal: "", cruce: "22:57", lavalle: "23:20", salvatierra: "23:30", citalia: "", sanfrancisco: "", "3demayo": "23:40", sguazini: "23:50", croco: "23:55", oscar: "", andacollo: "0:05", jocoli: "", km56: "", },
+{ mendoza: "23:00", borbollon: "23:30", pastal: "", cruce: "23:47", lavalle: "0:10", salvatierra: "0:20", citalia: "", sanfrancisco: "", "3demayo": "0:30", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "23:40", borbollon: "0:10", pastal: "", cruce: "0:27", lavalle: "0:40", salvatierra: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+{ mendoza: "0:30", borbollon: "1:00", pastal: "", cruce: "1:10", lavalle: "1:20", salvatierra: "", citalia: "", sanfrancisco: "", "3demayo": "", sguazini: "", croco: "", oscar: "", andacollo: "", jocoli: "", km56: "", },
+
+                ]
+            }
+        };
+
+        // Orden de las paradas
+        const ordenParadas = ["km56", "km47", "jocoli", "andacollo", "oscar", "croco", "sguazini", "3demayo", 
+                             "sanfrancisco", "citalia", "colmena", "salvatierra", "verjel", "lavalle", 
+                             "cruce", "paramillo", "pastal", "borbollon", "mendoza"];
+
+        // Variables globales
+        let selectedDay = "weekday";
+        let currentDay = "weekday"; // Día actual según la fecha del sistema
+
+        // Función para convertir tiempo a minutos
+        function timeToMinutes(timeStr) {
+            if (!timeStr) return Infinity;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Función para actualizar el reloj y determinar el día actual
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time-text').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Determinar día actual
+            const dayOfWeek = now.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+            let newCurrentDay = "weekday";
+            
+            if(dayOfWeek === 6) newCurrentDay = "saturday";
+            else if(dayOfWeek === 0) newCurrentDay = "sunday";
+            
+            // Actualizar solo si cambió el día actual
+            if(newCurrentDay !== currentDay) {
+                currentDay = newCurrentDay;
+                // Si no se ha seleccionado manualmente otro día, actualizar la selección
+                if(selectedDay !== "weekday" && selectedDay !== "saturday" && selectedDay !== "sunday") {
+                    cambiarDia(currentDay);
+                }
+            }
+            
+            // Resaltar visualmente el día actual
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('current-day');
+                if (btn.dataset.day === currentDay) {
+                    btn.classList.add('current-day');
+                }
+            });
+        }
+
+        // Función para determinar dirección del viaje
+        function determinarDireccion(origen, destino) {
+            const indiceOrigen = ordenParadas.indexOf(origen);
+            const indiceDestino = ordenParadas.indexOf(destino);
+            
+            if (indiceOrigen === -1 || indiceDestino === -1) return null;
+            
+            return indiceOrigen < indiceDestino ? "ida" : "vuelta";
+        }
+
+        // Función principal para mostrar horarios
+        function mostrarHorarios() {
+            const origen = document.getElementById('origen').value;
+            const destino = document.getElementById('destino').value;
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            
+            // Validaciones básicas
+            if (!origen || !destino) {
+                document.getElementById('schedule-results').style.display = 'none';
+                document.getElementById('no-results').style.display = 'none';
+                return;
+            }
+            
+            if (origen === destino) {
+                document.getElementById('no-results').textContent = 'Origen y destino no pueden ser iguales';
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            const direccion = determinarDireccion(origen, destino);
+            
+            if (!direccion) {
+                document.getElementById('no-results').textContent = 'Ruta no válida';
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            // Obtener horarios para el día seleccionado
+            const rutaHorarios = horarios[selectedDay][direccion];
+            
+            // Filtrar horarios válidos para la ruta seleccionada
+            const horariosFiltrados = rutaHorarios
+                .filter(h => h[origen] && h[destino])
+                .map(h => ({
+                    ...h,
+                    salidaMin: timeToMinutes(h[origen])
+                }));
+            
+            // Mostrar mensaje si no hay horarios
+            if (horariosFiltrados.length === 0) {
+                document.getElementById('no-results').style.display = 'block';
+                document.getElementById('schedule-results').style.display = 'none';
+                return;
+            }
+            
+            // Solo buscar próximo horario si estamos viendo el día actual
+            let nextIndex = -1;
+            if (selectedDay === currentDay) {
+                let minDiff = Infinity;
+                
+                horariosFiltrados.forEach((horario, index) => {
+                    const diff = horario.salidaMin - currentMinutes;
+                    if (diff >= 0 && diff < minDiff) {
+                        minDiff = diff;
+                        nextIndex = index;
+                    }
+                });
+            }
+            
+            // Generar HTML para mostrar los horarios
+            let scheduleHTML = '';
+            
+            horariosFiltrados.forEach((horario, index) => {
+                const isNext = (selectedDay === currentDay) && (index === nextIndex);
+                const tags = horario.tags || [];
+                
+                let tagsHTML = '';
+                if (tags.length > 0) {
+                    tagsHTML = '<div class="tags-container">';
+                    tags.forEach(tag => {
+                        tagsHTML += `<span class="schedule-tag">${tag.toUpperCase()}</span>`;
+                    });
+                    tagsHTML += '</div>';
+                }
+                
+                if (isNext) {
+                    tagsHTML += '<div class="tags-container"><span class="schedule-tag tag-proximo">PRÓXIMO</span></div>';
+                }
+                
+                scheduleHTML += `
+                    <div class="schedule-item ${isNext ? 'next-bus' : ''}">
+                        <div class="schedule-time">Partida: ${horario[origen]}</div>
+                        <div class="schedule-time">Llegada: ${horario[destino]}</div>
+                        ${tagsHTML}
+                    </div>
+                `;
+            });
+            
+            // Mostrar resultados
+            document.getElementById('schedule-results').innerHTML = scheduleHTML;
+            document.getElementById('schedule-results').style.display = 'block';
+            document.getElementById('no-results').style.display = 'none';
+        }
+
+        // Función para cambiar el día seleccionado
+        function cambiarDia(dia) {
+            selectedDay = dia;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.day === dia) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Actualizar horarios si ya hay una selección
+            if (document.getElementById('origen').value && document.getElementById('destino').value) {
+                mostrarHorarios();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('origen').addEventListener('change', mostrarHorarios);
+        document.getElementById('destino').addEventListener('change', mostrarHorarios);
+        
+        // Event listeners para los botones de día
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                cambiarDia(btn.dataset.day);
+            });
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configurar el día actual al cargar la página
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            
+            if(dayOfWeek === 6) {
+                cambiarDia("saturday");
+            } else if(dayOfWeek === 0) {
+                cambiarDia("sunday");
+            } else {
+                cambiarDia("weekday");
+            }
+            
+            // Iniciar el reloj
+            setInterval(updateClock, 1000);
+            updateClock();
+        });
+    </script>
+</body>
+</html>
