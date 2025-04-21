@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergencias Lavalle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #0f0f1a;
+            color: white;
+        }
+        
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #2a0845 0%, #0f0f1a 70%);
+        }
+        
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 1;
+            background: rgba(15, 15, 26, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .emergency-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            z-index: 1;
+        }
+        
+        .emergency-card {
+            background: rgba(40, 40, 60, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .service-number {
+            font-size: 1.1rem;
+            margin: 8px 0;
+            color: #ddd;
+            direction: ltr;
+        }
+        
+        .call-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .call-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            flex-grow: 1;
+            min-width: 120px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .police {
+            background: linear-gradient(135deg, #2196F3 0%, #0d47a1 100%);
+        }
+        
+        .fire {
+            background: linear-gradient(135deg, #FF5722 0%, #c62828 100%);
+        }
+        
+        .hospital {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+        
+        .icon {
+            font-size: 1.2rem;
+        }
+        
+        .phone-icon {
+            font-size: 0.9rem;
+        }
+        
+        @media (max-height: 700px) {
+            h1 { font-size: 1.3rem; margin-bottom: 10px; }
+            .emergency-container { gap: 10px; }
+            .emergency-card { padding: 12px; }
+            .service-name { font-size: 1.1rem; }
+            .service-number { font-size: 1rem; }
+            .call-button { padding: 6px 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <h1>Emergencias Lavalle</h1>
+    <div class="emergency-container">
+        <div class="emergency-card">
+            <div class="service-name">
+                <i class="fas fa-shield-alt icon"></i>
+                <span>Policía</span>
+            </div>
+            <div class="service-number">4941272 / 4941033</div>
+            <div class="call-buttons">
+                <a href="tel:4941272" class="call-button police">
+                    <i class="fas fa-phone-alt phone-icon"></i>
+                    <span>4941272</span>
+                </a>
+                <a href="tel:4941033" class="call-button police">
+                    <i class="fas fa-phone-alt phone-icon"></i>
+                    <span>4941033</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="emergency-card">
+            <div class="service-name">
+                <i class="fas fa-fire-extinguisher icon"></i>
+                <span>Bomberos</span>
+            </div>
+            <div class="service-number">4941300</div>
+            <div class="call-buttons">
+                <a href="tel:4941300" class="call-button fire">
+                    <i class="fas fa-phone-alt phone-icon"></i>
+                    <span>4941300</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="emergency-card">
+            <div class="service-name">
+                <i class="fas fa-hospital icon"></i>
+                <span>Hospital Sícoli</span>
+            </div>
+            <div class="service-number">4941065</div>
+            <div class="call-buttons">
+                <a href="tel:4941065" class="call-button hospital">
+                    <i class="fas fa-phone-alt phone-icon"></i>
+                    <span>4941065</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 60 },
+                "color": { "value": ["#2196F3", "#FF5722", "#4CAF50"] },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 100,
+                    "color": "#ffffff",
+                    "opacity": 0.1,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
