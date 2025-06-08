@@ -1,24 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pronóstico Lavalle, Mendoza</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Lavalle App - Estrenos de Películas</title>
     <style>
         :root {
-            --primary: #8ab4f8;
-            --secondary: #81c995;
-            --accent: #f28b82;
-            --bg-dark: #202124;
-            --bg-darker: #171717;
-            --text-light: #e8eaed;
-            --text-lighter: #ffffff;
-            --text-gray: #9aa0a6;
-            --border-dark: #3c4043;
-            --selected-day: #303134;
+            --primary: #25D366;
+            --dark: #075E54;
+            --text: #333333;
+            --bg: #f5f5f5;
         }
         
         * {
@@ -28,679 +19,221 @@
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             line-height: 1.6;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .app-container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-darker);
+            padding: 15px;
             min-height: 100vh;
         }
         
-        .header {
-            background: linear-gradient(135deg, #303134 0%, #202124 100%);
-            color: var(--text-lighter);
-            padding: 16px;
-            position: relative;
-            border-bottom: 1px solid var(--border-dark);
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
         }
         
-        .location {
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            color: var(--dark);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .category {
+            margin-bottom: 25px;
+        }
+        
+        .category-title {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--dark);
+        }
+        
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .platform-btn {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px 0;
-        }
-        
-        .location-icon {
-            margin-right: 8px;
-            font-size: 18px;
-            color: var(--primary);
-        }
-        
-        .location-text {
-            font-size: 18px;
-            font-weight: 500;
-        }
-        
-        .current-weather {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .current-temp {
-            font-size: 48px;
-            font-weight: 300;
-            margin: 8px 0;
-            display: flex;
-            color: var(--text-lighter);
-        }
-        
-        .current-temp span {
-            font-size: 16px;
-            margin-top: 8px;
-            color: var(--text-gray);
-        }
-        
-        .current-description {
-            font-size: 16px;
-            text-transform: capitalize;
-            margin-bottom: 12px;
-            color: var(--text-light);
-        }
-        
-        .current-details {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-top: 12px;
-        }
-        
-        .detail-item {
-            text-align: center;
-        }
-        
-        .detail-label {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-        
-        .detail-value {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-light);
-        }
-        
-        .hourly-forecast {
-            padding: 16px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .hourly-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            color: var(--primary);
-        }
-        
-        .hourly-container {
-            display: flex;
-            gap: 12px;
-            padding-bottom: 8px;
-        }
-        
-        .hour-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 60px;
-        }
-        
-        .hour-time {
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: var(--text-light);
-        }
-        
-        .hour-temp {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-lighter);
-        }
-        
-        .chart-container {
-            padding: 16px;
-            height: 200px;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .daily-forecast {
-            padding: 16px;
-        }
-        
-        .daily-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            color: var(--primary);
-        }
-        
-        .day-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border-dark);
-            cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 15px 8px;
             border-radius: 8px;
-        }
-        
-        .day-item.selected {
-            background-color: var(--selected-day);
-        }
-        
-        .day-item:active {
-            background-color: var(--selected-day);
-        }
-        
-        .day-name {
-            font-size: 16px;
-            width: 100px;
-            color: var(--text-light);
-        }
-        
-        .day-weather {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-        }
-        
-        .day-description {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: transform 0.3s;
+            min-height: 80px;
             font-size: 14px;
-            color: var(--text-gray);
-            flex-grow: 1;
-            text-transform: capitalize;
         }
         
-        .day-temps {
-            display: flex;
-            width: 80px;
-            justify-content: space-between;
+        .platform-btn:active {
+            transform: scale(0.98);
         }
         
-        .day-max {
-            font-weight: 500;
-            color: var(--accent);
-        }
-        
-        .day-min {
-            color: var(--primary);
-        }
-        
-        .loading {
-            padding: 40px;
-            text-align: center;
-            font-size: 16px;
-            color: var(--text-gray);
-        }
-        
-        .error {
-            padding: 40px;
-            text-align: center;
-            font-size: 16px;
-            color: var(--accent);
-        }
-        
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            height: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .weather-emoji {
+        .platform-btn i {
             font-size: 24px;
-            width: 40px;
-            text-align: center;
-        }
-
-        .hour-emoji {
-            font-size: 28px;
-            margin-bottom: 4px;
-        }
-
-        small {
-            font-size: 0.8em;
-            color: var(--text-gray);
+            margin-bottom: 8px;
         }
         
-        .current-time {
+        /* Estilos para la sección de estrenos */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .movie-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .movie-card:active {
+            transform: scale(0.98);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .movie-info {
+            padding: 10px;
+        }
+        
+        .movie-title {
+            font-weight: 600;
+            margin-bottom: 4px;
             font-size: 14px;
-            color: var(--text-gray);
-            margin-bottom: 8px;
+        }
+        
+        .movie-platform {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Colores plataformas */
+        .pelisplus { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .cuevana { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .stremio { background: linear-gradient(135deg, #6e45e2 0%, #89d4cf 100%); }
+        .plex { background: linear-gradient(135deg, #e5a00d 0%, #383838 100%); color: white; }
+        
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .disclaimer {
+            background-color: #fff8e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #5d4037;
+            border-left: 4px solid #ffc107;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <div class="header">
-            <div class="location">
-                <span class="location-icon">📍</span>
-                <span class="location-text">Lavalle, Mendoza</span>
+            <div class="logo">Lavalle App</div>
+            <div class="subtitle">Estrenos de películas</div>
+        </div>
+        
+        
+        
+        <!-- PRIMERA SECCIÓN: PLATAFORMAS DE STREAMING -->
+        <div class="category">
+            <h2 class="category-title">Plataformas de Streaming</h2>
+            <div class="platforms-grid">
+                <a href="https://www.cuevana3.eu/" target="_blank" class="platform-btn pelisplus">
+                    <i class="fas fa-video"></i>
+                    Cuevana
+                </a>
+               <a href="https://pluto.tv/latam/on-demand" target="_blank" class="platform-btn plex">
+                    <i class="fas fa-server"></i>
+                    Pluto TV
+                </a>
+                
+                
+                
+              
             </div>
         </div>
         
-        <div id="current-weather" class="current-weather">
-            <div class="loading">Cargando datos...</div>
-        </div>
-        
-        <div class="hourly-forecast">
-            <div class="hourly-title">
-                <span id="hourly-title-text">Pronóstico por horas</span>
+        <!-- SEGUNDA SECCIÓN: ESTRENOS DE PELÍCULAS -->
+        <div class="category">
+            <h2 class="category-title">Estrenos de Películas</h2>
+            <div class="movies-grid">
+                <a href="https://www.cuevana3.eu/ver-pelicula/lilo-y-stitch-552524" target="_blank" class="movie-card">
+                    <img src="https://www.cuevana3.eu/_next/image?url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2FmKKqV23MQ0uakJS8OCE2TfV5jNS.jpg&w=640&q=75" alt="Duna: Parte Dos" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">Lilo y Stitch</div>
+                        <div class="movie-platform">Disponible ahora</div>
+                    </div>
+                </a>
+                
+                <a href="https://www.cuevana3.eu/ver-pelicula/thunderbolts" target="_blank" class="movie-card">
+                    <img src="https://www.cuevana3.eu/_next/image?url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2FcGOBis1KNC8AkYMcOEw4lCycfD1.jpg&w=640&q=75" alt="Spider-Man: Across the Spider-Verse" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">Thunderbolts*</div>
+                        <div class="movie-platform">Disponible ahora</div>
+                    </div>
+                </a>
+                
+                <a href="https://tupagina.com/the-batman" target="_blank" class="movie-card">
+                    <img src="https://www.cuevana3.eu/_next/image?url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2FgL6puhup6PXqrKqItWbGA8LF529.jpg&w=640&q=75" alt="The Batman" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">Pecadores</div>
+                        <div class="movie-platform">Disponible ahora</div>
+                    </div>
+                </a>
+                
+                <a href="https://www.cuevana3.eu/ver-pelicula/mision-imposible-la-sentencia-final" target="_blank" class="movie-card">
+                    <img src="https://www.cuevana3.eu/_next/image?url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2FhaOjJGUV00dKlZaJWgjM1UD1cJV.jpg&w=640&q=75" alt="Top Gun: Maverick" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">Misión: Imposible - La sentencia final</div>
+                        <div class="movie-platform">Disponible ahora</div>
+                    </div>
+                </a>
             </div>
-            <div id="hourly-container" class="hourly-container"></div>
         </div>
         
-        <div class="chart-container">
-            <canvas id="weather-chart"></canvas>
-        </div>
-        
-        <div class="daily-forecast">
-            <div class="daily-title">
-                Próximos días
-            </div>
-            <div id="daily-forecast"></div>
+        <div class="footer">
+            © 2025 Lavalle App. Todos los derechos reservados.<br>
+            Este sitio no aloja ningún contenido, solo proporciona enlaces a plataformas externas.
         </div>
     </div>
-
-    <script>
-        // Mapeo de iconos a emojis
-        const weatherIcons = {
-            '01d': '☀️', // clear sky day
-            '01n': '🌙', // clear sky night
-            '02d': '⛅', // few clouds day
-            '02n': '⛅', // few clouds night
-            '03d': '☁️', // scattered clouds
-            '03n': '☁️', // scattered clouds
-            '04d': '☁️', // broken clouds
-            '04n': '☁️', // broken clouds
-            '09d': '🌧️', // shower rain
-            '09n': '🌧️', // shower rain
-            '10d': '🌦️', // rain day
-            '10n': '🌦️', // rain night
-            '11d': '⚡', // thunderstorm
-            '11n': '⚡', // thunderstorm
-            '13d': '❄️', // snow
-            '13n': '❄️', // snow
-            '50d': '🌫️', // mist
-            '50n': '🌫️'  // mist
-        };
-
-        // Variables globales
-        let weatherData = {};
-        let currentChart = null;
-        let selectedDayIndex = 0; // 0 = hoy
-        let currentTempData = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const apiKey = '27c18808adf339f50d6502f83a58b7cc'; // Reemplaza con tu API key
-            
-            // Coordenadas de Lavalle, Mendoza
-            const lat = -32.7042;
-            const lon = -68.5833;
-            
-            fetchWeatherData(lat, lon, apiKey);
-        });
-        
-        async function fetchWeatherData(lat, lon, apiKey) {
-            try {
-                // Obtener datos actuales y pronóstico
-                const [currentResponse, forecastResponse] = await Promise.all([
-                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`),
-                    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`)
-                ]);
-                
-                if (!currentResponse.ok || !forecastResponse.ok) {
-                    throw new Error('Error al obtener datos meteorológicos');
-                }
-                
-                const currentData = await currentResponse.json();
-                const forecastData = await forecastResponse.json();
-                
-                // Guardar datos globalmente
-                weatherData = {
-                    current: currentData,
-                    forecast: forecastData
-                };
-                
-                // Obtener temperatura actual exacta
-                const now = new Date();
-                let closestItem = null;
-                let smallestDiff = Infinity;
-                
-                forecastData.list.forEach(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    const diff = Math.abs(itemDate - now);
-                    if (diff < smallestDiff) {
-                        smallestDiff = diff;
-                        closestItem = item;
-                    }
-                });
-                
-                currentTempData = closestItem || currentData;
-                
-                displayCurrentWeather(currentTempData);
-                updateDayForecast(0); // Mostrar datos de hoy por defecto
-                displayDailyForecast(forecastData);
-                
-            } catch (error) {
-                showError(error.message);
-            }
-        }
-        
-        function displayCurrentWeather(data) {
-            const temp = data.main?.temp || data.main.temp;
-            const feels_like = data.main?.feels_like || data.main.feels_like;
-            const humidity = data.main?.humidity || data.main.humidity;
-            const speed = data.wind?.speed || data.wind.speed;
-            const description = data.weather?.[0]?.description || data.weather[0].description;
-            const icon = data.weather?.[0]?.icon || data.weather[0].icon;
-            
-            const iconEmoji = weatherIcons[icon] || '🌤️';
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
-            
-            document.getElementById('current-weather').innerHTML = `
-                <div class="current-time">Actualizado: ${currentTime}</div>
-                <div style="font-size: 64px; margin: 8px 0;">${iconEmoji}</div>
-                <div class="current-temp">${Math.round(temp)}<span>°C</span></div>
-                <div class="current-description">${description}</div>
-                <div class="current-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Sensación</div>
-                        <div class="detail-value">${Math.round(feels_like)}°</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Humedad</div>
-                        <div class="detail-value">${humidity}%</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Viento</div>
-                        <div class="detail-value">${Math.round(speed * 3.6)} km/h</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function updateDayForecast(dayIndex) {
-            if (!weatherData.forecast) return;
-            
-            selectedDayIndex = dayIndex;
-            const forecastData = weatherData.forecast;
-            const now = new Date();
-            
-            if (dayIndex === 0) {
-                // Para hoy, mostrar desde la hora actual
-                const currentHour = now.getHours();
-                const currentMinute = now.getMinutes();
-                
-                // Encontrar el dato más cercano a la hora actual
-                let closestItem = null;
-                let smallestDiff = Infinity;
-                
-                forecastData.list.forEach(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    if (itemDate.getDate() === now.getDate() && 
-                        itemDate.getMonth() === now.getMonth() && 
-                        itemDate.getFullYear() === now.getFullYear()) {
-                        
-                        const diff = Math.abs(itemDate.getHours() * 60 + itemDate.getMinutes() - (currentHour * 60 + currentMinute));
-                        if (diff < smallestDiff) {
-                            smallestDiff = diff;
-                            closestItem = item;
-                        }
-                    }
-                });
-                
-                // Mostrar las próximas 8 horas desde el dato más cercano
-                const startIndex = forecastData.list.findIndex(item => item.dt === closestItem.dt);
-                const hourlyData = forecastData.list.slice(startIndex, startIndex + 8);
-                
-                document.getElementById('hourly-title-text').textContent = 'Pronóstico por horas - Hoy';
-                displayHourlyForecast(hourlyData);
-                createTemperatureChart(hourlyData);
-            } else {
-                // Para otros días, mostrar desde las 00:00
-                const targetDate = new Date(now);
-                targetDate.setDate(now.getDate() + dayIndex);
-                targetDate.setHours(0, 0, 0, 0);
-                
-                // Filtrar datos para el día seleccionado
-                const dayData = forecastData.list.filter(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    return itemDate.getDate() === targetDate.getDate() && 
-                           itemDate.getMonth() === targetDate.getMonth() && 
-                           itemDate.getFullYear() === targetDate.getFullYear();
-                });
-                
-                const dayName = dayIndex === 1 ? 'Mañana' : 
-                              targetDate.toLocaleDateString('es-AR', { weekday: 'long' });
-                const formattedDate = targetDate.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
-                
-                document.getElementById('hourly-title-text').textContent = 
-                    `Pronóstico por horas - ${capitalizeFirstLetter(dayName)} ${formattedDate}`;
-                
-                displayHourlyForecast(dayData.length > 0 ? dayData : forecastData.list.slice(dayIndex * 8, (dayIndex + 1) * 8));
-                createTemperatureChart(dayData.length > 0 ? dayData : forecastData.list.slice(dayIndex * 8, (dayIndex + 1) * 8));
-            }
-            
-            highlightSelectedDay(dayIndex);
-        }
-        
-        function displayHourlyForecast(data) {
-            let hourlyHTML = '';
-            
-            data.forEach(item => {
-                const time = new Date(item.dt * 1000);
-                const hours = time.getHours();
-                const displayTime = `${hours}:00`; // Formato 24 horas
-                const iconEmoji = weatherIcons[item.weather[0].icon] || '🌤️';
-                
-                hourlyHTML += `
-                    <div class="hour-item">
-                        <div class="hour-time">${displayTime}</div>
-                        <div class="hour-emoji">${iconEmoji}</div>
-                        <div class="hour-temp">${Math.round(item.main.temp)}°</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('hourly-container').innerHTML = hourlyHTML;
-        }
-        
-        function createTemperatureChart(data) {
-            const ctx = document.getElementById('weather-chart').getContext('2d');
-            
-            // Destruir gráfico anterior si existe
-            if (currentChart) {
-                currentChart.destroy();
-            }
-            
-            // Configuración del tema oscuro para Chart.js
-            Chart.defaults.color = '#9aa0a6';
-            Chart.defaults.borderColor = '#3c4043';
-            
-            const labels = data.map(item => {
-                const date = new Date(item.dt * 1000);
-                return date.getHours() + 'h';
-            });
-            
-            const temps = data.map(item => item.main.temp);
-            
-            currentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Temperatura (°C)',
-                        data: temps,
-                        borderColor: 'rgba(138, 180, 248, 1)',
-                        backgroundColor: 'rgba(138, 180, 248, 0.1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(138, 180, 248, 1)',
-                        pointRadius: 4,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: '#303134',
-                            titleColor: '#e8eaed',
-                            bodyColor: '#e8eaed',
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y.toFixed(1) + '°C';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            grid: {
-                                color: 'rgba(60, 64, 67, 0.5)'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '°';
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function displayDailyForecast(forecastData) {
-            const now = new Date();
-            const dailyData = [];
-            
-            for (let i = 0; i < 5; i++) {
-                const targetDate = new Date(now);
-                targetDate.setDate(now.getDate() + i);
-                targetDate.setHours(0, 0, 0, 0);
-                
-                // Filtrar datos para este día
-                const dayItems = forecastData.list.filter(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    return itemDate.getDate() === targetDate.getDate() && 
-                           itemDate.getMonth() === targetDate.getMonth() && 
-                           itemDate.getFullYear() === targetDate.getFullYear();
-                });
-                
-                if (dayItems.length === 0) break;
-                
-                // Calcular min/max
-                const minTemp = Math.min(...dayItems.map(item => item.main.temp_min));
-                const maxTemp = Math.max(...dayItems.map(item => item.main.temp_max));
-                
-                // Usar el período del mediodía como representativo si está disponible
-                const middayItem = dayItems.find(item => {
-                    const hours = new Date(item.dt * 1000).getHours();
-                    return hours >= 11 && hours <= 13;
-                }) || dayItems[0];
-                
-                const dayName = i === 0 ? 'Hoy' : 
-                               i === 1 ? 'Mañana' : 
-                               targetDate.toLocaleDateString('es-AR', { weekday: 'long' });
-                
-                dailyData.push({
-                    dayName: dayName,
-                    min: minTemp,
-                    max: maxTemp,
-                    icon: middayItem.weather[0].icon,
-                    description: middayItem.weather[0].description,
-                    dayIndex: i,
-                    date: targetDate
-                });
-            }
-            
-            let dailyHTML = '';
-            
-            dailyData.forEach(day => {
-                const iconEmoji = weatherIcons[day.icon] || '🌤️';
-                const formattedDate = day.date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
-                
-                dailyHTML += `
-                    <div class="day-item ${day.dayIndex === selectedDayIndex ? 'selected' : ''}" 
-                         data-day-index="${day.dayIndex}">
-                        <div class="day-name">${capitalizeFirstLetter(day.dayName)} <small>${formattedDate}</small></div>
-                        <div class="day-weather">
-                            <div class="weather-emoji">${iconEmoji}</div>
-                            <div class="day-description">${day.description}</div>
-                        </div>
-                        <div class="day-temps">
-                            <span class="day-max">${Math.round(day.max)}°</span>
-                            <span class="day-min">${Math.round(day.min)}°</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('daily-forecast').innerHTML = dailyHTML;
-            
-            // Añadir event listeners a los días
-            document.querySelectorAll('.day-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const dayIndex = parseInt(this.getAttribute('data-day-index'));
-                    updateDayForecast(dayIndex);
-                });
-            });
-        }
-        
-        function highlightSelectedDay(dayIndex) {
-            document.querySelectorAll('.day-item').forEach(item => {
-                const itemIndex = parseInt(item.getAttribute('data-day-index'));
-                if (itemIndex === dayIndex) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
-        }
-        
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-        
-        function showError(message) {
-            document.getElementById('current-weather').innerHTML = `<div class="error">${message}</div>`;
-            document.getElementById('hourly-container').innerHTML = '';
-            document.getElementById('daily-forecast').innerHTML = '';
-        }
-        
-        // Actualizar cada 15 minutos para mantener datos frescos
-        setInterval(() => {
-            if (selectedDayIndex === 0) {
-                const apiKey = 'TU_API_KEY'; // Reemplaza con tu API key
-                const lat = -32.7042;
-                const lon = -68.5833;
-                fetchWeatherData(lat, lon, apiKey);
-            }
-        }, 15 * 60 * 1000);
-    </script>
 </body>
 </html>
-<br> <p style="text-align: center; color: white;">© 2025 Elian Mamani. Todos los derechos reservados.
-</p>
-<br>
