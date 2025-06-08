@@ -1,26 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pronóstico Lavalle, Mendoza</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Portal Lavalle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #8ab4f8;
-            --secondary: #81c995;
-            --accent: #f28b82;
-            --bg-dark: #202124;
-            --bg-darker: #171717;
-            --text-light: #e8eaed;
-            --text-lighter: #ffffff;
-            --text-gray: #9aa0a6;
-            --border-dark: #3c4043;
-            --selected-day: #303134;
-        }
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -28,679 +13,549 @@
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .app-container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-darker);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #303134 0%, #202124 100%);
-            color: var(--text-lighter);
-            padding: 16px;
+            overflow-x: hidden;
             position: relative;
-            border-bottom: 1px solid var(--border-dark);
+            background: #0f0f1a;
+            color: white;
         }
         
-        .location {
+        /* Menú lateral para móviles */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+        
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(15, 15, 26, 0.95);
+            z-index: 999;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding-top: 60px;
+        }
+        
+        .side-menu.active {
+            left: 0;
+        }
+        
+        .menu-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Contenido principal */
+        .main-content {
+            padding: 20px;
+            padding-top: 80px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .menu-active .main-content {
+            transform: translateX(250px);
+        }
+        
+        /* Iframe para contenido externo */
+        .iframe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f0f1a;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .iframe-header {
+            padding: 15px;
+            background: rgba(15, 15, 26, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .close-iframe {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        iframe {
+            flex-grow: 1;
+            border: none;
+            background: white;
+        }
+        
+        /* Estilos existentes adaptados */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #2a0845 0%, #0f0f1a 70%);
+        }
+        
+        h1 {
+            color: #fff;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.7rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 1;
+            background: rgba(15, 15, 26, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: titleGlow 6s infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+            100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        }
+        
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            z-index: 1;
+        }
+        
+        .redirect-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px 0;
-        }
-        
-        .location-icon {
-            margin-right: 8px;
-            font-size: 18px;
-            color: var(--primary);
-        }
-        
-        .location-text {
-            font-size: 18px;
-            font-weight: 500;
-        }
-        
-        .current-weather {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .current-temp {
-            font-size: 48px;
-            font-weight: 300;
-            margin: 8px 0;
-            display: flex;
-            color: var(--text-lighter);
-        }
-        
-        .current-temp span {
-            font-size: 16px;
-            margin-top: 8px;
-            color: var(--text-gray);
-        }
-        
-        .current-description {
-            font-size: 16px;
-            text-transform: capitalize;
-            margin-bottom: 12px;
-            color: var(--text-light);
-        }
-        
-        .current-details {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-top: 12px;
-        }
-        
-        .detail-item {
-            text-align: center;
-        }
-        
-        .detail-label {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-        
-        .detail-value {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-light);
-        }
-        
-        .hourly-forecast {
-            padding: 16px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .hourly-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            color: var(--primary);
-        }
-        
-        .hourly-container {
-            display: flex;
             gap: 12px;
-            padding-bottom: 8px;
-        }
-        
-        .hour-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 60px;
-        }
-        
-        .hour-time {
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: var(--text-light);
-        }
-        
-        .hour-temp {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-lighter);
-        }
-        
-        .chart-container {
-            padding: 16px;
-            height: 200px;
-            border-bottom: 1px solid var(--border-dark);
-        }
-        
-        .daily-forecast {
-            padding: 16px;
-        }
-        
-        .daily-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            color: var(--primary);
-        }
-        
-        .day-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border-dark);
+            padding: 14px 20px;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            animation: float 4s ease-in-out infinite, buttonGlow 3s infinite alternate;
         }
         
-        .day-item.selected {
-            background-color: var(--selected-day);
+        @keyframes buttonGlow {
+            0% { 
+                box-shadow: 0 0 5px rgba(255,255,255,0.2);
+                transform: translateY(0) scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255,255,255,0.4);
+                transform: translateY(-3px) scale(1.02);
+            }
+            100% { 
+                box-shadow: 0 0 5px rgba(255,255,255,0.2);
+                transform: translateY(0) scale(1);
+            }
         }
         
-        .day-item:active {
-            background-color: var(--selected-day);
+        .redirect-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right, 
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.1) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shineWave 5s infinite linear;
+            opacity: 0.5;
         }
         
-        .day-name {
-            font-size: 16px;
-            width: 100px;
-            color: var(--text-light);
+        @keyframes shineWave {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
         
-        .day-weather {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
+        .redirect-button:hover {
+            animation: buttonGlowHover 1s infinite alternate;
         }
         
-        .day-description {
-            font-size: 14px;
-            color: var(--text-gray);
-            flex-grow: 1;
-            text-transform: capitalize;
+        @keyframes buttonGlowHover {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
         }
         
-        .day-temps {
-            display: flex;
-            width: 80px;
-            justify-content: space-between;
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
         }
         
-        .day-max {
-            font-weight: 500;
-            color: var(--accent);
+        /* Colores para cada botón */
+        .micros {
+            background: linear-gradient(135deg, #2196F3 0%, #0d8bf2 100%);
         }
         
-        .day-min {
-            color: var(--primary);
+        .tienda {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
         }
         
-        .loading {
-            padding: 40px;
+        .comentarios {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+        
+        .negocios {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+        }
+        
+        .quinchos {
+            background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+        }
+        
+        .clima {
+            background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
+        }
+        
+        .emergencias {
+            background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+        }
+        
+        .icon {
+            font-size: 1.3rem;
+            animation: iconPulse 2s infinite alternate;
+        }
+        
+        @keyframes iconPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            opacity: 0;
+            animation: confettiFall 2s ease-out forwards;
+            z-index: 10;
+        }
+        
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(0) rotate(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+        
+        .footer {
+            margin-top: 30px;
             text-align: center;
-            font-size: 16px;
-            color: var(--text-gray);
+            color: white;
+            padding: 20px;
+            font-size: 0.9rem;
         }
         
-        .error {
-            padding: 40px;
-            text-align: center;
-            font-size: 16px;
-            color: var(--accent);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .main-content {
+                padding-top: 80px;
+            }
         }
         
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            height: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .weather-emoji {
-            font-size: 24px;
-            width: 40px;
-            text-align: center;
-        }
-
-        .hour-emoji {
-            font-size: 28px;
-            margin-bottom: 4px;
-        }
-
-        small {
-            font-size: 0.8em;
-            color: var(--text-gray);
-        }
-        
-        .current-time {
-            font-size: 14px;
-            color: var(--text-gray);
-            margin-bottom: 8px;
+        @media (min-width: 768px) {
+            .button-container {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 700px;
+                gap: 18px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+            
+            .redirect-button {
+                padding: 16px 20px;
+                font-size: 1.05rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <div class="location">
-                <span class="location-icon">📍</span>
-                <span class="location-text">Lavalle, Mendoza</span>
-            </div>
+    <div id="particles-js"></div>
+    
+    <!-- Botón de menú móvil -->
+    <button class="mobile-menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Menú lateral -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-item" data-url="">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
         </div>
-        
-        <div id="current-weather" class="current-weather">
-            <div class="loading">Cargando datos...</div>
+        <div class="menu-item" data-url="https://lavalleapp.com.ar/1.html">
+            <i class="fas fa-download"></i>
+            <span>Descarga videos y audio</span>
         </div>
-        
-        <div class="hourly-forecast">
-            <div class="hourly-title">
-                <span id="hourly-title-text">Pronóstico por horas</span>
-            </div>
-            <div id="hourly-container" class="hourly-container"></div>
-        </div>
-        
-        <div class="chart-container">
-            <canvas id="weather-chart"></canvas>
-        </div>
-        
-        <div class="daily-forecast">
-            <div class="daily-title">
-                Próximos días
-            </div>
-            <div id="daily-forecast"></div>
+        <div class="menu-item" data-url="https://lavalleapp.com.ar/2.html">
+            <i class="fas fa-film"></i>
+            <span>Estrenos de Películas</span>
         </div>
     </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content" id="mainContent">
+        <h1>Servicios Lavalle</h1>
+        <div class="button-container">
+            <a href="micros.html" class="redirect-button micros">
+                <i class="fas fa-bus icon"></i>
+                <span>Micros Lavalle</span>
+            </a>
+            <a href="tienda.html" class="redirect-button tienda">
+                <i class="fas fa-store icon"></i>
+                <span>Negocios Lavalle</span>
+            </a>
+            <a href="emergencias.html" class="redirect-button emergencias">
+                <i class="fas fa-ambulance icon"></i>
+                <span>Emergencias Lavalle</span>
+            </a>
+        </div>
+        
+        <div class="footer">
+            © 2025 Elian Mamani. Todos los derechos reservados.
+        </div>
+    </div>
+    
+    <!-- Contenedor para iframe -->
+    <div class="iframe-container" id="iframeContainer">
+        <div class="iframe-header">
+            <span id="iframeTitle"></span>
+            <button class="close-iframe" id="closeIframe">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <iframe id="contentFrame" src="about:blank"></iframe>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Mapeo de iconos a emojis
-        const weatherIcons = {
-            '01d': '☀️', // clear sky day
-            '01n': '🌙', // clear sky night
-            '02d': '⛅', // few clouds day
-            '02n': '⛅', // few clouds night
-            '03d': '☁️', // scattered clouds
-            '03n': '☁️', // scattered clouds
-            '04d': '☁️', // broken clouds
-            '04n': '☁️', // broken clouds
-            '09d': '🌧️', // shower rain
-            '09n': '🌧️', // shower rain
-            '10d': '🌦️', // rain day
-            '10n': '🌦️', // rain night
-            '11d': '⚡', // thunderstorm
-            '11n': '⚡', // thunderstorm
-            '13d': '❄️', // snow
-            '13n': '❄️', // snow
-            '50d': '🌫️', // mist
-            '50n': '🌫️'  // mist
-        };
-
-        // Variables globales
-        let weatherData = {};
-        let currentChart = null;
-        let selectedDayIndex = 0; // 0 = hoy
-        let currentTempData = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const apiKey = '3616e3a1544643c856bf19f67516fe35'; // Reemplaza con tu API key
-            
-            // Coordenadas de Lavalle, Mendoza
-            const lat = -32.7042;
-            const lon = -68.5833;
-            
-            fetchWeatherData(lat, lon, apiKey);
+        // Menú móvil
+        const menuBtn = document.getElementById('menuBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuBtn.addEventListener('click', function() {
+            document.body.classList.toggle('menu-active');
+            sideMenu.classList.toggle('active');
         });
         
-        async function fetchWeatherData(lat, lon, apiKey) {
-            try {
-                // Obtener datos actuales y pronóstico
-                const [currentResponse, forecastResponse] = await Promise.all([
-                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`),
-                    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`)
-                ]);
-                
-                if (!currentResponse.ok || !forecastResponse.ok) {
-                    throw new Error('Error al obtener datos meteorológicos');
-                }
-                
-                const currentData = await currentResponse.json();
-                const forecastData = await forecastResponse.json();
-                
-                // Guardar datos globalmente
-                weatherData = {
-                    current: currentData,
-                    forecast: forecastData
-                };
-                
-                // Obtener temperatura actual exacta
-                const now = new Date();
-                let closestItem = null;
-                let smallestDiff = Infinity;
-                
-                forecastData.list.forEach(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    const diff = Math.abs(itemDate - now);
-                    if (diff < smallestDiff) {
-                        smallestDiff = diff;
-                        closestItem = item;
-                    }
-                });
-                
-                currentTempData = closestItem || currentData;
-                
-                displayCurrentWeather(currentTempData);
-                updateDayForecast(0); // Mostrar datos de hoy por defecto
-                displayDailyForecast(forecastData);
-                
-            } catch (error) {
-                showError(error.message);
-            }
-        }
+        // Sistema de iframe
+        const iframeContainer = document.getElementById('iframeContainer');
+        const contentFrame = document.getElementById('contentFrame');
+        const iframeTitle = document.getElementById('iframeTitle');
+        const closeIframe = document.getElementById('closeIframe');
+        const menuItems = document.querySelectorAll('.menu-item');
         
-        function displayCurrentWeather(data) {
-            const temp = data.main?.temp || data.main.temp;
-            const feels_like = data.main?.feels_like || data.main.feels_like;
-            const humidity = data.main?.humidity || data.main.humidity;
-            const speed = data.wind?.speed || data.wind.speed;
-            const description = data.weather?.[0]?.description || data.weather[0].description;
-            const icon = data.weather?.[0]?.icon || data.weather[0].icon;
-            
-            const iconEmoji = weatherIcons[icon] || '🌤️';
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
-            
-            document.getElementById('current-weather').innerHTML = `
-                <div class="current-time">Actualizado: ${currentTime}</div>
-                <div style="font-size: 64px; margin: 8px 0;">${iconEmoji}</div>
-                <div class="current-temp">${Math.round(temp)}<span>°C</span></div>
-                <div class="current-description">${description}</div>
-                <div class="current-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Sensación</div>
-                        <div class="detail-value">${Math.round(feels_like)}°</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Humedad</div>
-                        <div class="detail-value">${humidity}%</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Viento</div>
-                        <div class="detail-value">${Math.round(speed * 3.6)} km/h</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function updateDayForecast(dayIndex) {
-            if (!weatherData.forecast) return;
-            
-            selectedDayIndex = dayIndex;
-            const forecastData = weatherData.forecast;
-            const now = new Date();
-            
-            if (dayIndex === 0) {
-                // Para hoy, mostrar desde la hora actual
-                const currentHour = now.getHours();
-                const currentMinute = now.getMinutes();
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                const title = this.querySelector('span').textContent;
                 
-                // Encontrar el dato más cercano a la hora actual
-                let closestItem = null;
-                let smallestDiff = Infinity;
-                
-                forecastData.list.forEach(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    if (itemDate.getDate() === now.getDate() && 
-                        itemDate.getMonth() === now.getMonth() && 
-                        itemDate.getFullYear() === now.getFullYear()) {
-                        
-                        const diff = Math.abs(itemDate.getHours() * 60 + itemDate.getMinutes() - (currentHour * 60 + currentMinute));
-                        if (diff < smallestDiff) {
-                            smallestDiff = diff;
-                            closestItem = item;
-                        }
-                    }
-                });
-                
-                // Mostrar las próximas 8 horas desde el dato más cercano
-                const startIndex = forecastData.list.findIndex(item => item.dt === closestItem.dt);
-                const hourlyData = forecastData.list.slice(startIndex, startIndex + 8);
-                
-                document.getElementById('hourly-title-text').textContent = 'Pronóstico por horas - Hoy';
-                displayHourlyForecast(hourlyData);
-                createTemperatureChart(hourlyData);
-            } else {
-                // Para otros días, mostrar desde las 00:00
-                const targetDate = new Date(now);
-                targetDate.setDate(now.getDate() + dayIndex);
-                targetDate.setHours(0, 0, 0, 0);
-                
-                // Filtrar datos para el día seleccionado
-                const dayData = forecastData.list.filter(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    return itemDate.getDate() === targetDate.getDate() && 
-                           itemDate.getMonth() === targetDate.getMonth() && 
-                           itemDate.getFullYear() === targetDate.getFullYear();
-                });
-                
-                const dayName = dayIndex === 1 ? 'Mañana' : 
-                              targetDate.toLocaleDateString('es-AR', { weekday: 'long' });
-                const formattedDate = targetDate.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
-                
-                document.getElementById('hourly-title-text').textContent = 
-                    `Pronóstico por horas - ${capitalizeFirstLetter(dayName)} ${formattedDate}`;
-                
-                displayHourlyForecast(dayData.length > 0 ? dayData : forecastData.list.slice(dayIndex * 8, (dayIndex + 1) * 8));
-                createTemperatureChart(dayData.length > 0 ? dayData : forecastData.list.slice(dayIndex * 8, (dayIndex + 1) * 8));
-            }
-            
-            highlightSelectedDay(dayIndex);
-        }
-        
-        function displayHourlyForecast(data) {
-            let hourlyHTML = '';
-            
-            data.forEach(item => {
-                const time = new Date(item.dt * 1000);
-                const hours = time.getHours();
-                const displayTime = `${hours}:00`; // Formato 24 horas
-                const iconEmoji = weatherIcons[item.weather[0].icon] || '🌤️';
-                
-                hourlyHTML += `
-                    <div class="hour-item">
-                        <div class="hour-time">${displayTime}</div>
-                        <div class="hour-emoji">${iconEmoji}</div>
-                        <div class="hour-temp">${Math.round(item.main.temp)}°</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('hourly-container').innerHTML = hourlyHTML;
-        }
-        
-        function createTemperatureChart(data) {
-            const ctx = document.getElementById('weather-chart').getContext('2d');
-            
-            // Destruir gráfico anterior si existe
-            if (currentChart) {
-                currentChart.destroy();
-            }
-            
-            // Configuración del tema oscuro para Chart.js
-            Chart.defaults.color = '#9aa0a6';
-            Chart.defaults.borderColor = '#3c4043';
-            
-            const labels = data.map(item => {
-                const date = new Date(item.dt * 1000);
-                return date.getHours() + 'h';
-            });
-            
-            const temps = data.map(item => item.main.temp);
-            
-            currentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Temperatura (°C)',
-                        data: temps,
-                        borderColor: 'rgba(138, 180, 248, 1)',
-                        backgroundColor: 'rgba(138, 180, 248, 0.1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(138, 180, 248, 1)',
-                        pointRadius: 4,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: '#303134',
-                            titleColor: '#e8eaed',
-                            bodyColor: '#e8eaed',
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y.toFixed(1) + '°C';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            grid: {
-                                color: 'rgba(60, 64, 67, 0.5)'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '°';
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function displayDailyForecast(forecastData) {
-            const now = new Date();
-            const dailyData = [];
-            
-            for (let i = 0; i < 5; i++) {
-                const targetDate = new Date(now);
-                targetDate.setDate(now.getDate() + i);
-                targetDate.setHours(0, 0, 0, 0);
-                
-                // Filtrar datos para este día
-                const dayItems = forecastData.list.filter(item => {
-                    const itemDate = new Date(item.dt * 1000);
-                    return itemDate.getDate() === targetDate.getDate() && 
-                           itemDate.getMonth() === targetDate.getMonth() && 
-                           itemDate.getFullYear() === targetDate.getFullYear();
-                });
-                
-                if (dayItems.length === 0) break;
-                
-                // Calcular min/max
-                const minTemp = Math.min(...dayItems.map(item => item.main.temp_min));
-                const maxTemp = Math.max(...dayItems.map(item => item.main.temp_max));
-                
-                // Usar el período del mediodía como representativo si está disponible
-                const middayItem = dayItems.find(item => {
-                    const hours = new Date(item.dt * 1000).getHours();
-                    return hours >= 11 && hours <= 13;
-                }) || dayItems[0];
-                
-                const dayName = i === 0 ? 'Hoy' : 
-                               i === 1 ? 'Mañana' : 
-                               targetDate.toLocaleDateString('es-AR', { weekday: 'long' });
-                
-                dailyData.push({
-                    dayName: dayName,
-                    min: minTemp,
-                    max: maxTemp,
-                    icon: middayItem.weather[0].icon,
-                    description: middayItem.weather[0].description,
-                    dayIndex: i,
-                    date: targetDate
-                });
-            }
-            
-            let dailyHTML = '';
-            
-            dailyData.forEach(day => {
-                const iconEmoji = weatherIcons[day.icon] || '🌤️';
-                const formattedDate = day.date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
-                
-                dailyHTML += `
-                    <div class="day-item ${day.dayIndex === selectedDayIndex ? 'selected' : ''}" 
-                         data-day-index="${day.dayIndex}">
-                        <div class="day-name">${capitalizeFirstLetter(day.dayName)} <small>${formattedDate}</small></div>
-                        <div class="day-weather">
-                            <div class="weather-emoji">${iconEmoji}</div>
-                            <div class="day-description">${day.description}</div>
-                        </div>
-                        <div class="day-temps">
-                            <span class="day-max">${Math.round(day.max)}°</span>
-                            <span class="day-min">${Math.round(day.min)}°</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('daily-forecast').innerHTML = dailyHTML;
-            
-            // Añadir event listeners a los días
-            document.querySelectorAll('.day-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const dayIndex = parseInt(this.getAttribute('data-day-index'));
-                    updateDayForecast(dayIndex);
-                });
-            });
-        }
-        
-        function highlightSelectedDay(dayIndex) {
-            document.querySelectorAll('.day-item').forEach(item => {
-                const itemIndex = parseInt(item.getAttribute('data-day-index'));
-                if (itemIndex === dayIndex) {
-                    item.classList.add('selected');
+                if(url === '') {
+                    // Si es el inicio, ocultar iframe
+                    iframeContainer.style.display = 'none';
+                    document.body.classList.remove('menu-active');
+                    sideMenu.classList.remove('active');
                 } else {
-                    item.classList.remove('selected');
+                    // Mostrar iframe con contenido externo
+                    iframeTitle.textContent = title;
+                    contentFrame.src = url;
+                    iframeContainer.style.display = 'flex';
+                    document.body.classList.remove('menu-active');
+                    sideMenu.classList.remove('active');
                 }
             });
+        });
+        
+        closeIframe.addEventListener('click', function() {
+            iframeContainer.style.display = 'none';
+            contentFrame.src = 'about:blank';
+        });
+        
+        // Configuración de partículas
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#6a11cb", "#2575fc", "#4CAF50", "#FF9800", "#f83600", "#9C27B0", "#00BCD4"]
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.6,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 4,
+                        "size_min": 1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 120,
+                    "color": "#ffffff",
+                    "opacity": 0.2,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2.5,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": {
+                        "distance": 80,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // Efecto confeti
+        const buttons = document.querySelectorAll('.redirect-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                for(let i = 0; i < 20; i++) {
+                    createConfetti(e.clientX, e.clientY);
+                }
+            });
+        });
+        
+        function createConfetti(x, y) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${x}px`;
+            confetti.style.top = `${y}px`;
+            confetti.style.backgroundColor = getRandomColor();
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 2000);
         }
         
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
+        function getRandomColor() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            return colors[Math.floor(Math.random() * colors.length)];
         }
-        
-        function showError(message) {
-            document.getElementById('current-weather').innerHTML = `<div class="error">${message}</div>`;
-            document.getElementById('hourly-container').innerHTML = '';
-            document.getElementById('daily-forecast').innerHTML = '';
-        }
-        
-        // Actualizar cada 15 minutos para mantener datos frescos
-        setInterval(() => {
-            if (selectedDayIndex === 0) {
-                const apiKey = 'TU_API_KEY'; // Reemplaza con tu API key
-                const lat = -32.7042;
-                const lon = -68.5833;
-                fetchWeatherData(lat, lon, apiKey);
-            }
-        }, 15 * 60 * 1000);
     </script>
 </body>
 </html>
-<br> <p style="text-align: center; color: white;">© 2025 Elian Mamani. Todos los derechos reservados.
-</p>
-<br>
