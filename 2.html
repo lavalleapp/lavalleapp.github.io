@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Negocios - Lavalle</title>
+    <title>Negocios en Lavalle</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
         * {
             margin: 0;
@@ -14,230 +13,92 @@
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             color: #333;
             line-height: 1.5;
-            padding-bottom: 80px;
+            padding: 10px;
         }
         
-        /* Header y buscador */
+        .container {
+            max-width: 100%;
+        }
+        
+        /* Header */
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: linear-gradient(135deg, #1a5f7a 0%, #2a8bb8 100%);
+            text-align: center;
+            padding: 20px 15px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             color: white;
-            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .logo-icon {
-            font-size: 24px;
-            margin-right: 10px;
-            background-color: rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logo-text h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        
-        .logo-text p {
-            font-size: 0.85rem;
+        .header p {
+            font-size: 0.9rem;
             opacity: 0.9;
         }
         
-        .search-container {
-            position: relative;
-            margin-bottom: 10px;
-        }
-        
-        .search-box {
-            width: 100%;
-            padding: 14px 50px 14px 20px;
-            border-radius: 30px;
-            border: none;
-            font-size: 1rem;
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #1a5f7a;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        /* Contenedor principal */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        
-        /* Panel de categorías */
-        .categories-panel {
-            background-color: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .categories-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #1a5f7a;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .categories-grid {
+        /* Grid de negocios en 2 columnas */
+        .business-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 15px;
+            margin-bottom: 30px;
         }
         
-        .category-card {
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .category-card:hover, .category-card.active {
-            background-color: #1a5f7a;
-            border-color: #1a5f7a;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(26, 95, 122, 0.2);
-        }
-        
-        .category-icon {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            color: #1a5f7a;
-        }
-        
-        .category-card:hover .category-icon,
-        .category-card.active .category-icon {
-            color: white;
-        }
-        
-        .category-name {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        /* Contenedor de negocios */
-        .businesses-section {
-            background-color: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a5f7a;
-        }
-        
-        .results-count {
-            background-color: #e6f2f8;
-            color: #1a5f7a;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .businesses-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
+        /* Tarjeta de negocio */
         .business-card {
             background-color: white;
-            border-radius: 15px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
         
         .business-card:active {
             transform: scale(0.98);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
         .business-image {
-            height: 140px;
+            height: 120px;
             width: 100%;
             background-size: cover;
             background-position: center;
             position: relative;
         }
         
-        .business-category {
+        .delrosario {
+            background-image: url('https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+        
+        .softfood {
+            background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+        
+        .business-type {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(26, 95, 122, 0.9);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 500;
+            top: 8px;
+            left: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
         
         .business-content {
@@ -248,54 +109,81 @@
         }
         
         .business-name {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #222;
-            line-height: 1.3;
+            color: #2c3e50;
         }
         
         .business-description {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #666;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-grow: 1;
+        }
+        
+        .business-info {
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+        }
+        
+        .info-icon {
+            color: #3498db;
+            width: 14px;
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .info-text {
+            color: #555;
         }
         
         .business-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 8px;
             margin-top: auto;
         }
         
-        .business-details-btn {
-            background-color: #f0f7ff;
-            color: #1a5f7a;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        .btn-details {
+            flex: 1;
+            background-color: #f8f9fa;
+            color: #3498db;
+            border: 1px solid #3498db;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
             font-weight: 500;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 5px;
             cursor: pointer;
+            text-decoration: none;
+            text-align: center;
         }
         
-        .business-website-btn {
-            background-color: #1a5f7a;
+        .btn-website {
+            flex: 1;
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
             font-weight: 500;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 5px;
-            text-decoration: none;
             cursor: pointer;
+            text-decoration: none;
+            text-align: center;
         }
         
         /* Modal de detalles */
@@ -310,7 +198,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            padding: 20px;
+            padding: 15px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -323,10 +211,10 @@
         
         .modal {
             background-color: white;
-            border-radius: 20px;
+            border-radius: 15px;
             width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
+            max-width: 400px;
+            max-height: 85vh;
             overflow-y: auto;
             position: relative;
             transform: translateY(20px);
@@ -338,88 +226,88 @@
         }
         
         .modal-image {
-            height: 200px;
+            height: 160px;
             width: 100%;
             background-size: cover;
             background-position: center;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
         }
         
         .modal-content {
-            padding: 25px;
+            padding: 20px;
         }
         
         .modal-header {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .modal-category {
             display: inline-block;
-            background-color: #e6f2f8;
-            color: #1a5f7a;
+            background-color: #e6f2ff;
+            color: #3498db;
             padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 500;
             margin-bottom: 10px;
         }
         
         .modal-name {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 10px;
-            color: #222;
+            color: #2c3e50;
         }
         
         .modal-description {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #666;
             margin-bottom: 20px;
         }
         
         .modal-details {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
-        .detail-item {
+        .modal-item {
             display: flex;
             margin-bottom: 15px;
         }
         
-        .detail-icon {
-            color: #1a5f7a;
-            width: 24px;
-            font-size: 1.1rem;
+        .modal-icon {
+            color: #3498db;
+            width: 20px;
+            font-size: 1rem;
             margin-right: 12px;
             flex-shrink: 0;
         }
         
-        .detail-content h4 {
-            font-size: 0.95rem;
+        .modal-item-content h4 {
+            font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 3px;
             color: #444;
         }
         
-        .detail-content p {
-            font-size: 0.9rem;
+        .modal-item-content p {
+            font-size: 0.85rem;
             color: #666;
         }
         
         .modal-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
         
         .modal-close {
             flex: 1;
-            background-color: #f0f7ff;
-            color: #1a5f7a;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            background-color: #f8f9fa;
+            color: #3498db;
+            border: 1px solid #3498db;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -430,12 +318,12 @@
         
         .modal-website {
             flex: 2;
-            background-color: #1a5f7a;
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -447,492 +335,249 @@
         
         /* Footer */
         .footer {
-            background-color: #1a5f7a;
-            color: white;
-            padding: 25px 15px;
             text-align: center;
-            margin-top: 30px;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 20px 15px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 15px;
         }
         
         .footer p {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.9;
         }
         
         .copyright {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            opacity: 0.8;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
         }
         
-        /* Responsive */
+        /* Responsive para tablets */
         @media (min-width: 768px) {
-            .main-container {
-                grid-template-columns: 280px 1fr;
+            .container {
+                max-width: 750px;
+                margin: 0 auto;
             }
             
-            .categories-grid {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .business-grid {
+                gap: 20px;
+            }
+            
+            .business-image {
+                height: 140px;
+            }
+        }
+        
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 360px) {
+            .business-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
-            
-            .businesses-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 992px) {
-            .businesses-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .businesses-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Animación de carga */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1a5f7a;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Header con buscador -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-store"></i>
-                </div>
-                <div class="logo-text">
-                    <h1>Negocios en Lavalle</h1>
-                    <p>Descubre y visita los mejores lugares</p>
-                </div>
-            </div>
-            
-            <div class="search-container">
-                <input type="text" class="search-box" id="searchBox" placeholder="Buscar negocios, restaurantes, servicios...">
-                <button class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-    
-    <!-- Contenedor principal -->
-    <div class="main-container">
-        <!-- Panel de categorías -->
-        <aside class="categories-panel">
-            <div class="categories-title">
-                <i class="fas fa-filter"></i> Categorías
-            </div>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- Las categorías se generarán con JavaScript -->
-            </div>
-        </aside>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Negocios en Lavalle</h1>
+            <p>Descubre los mejores lugares de la ciudad</p>
+        </header>
         
-        <!-- Sección de negocios -->
-        <section class="businesses-section">
-            <div class="section-header">
-                <h2 class="section-title" id="sectionTitle">Todos los negocios</h2>
-                <div class="results-count" id="resultsCount">10 negocios</div>
+        <!-- Grid de negocios en 2 columnas -->
+        <div class="business-grid" id="businessGrid">
+            <!-- Delrosario -->
+            <div class="business-card" data-business="delrosario">
+                <div class="business-image delrosario">
+                    <div class="business-type">
+                        <i class="fas fa-store"></i> Ropa
+                    </div>
+                </div>
+                <div class="business-content">
+                    <h3 class="business-name">Delrosario</h3>
+                    <p class="business-description">Tienda de ropa moderna con las últimas tendencias de moda para toda la familia.</p>
+                    
+                    <div class="business-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt info-icon"></i>
+                            <span class="info-text">Av. San Martín 850</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock info-icon"></i>
+                            <span class="info-text">Lun-Sáb: 9:00-20:30</span>
+                        </div>
+                    </div>
+                    
+                    <div class="business-actions">
+                        <a href="#" class="btn-details" data-business="delrosario">
+                            <i class="fas fa-info-circle"></i> Detalles
+                        </a>
+                        <a href="https://delrosario.ar" target="_blank" class="btn-website">
+                            <i class="fas fa-external-link-alt"></i> Web
+                        </a>
+                    </div>
+                </div>
             </div>
             
-            <div class="businesses-grid" id="businessesGrid">
-                <!-- Los negocios se cargarán aquí con JavaScript -->
+            <!-- Soft Food -->
+            <div class="business-card" data-business="softfood">
+                <div class="business-image softfood">
+                    <div class="business-type">
+                        <i class="fas fa-utensils"></i> Comida
+                    </div>
+                </div>
+                <div class="business-content">
+                    <h3 class="business-name">Soft Food</h3>
+                    <p class="business-description">Comida rápida saludable con ingredientes frescos y opciones para todos.</p>
+                    
+                    <div class="business-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt info-icon"></i>
+                            <span class="info-text">Calle Sarmiento 320</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock info-icon"></i>
+                            <span class="info-text">Todos los días: 11:00-23:00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="business-actions">
+                        <a href="#" class="btn-details" data-business="softfood">
+                            <i class="fas fa-info-circle"></i> Detalles
+                        </a>
+                        <a href="https://softfood.com.ar" target="_blank" class="btn-website">
+                            <i class="fas fa-external-link-alt"></i> Web
+                        </a>
+                    </div>
+                </div>
             </div>
-        </section>
-    </div>
-    
-    <!-- Modal de detalles -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modal">
-            <!-- El contenido del modal se generará con JavaScript -->
+            
+            <!-- Espacio para más negocios que agregues después -->
+            <div class="business-card empty" style="display: none;">
+                <div class="business-content" style="align-items: center; justify-content: center; text-align: center;">
+                    <i class="fas fa-plus-circle" style="font-size: 2rem; color: #3498db; margin-bottom: 10px;"></i>
+                    <p style="color: #666;">Próximamente más negocios</p>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>Guía completa de negocios en Lavalle, Mendoza</p>
+        
+        <!-- Modal de detalles -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modal">
+                <!-- El contenido se genera con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Guía de negocios locales en Lavalle</p>
             <p class="copyright">© 2025 Nahuel Mamani. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script>
-        // Datos de los negocios en Lavalle
-        const businesses = [
-            {
-                id: 1,
-                name: "La Parrilla de Lavalle",
-                category: "restaurant",
-                description: "Carnes a la parrilla y platos regionales en un ambiente familiar.",
-                website: "https://laparrilladelavalle.com",
-                image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        // Datos de los negocios
+        const businesses = {
+            delrosario: {
+                name: "Delrosario",
+                category: "Tienda de Ropa",
+                description: "Tienda de ropa moderna con las últimas tendencias de moda para toda la familia. Calidad y estilo en cada prenda. Especialistas en moda casual y formal.",
+                image: "delrosario",
+                website: "https://delrosario.ar",
                 details: {
-                    address: "Av. San Martín 1234, Lavalle",
-                    phone: "+54 261 456-7890",
-                    hours: "Lun-Dom: 12:00-16:00 y 20:00-00:00",
-                    rating: "4.5/5",
-                    features: ["Terraza", "Wi-Fi gratis", "Estacionamiento", "Take away"]
-                }
-            },
-            {
-                id: 2,
-                name: "Supermercado El Ahorro",
-                category: "supermarket",
-                description: "Todo lo que necesitas para tu hogar con los mejores precios.",
-                website: "https://elahorro-lavalle.com.ar",
-                image: "https://images.unsplash.com/photo-1604719312566-8912e4227c9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Calle Sarmiento 567, Lavalle",
+                    address: "Av. San Martín 850, Lavalle, Mendoza",
                     phone: "+54 261 555-1234",
-                    hours: "Lun-Sáb: 8:00-21:00, Dom: 9:00-13:00",
-                    rating: "4.2/5",
-                    features: ["Delivery", "Productos locales", "Promociones semanales"]
+                    hours: "Lunes a Viernes: 9:00-13:00 y 16:00-20:30 | Sábados: 9:00-13:00",
+                    services: ["Ropa de temporada", "Accesorios", "Cambios sin cargo", "Asesoramiento de imagen", "Talles especiales"],
+                    payment: ["Efectivo", "Tarjetas de crédito/débito", "Transferencias"]
                 }
             },
-            {
-                id: 3,
-                name: "Farmacia Lavalle",
-                category: "pharmacy",
-                description: "Farmacia de turno permanente con delivery gratuito.",
-                website: "https://farmacialavalle.com",
-                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+            softfood: {
+                name: "Soft Food",
+                category: "Comida Rápida Saludable",
+                description: "Comida rápida con ingredientes frescos y saludables. Hamburguesas, wraps, ensaladas y smoothies naturales. Opciones veganas y sin gluten.",
+                image: "softfood",
+                website: "https://softfood.com.ar",
                 details: {
-                    address: "Av. Belgrano 789, Lavalle",
+                    address: "Calle Sarmiento 320, Lavalle, Mendoza",
                     phone: "+54 261 444-5678",
-                    hours: "Abierto 24 horas",
-                    rating: "4.7/5",
-                    features: ["Delivery gratuito", "Asesoramiento", "Productos naturales"]
-                }
-            },
-            {
-                id: 4,
-                name: "Hotel Viñas del Sol",
-                category: "hotel",
-                description: "Hotel boutique con vistas a viñedos y spa de relax.",
-                website: "https://hotelvinasdelsol.com",
-                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Ruta 40 km 123, Lavalle",
-                    phone: "+54 261 777-8888",
-                    hours: "Check-in: 15:00, Check-out: 11:00",
-                    rating: "4.8/5",
-                    features: ["Piscina", "Spa", "Wi-Fi", "Desayuno buffet"]
-                }
-            },
-            {
-                id: 5,
-                name: "Café de la Plaza",
-                category: "cafe",
-                description: "Cafetería tradicional con pastelería artesanal y desayunos.",
-                website: "https://cafedelaplaza-lavalle.com",
-                image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Plaza Principal 50, Lavalle",
-                    phone: "+54 261 333-4444",
-                    hours: "Lun-Dom: 7:00-21:00",
-                    rating: "4.4/5",
-                    features: ["Terraza", "Wi-Fi", "Postres caseros", "Apto celíacos"]
-                }
-            },
-            {
-                id: 6,
-                name: "Modas Lavalle",
-                category: "clothing",
-                description: "Ropa para toda la familia con las últimas tendencias.",
-                website: "https://modaslavalle.com.ar",
-                image: "https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Calle Rivadavia 321, Lavalle",
-                    phone: "+54 261 222-3333",
-                    hours: "Lun-Vie: 9:30-13:00 y 16:30-20:30, Sáb: 9:30-13:00",
-                    rating: "4.3/5",
-                    features: ["Ropa de temporada", "Cambios sin cargo", "Talles especiales"]
-                }
-            },
-            {
-                id: 7,
-                name: "Taller Mecánico Rápido",
-                category: "service",
-                description: "Mantenimiento y reparaciones de vehículos con garantía.",
-                website: "https://tallermecanicorapido.com",
-                image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Av. San Martín 2200, Lavalle",
-                    phone: "+54 261 666-7777",
-                    hours: "Lun-Vie: 8:00-18:00, Sáb: 8:00-13:00",
-                    rating: "4.6/5",
-                    features: ["Servicio rápido", "Garantía", "Atención a flotas"]
-                }
-            },
-            {
-                id: 8,
-                name: "Bodega Los Andes",
-                category: "winery",
-                description: "Degustación de vinos y restaurante de alta cocina regional.",
-                website: "https://bodegalosandes.com",
-                image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Camino de los Viñedos 1500, Lavalle",
-                    phone: "+54 261 888-9999",
-                    hours: "Mié-Dom: 10:00-18:00",
-                    rating: "4.9/5",
-                    features: ["Degustaciones", "Visitas guiadas", "Tienda de productos"]
-                }
-            },
-            {
-                id: 9,
-                name: "Librería El Saber",
-                category: "shop",
-                description: "Libros, útiles escolares y material de oficina.",
-                website: "https://libreriaelsaber.com.ar",
-                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Av. Mitre 432, Lavalle",
-                    phone: "+54 261 111-2222",
-                    hours: "Lun-Vie: 9:00-13:00 y 16:00-20:00, Sáb: 9:00-13:00",
-                    rating: "4.5/5",
-                    features: ["Delivery", "Descuento a estudiantes", "Pedidos especiales"]
-                }
-            },
-            {
-                id: 10,
-                name: "Pizzería La Esquina",
-                category: "restaurant",
-                description: "Pizza al molde y empanadas caseras con delivery rápido.",
-                website: "https://pizzeriaesquina.com",
-                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                details: {
-                    address: "Esquina Belgrano y San Juan, Lavalle",
-                    phone: "+54 261 999-0000",
-                    hours: "Lun-Dom: 19:00-01:00",
-                    rating: "4.3/5",
-                    features: ["Delivery 24h", "Promociones", "Productos caseros"]
+                    hours: "Todos los días: 11:00-23:00",
+                    services: ["Delivery", "Take away", "Opciones veganas", "Menú infantil", "Catering para eventos"],
+                    payment: ["Efectivo", "Tarjetas", "Mercado Pago", "PedidosYa"]
                 }
             }
-        ];
+        };
 
-        // Categorías disponibles
-        const categories = [
-            { id: "all", name: "Todos", icon: "fas fa-store", color: "#1a5f7a" },
-            { id: "restaurant", name: "Restaurantes", icon: "fas fa-utensils", color: "#e74c3c" },
-            { id: "cafe", name: "Cafeterías", icon: "fas fa-coffee", color: "#8e44ad" },
-            { id: "supermarket", name: "Supermercados", icon: "fas fa-shopping-cart", color: "#27ae60" },
-            { id: "pharmacy", name: "Farmacias", icon: "fas fa-heartbeat", color: "#3498db" },
-            { id: "hotel", name: "Hoteles", icon: "fas fa-hotel", color: "#f39c12" },
-            { id: "clothing", name: "Ropa", icon: "fas fa-tshirt", color: "#e67e22" },
-            { id: "service", name: "Servicios", icon: "fas fa-tools", color: "#16a085" },
-            { id: "winery", name: "Bodegas", icon: "fas fa-wine-glass-alt", color: "#c0392b" },
-            { id: "shop", name: "Tiendas", icon: "fas fa-shopping-bag", color: "#9b59b6" }
-        ];
-
-        // Variables globales
-        let currentCategory = "all";
-        let currentSearch = "";
-
-        // Función para renderizar las categorías
-        function renderCategories() {
-            const container = document.getElementById("categoriesGrid");
-            container.innerHTML = "";
+        // Abrir modal de detalles
+        function openBusinessModal(businessId) {
+            const business = businesses[businessId];
+            if (!business) return;
             
-            categories.forEach(category => {
-                const card = document.createElement("div");
-                card.className = `category-card ${category.id === currentCategory ? "active" : ""}`;
-                card.setAttribute("data-category", category.id);
-                card.style.borderColor = category.color;
-                
-                card.innerHTML = `
-                    <div class="category-icon">
-                        <i class="${category.icon}"></i>
-                    </div>
-                    <div class="category-name">${category.name}</div>
-                `;
-                
-                card.addEventListener("click", () => {
-                    // Actualizar categoría activa
-                    document.querySelectorAll(".category-card").forEach(card => {
-                        card.classList.remove("active");
-                    });
-                    card.classList.add("active");
-                    
-                    // Cambiar categoría
-                    currentCategory = category.id;
-                    filterBusinesses();
-                    
-                    // Actualizar título de sección
-                    const sectionTitle = document.getElementById("sectionTitle");
-                    if (category.id === "all") {
-                        sectionTitle.textContent = "Todos los negocios";
-                    } else {
-                        sectionTitle.textContent = category.name;
-                    }
-                });
-                
-                container.appendChild(card);
-            });
-        }
-
-        // Función para renderizar los negocios
-        function renderBusinesses(businessList) {
-            const container = document.getElementById("businessesGrid");
-            
-            if (businessList.length === 0) {
-                container.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">
-                        <div style="font-size: 3rem; color: #ddd; margin-bottom: 15px;">
-                            <i class="fas fa-store-slash"></i>
-                        </div>
-                        <h3>No se encontraron negocios</h3>
-                        <p>Intenta con otra búsqueda o categoría</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = "";
-            
-            businessList.forEach(business => {
-                const card = document.createElement("div");
-                card.className = "business-card";
-                card.setAttribute("data-id", business.id);
-                
-                // Obtener información de categoría
-                const categoryInfo = categories.find(cat => cat.id === business.category);
-                const categoryName = categoryInfo ? categoryInfo.name : "Comercio";
-                const categoryIcon = categoryInfo ? categoryInfo.icon : "fas fa-store";
-                const categoryColor = categoryInfo ? categoryInfo.color : "#1a5f7a";
-                
-                card.innerHTML = `
-                    <div class="business-image" style="background-image: url('${business.image}')">
-                        <div class="business-category" style="background-color: ${categoryColor}">
-                            <i class="${categoryIcon}"></i> ${categoryName}
-                        </div>
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">${business.name}</h3>
-                        <p class="business-description">${business.description}</p>
-                        <div class="business-actions">
-                            <button class="business-details-btn" data-id="${business.id}">
-                                <i class="fas fa-info-circle"></i> Detalles
-                            </button>
-                            <a href="${business.website}" target="_blank" class="business-website-btn">
-                                <i class="fas fa-external-link-alt"></i> Web
-                            </a>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-                
-                // Añadir evento para abrir modal de detalles
-                const detailsBtn = card.querySelector(".business-details-btn");
-                detailsBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    openBusinessModal(business);
-                });
-                
-                // También permitir abrir modal tocando la tarjeta
-                card.addEventListener("click", (e) => {
-                    if (!e.target.closest(".business-website-btn")) {
-                        openBusinessModal(business);
-                    }
-                });
-            });
-        }
-
-        // Función para abrir modal de negocio
-        function openBusinessModal(business) {
             const modalOverlay = document.getElementById("modalOverlay");
             const modal = document.getElementById("modal");
             
-            // Obtener información de categoría
-            const categoryInfo = categories.find(cat => cat.id === business.category);
-            const categoryName = categoryInfo ? categoryInfo.name : "Comercio";
-            const categoryIcon = categoryInfo ? categoryInfo.icon : "fas fa-store";
-            const categoryColor = categoryInfo ? categoryInfo.color : "#1a5f7a";
-            
             // Crear contenido del modal
             modal.innerHTML = `
-                <div class="modal-image" style="background-image: url('${business.image}')"></div>
+                <div class="modal-image ${business.image}"></div>
                 <div class="modal-content">
                     <div class="modal-header">
-                        <span class="modal-category" style="background-color: ${categoryColor}20; color: ${categoryColor}">
-                            <i class="${categoryIcon}"></i> ${categoryName}
+                        <span class="modal-category">
+                            <i class="fas fa-${businessId === 'delrosario' ? 'store' : 'utensils'}"></i> ${business.category}
                         </span>
                         <h2 class="modal-name">${business.name}</h2>
                         <p class="modal-description">${business.description}</p>
                     </div>
                     
                     <div class="modal-details">
-                        <div class="detail-item">
-                            <div class="detail-icon">
+                        <div class="modal-item">
+                            <div class="modal-icon">
                                 <i class="fas fa-map-marker-alt"></i>
                             </div>
-                            <div class="detail-content">
+                            <div class="modal-item-content">
                                 <h4>Dirección</h4>
                                 <p>${business.details.address}</p>
                             </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
+                        <div class="modal-item">
+                            <div class="modal-icon">
                                 <i class="fas fa-phone"></i>
                             </div>
-                            <div class="detail-content">
+                            <div class="modal-item-content">
                                 <h4>Teléfono</h4>
                                 <p>${business.details.phone}</p>
                             </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
+                        <div class="modal-item">
+                            <div class="modal-icon">
                                 <i class="fas fa-clock"></i>
                             </div>
-                            <div class="detail-content">
+                            <div class="modal-item-content">
                                 <h4>Horarios</h4>
                                 <p>${business.details.hours}</p>
                             </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="detail-content">
-                                <h4>Calificación</h4>
-                                <p>${business.details.rating}</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
+                        <div class="modal-item">
+                            <div class="modal-icon">
                                 <i class="fas fa-check-circle"></i>
                             </div>
-                            <div class="detail-content">
+                            <div class="modal-item-content">
                                 <h4>Servicios</h4>
-                                <p>${business.details.features.join(", ")}</p>
+                                <p>${business.details.services.join(", ")}</p>
+                            </div>
+                        </div>
+                        <div class="modal-item">
+                            <div class="modal-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="modal-item-content">
+                                <h4>Medios de pago</h4>
+                                <p>${business.details.payment.join(", ")}</p>
                             </div>
                         </div>
                     </div>
@@ -952,7 +597,7 @@
             modalOverlay.classList.add("active");
             document.body.style.overflow = "hidden";
             
-            // Añadir evento para cerrar modal
+            // Configurar botón para cerrar modal
             const closeBtn = document.getElementById("modalClose");
             closeBtn.addEventListener("click", closeModal);
             
@@ -971,73 +616,56 @@
             });
         }
 
-        // Función para cerrar modal
+        // Cerrar modal
         function closeModal() {
             const modalOverlay = document.getElementById("modalOverlay");
             modalOverlay.classList.remove("active");
             document.body.style.overflow = "auto";
         }
 
-        // Función para filtrar negocios
-        function filterBusinesses() {
-            let filtered = businesses;
-            
-            // Filtrar por categoría
-            if (currentCategory !== "all") {
-                filtered = filtered.filter(business => business.category === currentCategory);
-            }
-            
-            // Filtrar por búsqueda
-            if (currentSearch.trim() !== "") {
-                const searchTerm = currentSearch.toLowerCase();
-                filtered = filtered.filter(business => 
-                    business.name.toLowerCase().includes(searchTerm) ||
-                    business.description.toLowerCase().includes(searchTerm) ||
-                    business.category.toLowerCase().includes(searchTerm) ||
-                    business.details.address.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            // Actualizar contador de resultados
-            const resultsCount = document.getElementById("resultsCount");
-            resultsCount.textContent = `${filtered.length} negocios`;
-            
-            // Renderizar negocios filtrados
-            renderBusinesses(filtered);
-        }
-
         // Inicializar la aplicación
-        function initApp() {
-            // Renderizar categorías
-            renderCategories();
-            
-            // Renderizar todos los negocios inicialmente
-            filterBusinesses();
-            
-            // Configurar búsqueda
-            const searchBox = document.getElementById("searchBox");
-            const searchBtn = document.getElementById("searchBtn");
-            
-            // Buscar al hacer clic en el botón
-            searchBtn.addEventListener("click", () => {
-                currentSearch = searchBox.value;
-                filterBusinesses();
+        document.addEventListener("DOMContentLoaded", function() {
+            // Configurar botones de detalles
+            document.querySelectorAll(".btn-details").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const businessId = this.getAttribute("data-business");
+                    openBusinessModal(businessId);
+                });
             });
             
-            // Buscar al presionar Enter
-            searchBox.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    currentSearch = searchBox.value;
-                    filterBusinesses();
-                }
+            // Configurar tarjetas para abrir modal al tocar
+            document.querySelectorAll(".business-card").forEach(card => {
+                card.addEventListener("click", function(e) {
+                    // Solo si no se hizo clic en un botón de acción
+                    if (!e.target.closest(".business-actions")) {
+                        const businessId = this.getAttribute("data-business");
+                        if (businessId) {
+                            openBusinessModal(businessId);
+                        }
+                    }
+                });
             });
             
-            // Mostrar mensaje de bienvenida
-            console.log("Guía de negocios de Lavalle cargada. Busca y descubre los mejores lugares.");
+            // Configurar enlaces de página web
+            document.querySelectorAll(".btn-website").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    // Permitir que el enlace se abra normalmente
+                    // Solo para tracking podemos agregar algo aquí
+                    console.log("Visitando sitio web de negocio");
+                });
+            });
+            
+            // Mensaje de carga
+            console.log("Guía de negocios de Lavalle cargada");
+            console.log("Negocios disponibles: Delrosario y Soft Food");
+        });
+        
+        // Función para agregar más negocios fácilmente
+        function addBusiness(businessData) {
+            // Esta función permite agregar más negocios dinámicamente
+            console.log("Función para agregar nuevos negocios disponible");
         }
-
-        // Inicializar cuando el DOM esté listo
-        document.addEventListener("DOMContentLoaded", initApp);
     </script>
 </body>
 </html>
