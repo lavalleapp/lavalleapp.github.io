@@ -453,32 +453,106 @@
         .social-links {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-top: 15px;
             flex-wrap: wrap;
         }
         
         .social-link {
-            color: var(--primary);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            background-color: #E3F2FD;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
             transition: var(--transition);
+            color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         
         .social-link:hover {
-            background-color: var(--primary);
-            color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.25);
         }
         
         .social-link i {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Instagram - Gradiente púrpura/naranja */
+        .instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);
+            background-size: 300% 300%;
+            animation: gradient 3s ease infinite;
+        }
+        
+        /* TikTok - Negro con acento rosado/azul */
+        .tiktok {
+            background-color: #000000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tiktok::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.3), rgba(0, 242, 234, 0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        .tiktok:hover::before {
+            left: 100%;
+        }
+        
+        /* WhatsApp - Verde característico */
+        .whatsapp {
+            background-color: #25D366;
+        }
+        
+        .whatsapp:hover {
+            background-color: #128C7E;
+        }
+        
+        /* Animación para Instagram */
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Responsive para redes sociales */
+        @media (max-width: 480px) {
+            .social-links {
+                gap: 10px;
+            }
+            
+            .social-link {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .social-link i {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 350px) {
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .social-link {
+                width: 200px;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -562,18 +636,21 @@
     
     <!-- Footer simple -->
     <footer class="footer">
-        <p>© 2025 Nahuel Mamani. Todos los derechos reservados.</p>
-          <div class="social-links">
-            <a href="https://instagram.com/tuusuario" target="_blank" class="social-link">
+        <p>© 2026 Nahuel Mamani. Todos los derechos reservados.</p>
+             <!-- Footer simple -->
+    
+        <div class="social-links">
+            <a href="https://www.instagram.com/elnahuu_el?utm_source=qr&igsh=NGN3ZDlkdXcxc3F5" target="_blank" class="social-link instagram">
                 <i class="fab fa-instagram"></i> Instagram
             </a>
-            <a href="https://tiktok.com/@tucusuario" target="_blank" class="social-link">
+            <a href="https://www.tiktok.com/@nahuu_el44?_r=1&_t=ZM-92iZJq074Qd" target="_blank" class="social-link tiktok">
                 <i class="fab fa-tiktok"></i> TikTok
             </a>
-            <a href="https://wa.me/5492611234567" target="_blank" class="social-link">
+            <a href="https://wa.me/5492612316632" target="_blank" class="social-link whatsapp">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
-             </div>
+        </div>
+    
     </footer>
 
     <script>
