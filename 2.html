@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -599,7 +600,7 @@
                 <span>Servicios</span>
             </button>
             <button class="category-btn" data-filter="entretenimiento">
-                <i class="fas fa-film"></i>
+                <i class="fa-solid fa-house"></i>
                 <span>Diversión</span>
             </button>
             <button class="category-btn" data-filter="salud">
@@ -658,162 +659,23 @@
         const businesses = [
             {
                 id: 1,
-                name: "La Parrilla",
+                name: "Del Rosario",
                 category: "restaurante",
-                location: "Av. San Martín 1234",
-                image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "2x1 en Parrilladas",
-                promoText: "Viernes y sábados después de las 20hs, parrilladas 2x1.",
-                promoValid: "Hasta 30/11/2023",
-                website: "https://www.laparrilla.com",
-                phone: "2615550101",
+                location: "San Martin 45 frente a plaza departamental, Lavalle, Mendoza, Argentina 5664",
+                image: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSybRbpabic8395L4x7nw-tg0cVHsNsDEFSUDIVf2BI_bDx9yFxMHHtH8ZdWoD5c_SGLAtRqlv3L63nA_ndTAGV2EUhtpJ14le9hI_Y1mvpRFizjXYQgeR2R3Z7n07XUAyzNEx9j=s1360-w1360-h1020-rw",
+                promoTitle: "Horarios",
+                promoText: "Lun-Vie: 9:00-22:00 <br> Sábados: 9:00-22:00 <br> Domingos: 9:00-14:00",
+                
+                promoValid: "",
+                website: "https://delrosario.ar/",
+                
                 rating: 4.8
-            },
-            {
-                id: 2,
-                name: "Bazar El Económico",
-                category: "comercio",
-                location: "Calle Rivadavia 567",
-                image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "30% OFF Electrónica",
-                promoText: "Descuento del 30% en electrónica y electrodomésticos.",
-                promoValid: "Todo el mes",
-                website: "https://www.bazareconomico.com",
-                phone: "2615550202",
-                rating: 4.5
-            },
-            {
-                id: 3,
-                name: "Auto Service",
-                category: "servicio",
-                location: "Ruta 40 km 123",
-                image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "Cambio de Aceite Gratis",
-                promoText: "Con compra de 4 cubiertas, cambio de aceite gratis.",
-                promoValid: "Hasta fin de mes",
-                website: "https://www.autoservice.com",
-                phone: "2615550303",
-                rating: 4.7
-            },
-            {
-                id: 4,
-                name: "Cine Lavalle",
-                category: "entretenimiento",
-                location: "Shopping Lavalle",
-                image: "https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "Entradas 50% OFF",
-                promoText: "Miércoles entradas a mitad de precio en todas las salas.",
-                promoValid: "Promo permanente",
-                website: "https://www.cinelavalle.com",
-                phone: "2615550404",
-                rating: 4.6
-            },
-            {
-                id: 5,
-                name: "Pizzería Don José",
-                category: "restaurante",
-                location: "Calle Sarmiento 789",
-                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "Pizza + Gaseosa",
-                promoText: "Pizza familiar + gaseosa 1.5L a $4.500.",
-                promoValid: "Lunes a jueves",
-                website: "https://www.donjose.com",
-                phone: "2615550505",
-                rating: 4.9
-            },
-            {
-                id: 6,
-                name: "Farmacia Lavalle",
-                category: "salud",
-                location: "Av. España 456",
-                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "20% OFF Perfumería",
-                promoText: "20% de descuento en toda la sección de perfumería.",
-                promoValid: "Hasta 15/12/2023",
-                website: "https://www.farmacialavalle.com",
-                phone: "2615550606",
-                rating: 4.4
-            },
-            {
-                id: 7,
-                name: "Gimnasio Vitality",
-                category: "salud",
-                location: "Calle Alberdi 321",
-                image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "1er Mes Gratis",
-                promoText: "Inscríbete y obtén tu primer mes completamente gratis.",
-                promoValid: "Oferta limitada",
-                website: "https://www.gimnasio.com",
-                phone: "2615550707",
-                rating: 4.8
-            },
-            {
-                id: 8,
-                name: "Librería El Saber",
-                category: "comercio",
-                location: "Plaza Principal 55",
-                image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "3x2 Libros",
-                promoText: "Lleva 3 libros educativos y paga solo 2.",
-                promoValid: "Todo noviembre",
-                website: "https://www.libreria.com",
-                phone: "2615550808",
-                rating: 4.7
-            },
-            {
-                id: 9,
-                name: "Boutique de Moda",
-                category: "moda",
-                location: "Av. Libertador 234",
-                image: "https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "50% OFF Segunda Unidad",
-                promoText: "En la segunda unidad de ropa, 50% de descuento.",
-                promoValid: "Todo diciembre",
-                website: "https://www.boutique.com",
-                phone: "2615550909",
-                rating: 4.6
-            },
-            {
-                id: 10,
-                name: "Panadería Dulce",
-                category: "restaurante",
-                location: "Calle Mitre 345",
-                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "Media Mañana",
-                promoText: "Café + 2 medialunas a solo $800 hasta las 11am.",
-                promoValid: "Todos los días",
-                website: "https://www.panaderia.com",
-                phone: "2615551010",
-                rating: 4.9
-            },
-            {
-                id: 11,
-                name: "TecnoShop",
-                category: "comercio",
-                location: "Av. San Martín 890",
-                image: "https://images.unsplash.com/photo-1498049860654-af1a5c566876?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "12 Cuotas Sin Interés",
-                promoText: "En todos los celulares y tablets, 12 cuotas sin interés.",
-                promoValid: "Hasta agotar stock",
-                website: "https://www.tecnoshop.com",
-                phone: "2615551111",
-                rating: 4.5
-            },
-            {
-                id: 12,
-                name: "Óptica Visión",
-                category: "salud",
-                location: "Calle San Juan 678",
-                image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                promoTitle: "Anteojos 2x1",
-                promoText: "En la compra de un anteojo de armazón, el segundo a mitad de precio.",
-                promoValid: "Promoción especial",
-                website: "https://www.optica.com",
-                phone: "2615551212",
-                rating: 4.7
             }
+          
+          
+           
         ];
-        
+      
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
             const businessesGrid = document.getElementById('businessesGrid');
@@ -886,9 +748,7 @@
                                 <a href="${business.website}" target="_blank" class="action-btn btn-web">
                                     <i class="fas fa-globe"></i> Web
                                 </a>
-                                <a href="tel:+54${business.phone}" class="action-btn btn-call">
-                                    <i class="fas fa-phone"></i> Llamar
-                                </a>
+                               
                             </div>
                         </div>
                     `;
