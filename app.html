@@ -1,382 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Lavalle</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Entretenimiento - Redirecciones</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        .portal-description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .button-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            padding-top: 8vh;
-            overflow: hidden;
-            position: relative;
-            background: #0f0f1a;
-        }
-        
-        #particles-js {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #2a0845 0%, #0f0f1a 70%);
-        }
-        
-        h1 {
-            color: #fff;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 1.7rem;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 1;
-            background: rgba(15, 15, 26, 0.7);
-            padding: 10px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: titleGlow 6s infinite alternate;
-        }
-        
-        @keyframes titleGlow {
-            0% { box-shadow: 0 0 5px rgba(255,255,255,0.1); }
-            100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
-        }
-        
-        .button-container {
-            display: grid;
-            grid-template-columns: 1fr;
             gap: 15px;
-            width: 100%;
-            max-width: 500px;
-            z-index: 1;
         }
-        
-        .redirect-button {
+        .redirect-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            padding: 14px 20px;
-            font-size: 1rem;
-            color: white;
+            gap: 10px;
+            padding: 18px 25px;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            animation: float 4s ease-in-out infinite, buttonGlow 3s infinite alternate;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        
-        @keyframes buttonGlow {
-            0% { 
-                box-shadow: 0 0 5px rgba(255,255,255,0.2);
-                transform: translateY(0) scale(1);
-            }
-            50% { 
-                box-shadow: 0 0 20px rgba(255,255,255,0.4);
-                transform: translateY(-3px) scale(1.02);
-            }
-            100% { 
-                box-shadow: 0 0 5px rgba(255,255,255,0.2);
-                transform: translateY(0) scale(1);
-            }
+        .redirect-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
-        
-        .redirect-button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right, 
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.1) 50%,
-                rgba(255,255,255,0) 100%
-            );
-            transform: rotate(30deg);
-            animation: shineWave 5s infinite linear;
-            opacity: 0.5;
+        .redirect-btn:active {
+            transform: translateY(0);
         }
-        
-        @keyframes shineWave {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
+        .btn-cuevana {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
         }
-        
-        .redirect-button:hover {
-            animation: buttonGlowHover 1s infinite alternate;
+        .btn-anime {
+            background: linear-gradient(45deg, #9C27B0, #BA68C8);
         }
-        
-        @keyframes buttonGlowHover {
-            0% { filter: brightness(1); }
-            100% { filter: brightness(1.2); }
+        .btn-futbol {
+            background: linear-gradient(45deg, #45B649, #6FD86F);
         }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-            100% { transform: translateY(0px); }
+        .btn-icon {
+            font-size: 1.5em;
         }
-        
-        /* Colores para cada botón */
-        .micros {
-            background: linear-gradient(135deg, #2196F3 0%, #0d8bf2 100%);
-        }
-        
-        .tienda {
-            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-        }
-        
-        .comentarios {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-        }
-        
-        .negocios {
-            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-        }
-        
-        .quinchos {
-            background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
-        }
-        
-        .clima {
-            background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
-        }
-        
-        .emergencias {
-            background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
-        }
-        
-        .icon {
-            font-size: 1.3rem;
-            animation: iconPulse 2s infinite alternate;
-        }
-        
-        @keyframes iconPulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            opacity: 0;
-            animation: confettiFall 2s ease-out forwards;
-            z-index: 10;
-        }
-        
-        @keyframes confettiFall {
-            0% { 
-                transform: translateY(0) rotate(0deg); 
-                opacity: 1;
-            }
-            100% { 
-                transform: translateY(100vh) rotate(360deg); 
-                opacity: 0;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            body {
-                padding-top: 10vh;
-            }
-            
-            .button-container {
-                grid-template-columns: repeat(2, 1fr);
-                max-width: 700px;
-                gap: 18px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 30px;
-            }
-            
-            .redirect-button {
-                padding: 16px 20px;
-                font-size: 1.05rem;
-            }
+        .footer-note {
+            margin-top: 20px;
+            color: #999;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div id="particles-js"></div>
-     
-    <h1>Servicios Lavalle</h1>
-    <div class="button-container">
-        <a href="micros.html" class="redirect-button micros">
-            <i class="fas fa-bus icon"></i>
-            <span>Micros Lavalle</span>
-        </a>
-        <a href="tiendadigital.html" class="redirect-button tienda">
-            <i class="fas fa-store icon"></i>
-            <span>Tienda Lavalle</span>
-        </a>
-        <a href="emergencias.html" class="redirect-button emergencias">
-            <i class="fas fa-ambulance icon"></i>
-            <span>Emergencias Lavalle</span>
-        </a>
-       
-       
+    <div class="container">
+        <h1>🎬 Entretenimiento</h1>
+        <p class="portal-description">Haz clic en cualquier botón para ir directamente al sitio</p>
+        
+        <div class="button-container">
+            <!-- Botón Cuevana - Redirección directa -->
+            <a href="https://cue.cuevana3.nu/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="redirect-btn btn-cuevana">
+                <span class="btn-icon">🎥</span>
+                Cuevana - Películas y Series
+            </a>
+            
+            <!-- Botón Anime Latino - Redirección directa con ícono de anime -->
+            <a href="https://www.animelatinohd.com/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="redirect-btn btn-anime">
+                <span class="btn-icon">🍜</span>
+                Anime Latino HD
+            </a>
+            
+            <!-- Botón Fútbol Libre - Redirección directa -->
+            <a href="https://librefutboltv.su/home1/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="redirect-btn btn-futbol">
+                <span class="btn-icon">⚽</span>
+                Fútbol Libre Oficial
+            </a>
+        </div>
+
+        <div class="footer-note">
+            ⚡ Haz clic en cualquier botón para acceder
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Script opcional para estadísticas de clics (puedes eliminarlo) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": {
-                        "value": 80,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": ["#6a11cb", "#2575fc", "#4CAF50", "#FF9800", "#f83600", "#9C27B0", "#00BCD4"]
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.6,
-                        "random": true,
-                        "anim": {
-                            "enable": true,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": true,
-                            "speed": 4,
-                            "size_min": 1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 120,
-                        "color": "#ffffff",
-                        "opacity": 0.2,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 2.5,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": true,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "repulse"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "repulse": {
-                            "distance": 80,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        }
-                    }
-                },
-                "retina_detect": true
+        document.querySelectorAll('.redirect-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const siteName = this.innerText.trim();
+                console.log(`Redirigiendo a: ${siteName}`);
+                // Aquí puedes agregar código para analytics si lo deseas
             });
-
-            const colors = [
-                "radial-gradient(circle at center, #2a0845 0%, #0f0f1a 70%)",
-                "radial-gradient(circle at center, #1a2a6c 0%, #0f0f1a 70%)",
-                "radial-gradient(circle at center, #4b134f 0%, #0f0f1a 70%)"
-            ];
-            
-            let current = 0;
-            const bg = document.getElementById('particles-js');
-            
-            setInterval(() => {
-                current = (current + 1) % colors.length;
-                bg.style.transition = "background 10s ease";
-                bg.style.background = colors[current];
-            }, 15000);
-
-            const buttons = document.querySelectorAll('.redirect-button');
-            buttons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    for(let i = 0; i < 20; i++) {
-                        createConfetti(e.clientX, e.clientY);
-                    }
-                });
-            });
-            
-            function createConfetti(x, y) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = `${x}px`;
-                confetti.style.top = `${y}px`;
-                confetti.style.backgroundColor = getRandomColor();
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => {
-                    confetti.remove();
-                }, 2000);
-            }
-            
-            function getRandomColor() {
-                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
         });
     </script>
 </body>
 </html>
-<br> <p style="text-align: center; color: white;">© 2025 Elian Mamani. Todos los derechos reservados.
-</p>
