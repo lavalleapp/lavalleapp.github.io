@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Lavalle App · Planes Web + Dominio y Punto de Venta</title>
+    <!-- Fuente optimizada y moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f9fe;
+            background-image: radial-gradient(circle at 10% 20%, rgba(28,110,111,0.03) 0%, rgba(0,0,0,0) 70%);
+            color: #122b38;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Header adaptable */
+        .main-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .main-header h1 {
+            font-size: clamp(1.8rem, 7vw, 2.8rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #0F4C5C, #1C7A6E, #F0A73E);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            letter-spacing: -0.3px;
+        }
+        .main-header h1 i {
+            background: none;
+            color: #1C6E6F;
+            font-size: clamp(1.6rem, 6vw, 2.3rem);
+        }
+        .main-header p {
+            font-size: clamp(0.9rem, 4vw, 1.15rem);
+            font-weight: 500;
+            color: #2c6275;
+            margin-top: 0.4rem;
+            padding: 0 0.5rem;
+        }
+        .tagline {
+            background: #eef2f7;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.8rem;
+            color: #1e6a5e;
+            flex-wrap: wrap;
+        }
+
+        /* Grid tarjetas: una columna en móvil, flex en desktop */
+        .pricing-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0 1.8rem;
+        }
+
+        /* Tarjetas con ancho fluido */
+        .price-card {
+            background: #ffffff;
+            border-radius: 1.8rem;
+            flex: 1 1 100%;
+            max-width: 100%;
+            transition: all 0.25s ease;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.07);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        /* En pantallas medianas, que las tarjetas se muestren lado a lado */
+        @media (min-width: 640px) {
+            .price-card {
+                flex: 1 1 280px;
+                max-width: 340px;
+            }
+            .pricing-grid {
+                gap: 1.8rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .price-card {
+                flex: 1 1 300px;
+                max-width: 350px;
+            }
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 36px -16px rgba(28, 110, 111, 0.2);
+            border-color: #cde0e8;
+        }
+
+        /* Bordes decorativos */
+        .card-gratis { border-top: 5px solid #9aaebf; }
+        .card-standard { border-top: 5px solid #2C7A7B; }
+        .card-élite { border-top: 5px solid #F4B942; background: white; }
+
+        .card-header {
+            padding: 1.5rem 1rem 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #ecf3f8;
+        }
+        .plan-name {
+            font-size: clamp(1.5rem, 6vw, 1.9rem);
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .plan-price {
+            font-size: clamp(2rem, 7vw, 2.6rem);
+            font-weight: 800;
+            color: #0f3340;
+            margin: 0.5rem 0 0.1rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .plan-price .currency { font-size: 1.3rem; font-weight: 700; }
+        .plan-price .amount { font-size: clamp(2.2rem, 8vw, 3rem); letter-spacing: -1px; }
+        .plan-period {
+            background: #eef2f7;
+            padding: 0.2rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+            color: #2C7A7B;
+        }
+        .price-note {
+            font-size: 0.7rem;
+            background: #fff1e0;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            margin-top: 10px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        /* features list */
+        .features-list {
+            padding: 1.2rem 1.2rem 0.8rem;
+            list-style: none;
+        }
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.85rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1f4d61;
+            line-height: 1.3;
+        }
+        .features-list li i:first-child {
+            width: 22px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .fa-check-circle { color: #2a9d8f; }
+        .fa-times-circle { color: #cbd5e6; }
+        .fa-ad, .fa-bullhorn { color: #e67e22; }
+        .badge-highlight {
+            background: #fef2e0;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+        .point-sale-icon {
+            background: #F4B94220;
+            padding: 0.15rem 0.5rem;
+            border-radius: 24px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Botones táctiles */
+        .btn-plan {
+            display: block;
+            width: calc(100% - 1.8rem);
+            margin: 0.5rem auto 1.3rem auto;
+            padding: 0.75rem 0;
+            text-align: center;
+            background: #f0f5fa;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #1b5e6b;
+            border: 1px solid #d4e2ec;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-primary {
+            background: #1C6E6F;
+            color: white;
+            border: none;
+            box-shadow: 0 6px 14px -6px #1C6E6F;
+        }
+        .btn-primary:active {
+            background: #0f595a;
+            transform: scale(0.97);
+        }
+        .btn-outline:active {
+            background: #e6f2f5;
+        }
+
+        /* Nota suscripción */
+        .subscription-note {
+            background: #eef2f9;
+            border-radius: 1.5rem;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            margin: 0.5rem auto 1.2rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #175f68;
+            width: 100%;
+        }
+
+        /* Sección explicativa responsiva */
+        .info-highlight {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1rem 1rem;
+            margin: 0.5rem auto 0;
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.05);
+            border: 1px solid #e6f0f2;
+        }
+        .info-flex {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+        .info-item i {
+            font-size: 1.6rem;
+        }
+        .divider-mobile {
+            width: 60px;
+            height: 2px;
+            background: #cde0ea;
+            margin: 0 auto;
+        }
+        @media (min-width: 640px) {
+            .info-flex {
+                flex-direction: row;
+                justify-content: center;
+                gap: 1.8rem;
+            }
+            .divider-mobile {
+                width: 1px;
+                height: 35px;
+                margin: 0;
+            }
+            .info-item {
+                width: auto;
+            }
+        }
+        .info-item span strong {
+            display: block;
+            font-size: 0.85rem;
+        }
+        .info-item span small {
+            font-size: 0.7rem;
+            color: #5f7e93;
+        }
+
+        /* Footer sin redes sociales, solo WhatsApp */
+        .footer-simple {
+            text-align: center;
+            margin-top: 2rem;
+            border-top: 1px solid #cde0ea;
+            padding-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #5f8198;
+        }
+        .whatsapp-contact {
+            background: #e6f0f2;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            margin-bottom: 0.8rem;
+            text-decoration: none;
+            color: #1C6E6F;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .whatsapp-contact i {
+            font-size: 1.2rem;
+        }
+        .whatsapp-contact:active {
+            background: #1C6E6F;
+            color: white;
+        }
+        .small-note {
+            font-size: 0.65rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Ajustes extra para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .features-list li {
+                font-size: 0.8rem;
+                gap: 8px;
+            }
+            .btn-plan {
+                font-size: 0.85rem;
+                padding: 0.7rem 0;
+            }
+            .price-note {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-header">
+        <h1><i class="fas fa-laptop-code"></i> Lavalle App</h1>
+        <p>Creá tu página web · Subí y vendé productos sin límites</p>
+        <div class="tagline"><i class="fas fa-tachometer-alt"></i> Panel de control simple · Elegí tu plan hoy</div>
+    </div>
+
+    <div class="pricing-grid">
+        <!-- PLAN 1: GRATIS con anuncios en panel (sin redes sociales) -->
+        <div class="price-card card-gratis">
+            <div class="card-header">
+                <div class="plan-name">Plan Gratuito</div>
+                <div class="plan-price"><span class="currency">$</span><span class="amount">0</span></div>
+                <div class="plan-period">Sin costo mensual</div>
+                <div class="price-note"><i class="fas fa-ad"></i> Anuncios solo en el panel</div>
+            </div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> <strong>Subir productos ilimitados</strong></li>
+                <li><i class="fas fa-check-circle"></i> Página web funcional</li>
+                <li><i class="fas fa-bullhorn"></i> <span class="badge-highlight">Anuncios Lavalle App (panel)</span></li>
+                <li><i class="fas fa-chart-simple"></i> Gestión de pedidos</li>
+                <li><i class="fas fa-store"></i> Catálogo digital completo</li>
+                <li><i class="fas fa-mobile-alt"></i> Diseño responsive</li>
+            </ul>
+            <a href="https://wa.me/5492612316632?text=Hola%20Lavalle%20App%2C%20quiero%20activar%20el%20Plan%20Gratuito%20para%20subir%20productos" target="_blank" rel="noopener noreferrer" class="btn-plan btn-outline"><i class="fab fa-whatsapp"></i> Activar gratis →</a>
+        </div>
+
+        <!-- PLAN 2: $30.000 mensual SIN anuncios -->
+        <div class="price-card card-standard">
+            <div class="card-header">
+                <div class="plan-name">Plan Sin Anuncios</div>
+                <div class="plan-price"><span class="currency">$</span><span class="amount">50.000</span></div>
+                <div class="plan-period">por mes · sin publicidad</div>
+                <div class="price-note"><i class="fas fa-ban"></i> Cero banners · experiencia limpia</div>
+            </div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Todo el plan anterior +</li>
+                <li><i class="fas fa-times-circle" style="color:#2a9d8f;"></i> <strong>Sin anuncios</strong> (panel 100% limpio)</li>
+                <li><i class="fas fa-upload"></i> Subida masiva de productos</li>
+                <li><i class="fas fa-palette"></i> Personalización de colores y logo</li>
+                <li><i class="fab fa-whatsapp"></i> Botón de WhatsApp integrado</li>
+                <li><i class="fas fa-chart-line"></i> Panel de ventas simplificado</li>
+                <li><i class="fas fa-database"></i> Sin límite de productos destacados</li>
+            </ul>
+            <a href="https://wa.me/5492612316632?text=Quiero%20el%20Plan%20Sin%20Anuncios%20por%20$30.000%2Fmes%20en%20Lavalle%20App" target="_blank" rel="noopener noreferrer" class="btn-plan btn-primary"><i class="fab fa-whatsapp"></i> Contratar →</a>
+        </div>
+
+        <!-- PLAN 3: ÉLITE: DOMINIO PROPIO + 1 PUNTO DE VENTA -->
+        <div class="price-card card-élite">
+            <div class="card-header">
+                <div class="plan-name">Plan Élite + Ventas</div>
+                <div class="plan-price"><span class="currency">$</span><span class="amount">100.000</span></div>
+                <div class="plan-period">por mes · dominio + punto de venta</div>
+                <div class="price-note"><i class="fas fa-globe"></i> <strong>Dominio .com/.com.ar</strong> + <i class="fas fa-map-pin"></i> 1 punto de venta</div>
+            </div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Todo lo del Plan sin anuncios</li>
+                <li><i class="fas fa-globe"></i> <strong>Página web con dominio personalizado</strong> (ej: tunegocio.com)</li>
+                <li><i class="fas fa-store"></i> <strong class="point-sale-icon">1 punto de venta incluido</strong> (local / retiro / deposito)</li>
+                <li><i class="fas fa-chart-line"></i> Gestión unificada + reportes del punto de venta</li>
+                <li><i class="fas fa-tachometer-alt"></i> Panel ejecutivo con métricas por sucursal</li>
+                <li><i class="fas fa-headset"></i> Soporte prioritario dedicado</li>
+                <li><i class="fas fa-rocket"></i> Mayor visibilidad y posicionamiento</li>
+                <li><i class="fab fa-whatsapp"></i> Botón WhatsApp personalizado para ventas</li>
+            </ul>
+            <a href="https://wa.me/5492612316632?text=Hola%2C%20quiero%20el%20Plan%20Élite%20con%20dominio%20propio%20%2B%201%20punto%20de%20venta%20(50.000%2Fmes)%20en%20Lavalle%20App" target="_blank" rel="noopener noreferrer" class="btn-plan btn-primary"><i class="fab fa-whatsapp"></i> Obtener Plan Élite →</a>
+        </div>
+    </div>
+
+    <!-- Nota mensual y recordatorio -->
+    <div class="subscription-note">
+        <i class="fas fa-calendar-alt"></i> Los planes de pago son <strong>suscripción mensual</strong> · Sin permanencia · Cancelá cuando quieras.
+        <span style="display: block; margin-top: 4px;">🎯 El Plan Élite incluye <strong>dominio gratuito por primer año</strong> + la gestión de 1 punto de venta físico o digital.</span>
+    </div>
+
+    <!-- Sección destacada dominio + punto de venta (mobile friendly) -->
+    <div class="info-highlight">
+        <div class="info-flex">
+            <div class="info-item">
+                <i class="fas fa-globe" style="font-size: 1.8rem; color:#1C6E6F;"></i>
+                <span><strong>Dominio propio</strong><small> .com / .com.ar sin costo extra</small></span>
+            </div>
+            <div class="divider-mobile"></div>
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt" style="font-size: 1.8rem; color:#F4B942;"></i>
+                <span><strong>1 punto de venta incluido</strong><small> Administrá local, comisionista o punto de retiro</small></span>
+            </div>
+            <div class="divider-mobile"></div>
+            <div class="info-item">
+                <i class="fab fa-whatsapp" style="font-size: 1.8rem; color:#25D366;"></i>
+                <span><strong>WhatsApp integrado</strong><small> Atención directa desde tu web</small></span>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 0.8rem; font-size: 0.7rem; color: #69889b;">
+            <i class="fas fa-store"></i> El punto de venta puede ser local comercial, depósito, o un punto de logística. Todo sincronizado desde tu panel.
+        </div>
+    </div>
+
+    <!-- Footer solo contacto WhatsApp, sin redes sociales -->
+    <div class="footer-simple">
+        <a href="https://wa.me/5492612316632?text=Consulta%20sobre%20planes%20Lavalle%20App" target="_blank" rel="noopener noreferrer" class="whatsapp-contact">
+            <i class="fab fa-whatsapp"></i> Consultar por WhatsApp 2612316632
+        </a>
+        <p><i class="far fa-registered"></i> Lavalle App · Creación de páginas web · Panel de control sin ruido.</p>
+        <p class="small-note">Plan gratuito: muestra anuncios solo dentro del panel de administración. Mejorá a planes sin publicidad.</p>
+        <p class="small-note">Todos los planes incluyen botón de WhatsApp para tus clientes y gestión de productos.</p>
+    </div>
+</div>
+
+<!-- Script simple sin redes sociales, solo funcionalidad de tracking mínima -->
+<script>
+    // Aseguramos aún más que ningún elemento de redes sociales aparezca (por si acaso)
+    document.querySelectorAll('a[href*="instagram"], a[href*="facebook"], a[href*="tiktok"], a[href*="twitter"]').forEach(el => el.remove());
+    console.log("Lavalle App - Versión responsiva móvil, sin redes sociales, Plan Elite: DOMINIO + 1 PUNTO DE VENTA");
+    // Toque amigable en móviles para los botones
+    const btns = document.querySelectorAll('.btn-plan');
+    btns.forEach(btn => {
+        btn.addEventListener('touchstart', function() {
+            // solo feedback táctil, no interfiere con el enlace
+            this.style.opacity = '0.8';
+        });
+        btn.addEventListener('touchend', function() {
+            this.style.opacity = '1';
+        });
+    });
+</script>
+</body>
+</html>
