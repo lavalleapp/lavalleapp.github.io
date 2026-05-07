@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Lista Visual de Compras | Recibo con fotos</title>
-    <!-- Libreria html2pdf.js para generar PDF tipo recibo -->
+    <title>Lista Visual de Compras | Recibo con Fotos</title>
+    <!-- Libreria html2pdf.js mejorada para PDF con imágenes correctas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
@@ -15,96 +15,89 @@
         }
 
         body {
-            background: linear-gradient(145deg, #d4e6f1 0%, #b8d4e8 100%);
-            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            padding: 20px 14px 32px 14px;
+            background: linear-gradient(145deg, #cde5f5 0%, #b0d0e8 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+            padding: 16px 12px 24px 12px;
             min-height: 100vh;
         }
 
-        /* Contenedor principal con tono celeste claro */
+        /* Contenedor principal */
         .shopping-app {
-            max-width: 580px;
+            max-width: 550px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 42px;
-            box-shadow: 0 20px 40px rgba(0, 30, 60, 0.15);
+            background: #ffffff;
+            border-radius: 36px;
+            box-shadow: 0 20px 35px rgba(0, 40, 60, 0.2);
             overflow: hidden;
-            backdrop-filter: blur(1px);
-            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: auto;
         }
 
-        /* Header celeste */
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #0b3b5f, #1b5a8c);
-            padding: 24px 20px 18px 20px;
+            background: linear-gradient(135deg, #126180, #1e6a96);
+            padding: 20px 18px 16px;
             text-align: center;
             color: white;
         }
 
         .header h1 {
-            font-size: 1.9rem;
+            font-size: 1.7rem;
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            letter-spacing: -0.3px;
-        }
-
-        .header h1::before {
-            content: "📸";
-            font-size: 2rem;
+            gap: 8px;
         }
 
         .sub {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             opacity: 0.9;
-            margin-top: 8px;
+            margin-top: 6px;
             background: rgba(255,255,255,0.2);
             display: inline-block;
-            padding: 4px 16px;
-            border-radius: 60px;
+            padding: 4px 14px;
+            border-radius: 40px;
         }
 
-        /* Formulario con acento celeste */
+        /* Formulario */
         .form-card {
-            background: #f4faff;
-            padding: 22px 20px;
-            border-bottom: 1px solid #cde2f0;
+            background: #f8fcff;
+            padding: 20px 16px;
+            border-bottom: 1px solid #cde1ef;
         }
 
         .camera-section {
-            background: #e6f0fa;
-            border-radius: 32px;
-            padding: 18px;
-            margin-bottom: 20px;
+            background: #eaf3fc;
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 18px;
             text-align: center;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
         }
 
         .photo-preview-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .captured-photo {
-            width: 130px;
-            height: 130px;
+            width: 110px;
+            height: 110px;
             border-radius: 28px;
             object-fit: cover;
-            background: #e2edf7;
-            border: 3px solid #5fa3cf;
-            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
-            transition: 0.1s;
+            background: #cde0ef;
+            border: 3px solid #3d8ec0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
         .btn-camera {
-            background: #1f6392;
+            background: #1e6a96;
             border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
+            padding: 12px 24px;
+            border-radius: 50px;
             color: white;
             font-weight: 700;
             font-size: 0.9rem;
@@ -113,51 +106,44 @@
             gap: 8px;
             cursor: pointer;
             transition: 0.1s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .btn-camera:active {
-            transform: scale(0.96);
-            background: #0f4a6e;
-        }
+        .btn-camera:active { transform: scale(0.96); background: #0f5278; }
 
         .input-field {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .input-field label {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: #176087;
-            text-transform: uppercase;
+            color: #176f9e;
             margin-bottom: 6px;
-            letter-spacing: 0.4px;
         }
 
         .input-field input {
             width: 100%;
             padding: 14px 16px;
-            border: 1.5px solid #cde0ed;
-            border-radius: 30px;
+            border: 1.5px solid #cce0ef;
+            border-radius: 32px;
             font-size: 0.95rem;
             background: white;
-            transition: 0.2s;
         }
 
         .input-field input:focus {
             outline: none;
-            border-color: #2c7cb6;
-            box-shadow: 0 0 0 3px rgba(44, 124, 182, 0.2);
+            border-color: #2c8bc0;
+            box-shadow: 0 0 0 2px rgba(44,139,192,0.2);
         }
 
         .btn-add {
-            background: #176087;
+            background: #176f9e;
             width: 100%;
             border: none;
-            padding: 15px;
+            padding: 14px;
             border-radius: 50px;
             font-weight: 800;
             font-size: 1rem;
@@ -167,50 +153,48 @@
             justify-content: center;
             gap: 8px;
             cursor: pointer;
-            transition: 0.1s;
-            margin-top: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            margin-top: 6px;
         }
 
-        .btn-add:active {
-            transform: scale(0.97);
-            background: #0f4e6f;
-        }
+        .btn-add:active { transform: scale(0.97); background: #0f5880; }
 
-        /* Lista de productos con diseño moderno */
+        /* LISTA DE PRODUCTOS - SCROLL VERTICAL CÓMODO EN MÓVIL */
         .products-list {
-            padding: 20px 16px;
+            padding: 18px 14px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            max-height: 48vh;
+            gap: 14px;
+            max-height: 42vh;
+            min-height: 180px;
             overflow-y: auto;
             background: #ffffff;
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* Tarjetas compactas pero legibles */
         .product-card {
             background: #fefeff;
-            border-radius: 28px;
+            border-radius: 26px;
             padding: 12px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            box-shadow: 0 4px 12px rgba(44, 101, 138, 0.08);
-            border: 1px solid #d9e6f2;
-            transition: all 0.1s;
+            gap: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #d7e6f2;
+            flex-wrap: wrap;
         }
 
         .product-img-box {
-            width: 70px;
-            height: 70px;
-            border-radius: 24px;
-            background: #eef3fc;
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: #eef4fa;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
-            border: 1px solid #cbe0ef;
+            border: 1px solid #c9dfef;
         }
 
         .product-img-box img {
@@ -220,7 +204,7 @@
         }
 
         .product-controls {
-            flex: 1;
+            flex: 2;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -230,183 +214,174 @@
 
         .price-tag {
             font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             background: #e3f0fa;
-            padding: 6px 12px;
-            border-radius: 40px;
-            color: #0f5b87;
+            padding: 5px 12px;
+            border-radius: 50px;
+            color: #146b97;
         }
 
         .quantity-zone {
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #ecf4fa;
-            padding: 4px 10px;
+            background: #edf5fc;
+            padding: 3px 8px;
             border-radius: 50px;
         }
 
         .qty-btn {
             background: white;
             border: none;
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 30px;
             font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            color: #176087;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            color: #176f9e;
         }
-
-        .qty-btn:active {
-            transform: scale(0.92);
-        }
+        .qty-btn:active { transform: scale(0.92); }
 
         .qty-number {
             font-weight: 700;
-            min-width: 28px;
+            min-width: 26px;
             text-align: center;
-            color: #1e4663;
+            font-size: 0.95rem;
         }
 
         .subtotal-amount {
             font-weight: 700;
-            font-size: 0.9rem;
-            background: #e0f0fe;
-            padding: 6px 12px;
+            font-size: 0.85rem;
+            background: #e1eff9;
+            padding: 5px 12px;
             border-radius: 40px;
-            color: #0d4b70;
+            color: #0e5780;
         }
 
         .delete-single {
-            background: #ffe6e5;
+            background: #ffe6e3;
             border: none;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 40px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
-            color: #c23d2b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #bc3b2a;
         }
+        .delete-single:active { background: #fccfcb; transform: scale(0.94); }
 
-        .delete-single:active {
-            background: #ffcecc;
-            transform: scale(0.94);
-        }
-
-        /* Total y botón PDF estilo recibo */
+        /* Total y PDF */
         .total-actions {
-            background: #1b4e72;
-            padding: 18px 20px;
+            background: #135e85;
+            padding: 16px 18px;
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
-            border-top: 2px solid #3482b0;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-top: 1px solid #3282ac;
         }
 
         .total-box {
-            background: #0e3a55;
-            border-radius: 60px;
-            padding: 6px 18px;
+            background: #0a4664;
+            border-radius: 50px;
+            padding: 5px 16px;
         }
 
         .total-label {
-            color: #bdd9ed;
-            font-size: 0.7rem;
-            font-weight: 500;
+            color: #c4e0f2;
+            font-size: 0.65rem;
         }
 
         .total-price {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             color: white;
             line-height: 1;
         }
 
         .pdf-btn {
-            background: #facc15;
+            background: #f9b81b;
             border: none;
-            padding: 10px 22px;
-            border-radius: 60px;
-            color: #1e2f3f;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #1c3d54;
             font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
-
-        .pdf-btn:active {
-            background: #eab308;
-            transform: scale(0.96);
-        }
+        .pdf-btn:active { background: #e5a50e; transform: scale(0.96); }
 
         .empty-state {
             text-align: center;
-            padding: 50px 20px;
-            color: #7fa1bc;
-            background: #fafdff;
+            padding: 40px 16px;
+            color: #779bb3;
+            background: #fbfeff;
             border-radius: 32px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         footer {
             text-align: center;
-            font-size: 0.65rem;
-            color: #5482a0;
-            padding: 14px 0 12px;
+            font-size: 0.6rem;
+            color: #5f8aaa;
+            padding: 12px 0 10px;
             background: white;
-            border-top: 1px solid #ddebf5;
+            border-top: 1px solid #dfecf5;
         }
 
-        @media (max-width: 550px) {
-            .product-card {
-                flex-wrap: wrap;
-            }
+        /* scroll suave */
+        .products-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .products-list::-webkit-scrollbar-track {
+            background: #e9f0f5;
+            border-radius: 10px;
+        }
+        .products-list::-webkit-scrollbar-thumb {
+            background: #9bbdd2;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 500px) {
             .product-controls {
                 width: 100%;
                 justify-content: space-evenly;
+                margin-top: 4px;
+            }
+            .product-img-box {
+                width: 58px;
+                height: 58px;
             }
         }
-
-        input[type="file"] {
-            display: none;
-        }
-        small {
-            color: #2d6a8f;
-            font-size: 0.7rem;
-        }
+        input[type="file"] { display: none; }
+        small { color: #3b7c9e; font-size: 0.65rem; }
     </style>
 </head>
 <body>
 <div class="shopping-app">
     <div class="header">
-        <h1>Compra Visual</h1>
-        <div class="sub">📸 Toma foto · Precio · Cantidad · Recibo final</div>
+        <h1>📸 FotoCompra</h1>
+        <div class="sub">Saca foto · Precio · Cantidad · Recibo con imágenes</div>
     </div>
 
     <div class="form-card">
         <div class="camera-section">
             <div class="photo-preview-area">
-                <img id="previewImage" class="captured-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='%239ac2db'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E" alt="Vista previa">
+                <img id="previewImage" class="captured-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238db9d4'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E" alt="preview">
                 <input type="file" id="cameraInput" accept="image/*" capture="environment">
-                <button id="openCameraBtn" class="btn-camera">📷 Tomar foto / Elegir imagen</button>
-                <small>📸 Captura el producto con tu cámara</small>
+                <button id="openCameraBtn" class="btn-camera">📷 Tomar foto / Galería</button>
+                <small>📱 Toca para capturar el producto</small>
             </div>
         </div>
 
         <div class="input-field">
             <label>💰 Precio unitario ($)</label>
-            <input type="number" id="priceInput" placeholder="Ej: 2.99" step="0.01" value="">
+            <input type="number" id="priceInput" placeholder="Ej: 2.99" step="0.01">
         </div>
         <div class="input-field">
             <label>🔢 Cantidad</label>
@@ -415,8 +390,9 @@
         <button class="btn-add" id="addProductBtn">➕ Agregar a la lista</button>
     </div>
 
+    <!-- Lista con scroll cómodo -->
     <div class="products-list" id="productsContainer">
-        <div class="empty-state">📸 Tu lista está vacía<br>Sácale una foto al producto, pon precio y cantidad</div>
+        <div class="empty-state">📸 Lista vacía<br>Saca una foto al producto, precio y cantidad</div>
     </div>
 
     <div class="total-actions">
@@ -424,20 +400,20 @@
             <div class="total-label">TOTAL A PAGAR</div>
             <div class="total-price" id="globalTotal">$0.00</div>
         </div>
-        <button id="downloadPdfBtn" class="pdf-btn">🧾 DESCARGAR RECIBO PDF</button>
+        <button id="downloadPdfBtn" class="pdf-btn">🧾 RECIBO PDF</button>
     </div>
     <footer>
-        © 2026 Nahuel Mamani. Todos los derechos reservados. | Lista con fotos reales
+        © 2026 Nahuel Mamani. Todos los derechos reservados.
     </footer>
 </div>
 
 <script>
-    // ---------- Variables ----------
+    // ---------- Modelo de datos ----------
     let productos = [];          // { id, imageDataURL, price, quantity }
     let nextId = 1;
     let currentImageDataURL = null;
 
-    // DOM elements
+    // Elementos DOM
     const productsContainer = document.getElementById('productsContainer');
     const globalTotalSpan = document.getElementById('globalTotal');
     const addBtn = document.getElementById('addProductBtn');
@@ -448,18 +424,18 @@
     const openCameraBtn = document.getElementById('openCameraBtn');
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
-    // ----- Manejo de captura de foto (celular / cámara) -----
+    // ----- Captura de foto (cámara o galería) -----
     function handleImageSelected(file) {
         if (!file) return;
         if (!file.type.startsWith('image/')) {
-            alert("Por favor selecciona una imagen válida.");
+            alert("Selecciona una imagen válida.");
             return;
         }
         const reader = new FileReader();
         reader.onload = function(e) {
             currentImageDataURL = e.target.result;
             previewImage.src = currentImageDataURL;
-            previewImage.style.border = "3px solid #2c7cb6";
+            previewImage.style.border = "3px solid #3d8ec0";
         };
         reader.readAsDataURL(file);
     }
@@ -486,7 +462,7 @@
         input.click();
     });
 
-    // ---- Funciones de total y persistencia ----
+    // ----- Cálculo total -----
     function calcularTotal() {
         let total = 0;
         for (let p of productos) total += p.price * p.quantity;
@@ -497,19 +473,20 @@
         globalTotalSpan.innerText = `$${calcularTotal().toFixed(2)}`;
     }
 
+    // ----- Persistencia -----
     function guardarStorage() {
         try {
-            localStorage.setItem('shopping_list_celeste', JSON.stringify(productos));
-            localStorage.setItem('shopping_next_id_celeste', nextId);
+            localStorage.setItem('shopping_list_celeste_v2', JSON.stringify(productos));
+            localStorage.setItem('shopping_next_id_v2', nextId);
         } catch(e) { console.warn(e); }
     }
 
     function cargarStorage() {
-        const data = localStorage.getItem('shopping_list_celeste');
+        const data = localStorage.getItem('shopping_list_celeste_v2');
         if (data) {
             try {
                 productos = JSON.parse(data);
-                const savedId = localStorage.getItem('shopping_next_id_celeste');
+                const savedId = localStorage.getItem('shopping_next_id_v2');
                 if (savedId) nextId = parseInt(savedId) || 1;
                 else nextId = productos.length ? Math.max(...productos.map(p => p.id), 0) + 1 : 1;
                 renderizarLista();
@@ -524,11 +501,11 @@
         }
     }
 
-    // Render lista con fotos reales
+    // ----- Render optimizado para móvil (scroll cómodo) -----
     function renderizarLista() {
         if (!productsContainer) return;
         if (productos.length === 0) {
-            productsContainer.innerHTML = `<div class="empty-state">📸 Agrega tu primer artículo<br>Sácale una foto, precio y cantidad</div>`;
+            productsContainer.innerHTML = `<div class="empty-state">📸 Agrega tu primer producto<br>Sácale foto, precio y cantidad</div>`;
             actualizarTotalUI();
             guardarStorage();
             return;
@@ -540,13 +517,13 @@
             html += `
                 <div class="product-card" data-id="${prod.id}">
                     <div class="product-img-box">
-                        <img src="${prod.imageDataURL}" alt="producto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27 fill=%27%238bb9d1%27%3E%3Cpath d=%27M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z%27/%3E%3C/svg%3E'">
+                        <img src="${prod.imageDataURL}" alt="producto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27 fill=%27%2390bbd4%27%3E%3Cpath d=%27M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z%27/%3E%3C/svg%3E'">
                     </div>
                     <div class="product-controls">
                         <div class="price-tag">$${prod.price.toFixed(2)}</div>
                         <div class="quantity-zone">
                             <button class="qty-btn decr-btn" data-id="${prod.id}">−</button>
-                            <span class="qty-number" id="qty-${prod.id}">${prod.quantity}</span>
+                            <span class="qty-number">${prod.quantity}</span>
                             <button class="qty-btn incr-btn" data-id="${prod.id}">+</button>
                         </div>
                         <div class="subtotal-amount">$${subtotal.toFixed(2)}</div>
@@ -559,6 +536,7 @@
         actualizarTotalUI();
         guardarStorage();
 
+        // Eventos
         document.querySelectorAll('.incr-btn').forEach(btn => {
             btn.removeEventListener('click', incrHandler);
             btn.addEventListener('click', incrHandler);
@@ -591,10 +569,10 @@
         renderizarLista();
     }
 
-    // Agregar producto con la foto capturada
+    // Agregar producto con foto
     function agregarProducto() {
         if (!currentImageDataURL) {
-            alert("📸 Primero saca una foto del producto usando la cámara.");
+            alert("📸 Primero saca una foto del producto usando la cámara o galería.");
             return;
         }
         const precio = parseFloat(priceInput.value);
@@ -605,61 +583,64 @@
         const nuevo = { id: nextId++, imageDataURL: currentImageDataURL, price: precio, quantity: cantidad };
         productos.push(nuevo);
 
-        // Resetear foto capturada para próximo producto
+        // Reset foto actual para próximo producto
         currentImageDataURL = null;
-        previewImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='%239ac2db'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E";
-        previewImage.style.border = "3px solid #5fa3cf";
+        previewImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238db9d4'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E";
+        previewImage.style.border = "3px solid #3d8ec0";
         priceInput.value = '';
         qtyInput.value = '1';
         cameraInput.value = '';
         renderizarLista();
-        setTimeout(() => { if(productsContainer.lastChild) productsContainer.lastChild.scrollIntoView({ behavior: 'smooth', block: 'nearest'}); }, 60);
+        // Scroll automático al final
+        setTimeout(() => {
+            if (productsContainer.lastChild) productsContainer.lastChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 80);
     }
 
-    // ========== GENERAR PDF COMO RECIBO PROFESIONAL ==========
+    // ---------- GENERAR PDF TIPO RECIBO CON IMÁGENES VISIBLES ----------
     async function generarReciboPDF() {
         if (productos.length === 0) {
-            alert("No hay productos para generar el recibo. Agrega al menos uno.");
+            alert("No hay productos. Agrega al menos uno para generar el recibo.");
             return;
         }
 
-        const total = calcularTotal();
+        const totalGeneral = calcularTotal();
 
-        // Contenedor del recibo con estilo tipo ticket
-        const recibo = document.createElement('div');
-        recibo.style.maxWidth = '550px';
-        recibo.style.margin = '0 auto';
-        recibo.style.backgroundColor = '#ffffff';
-        recibo.style.fontFamily = "'Segoe UI', 'Roboto', system-ui, sans-serif";
-        recibo.style.padding = '24px 22px';
-        recibo.style.borderRadius = '24px';
-        recibo.style.boxShadow = '0 0 0 1px #e2eff9';
+        // Contenedor principal del recibo
+        const reciboDiv = document.createElement('div');
+        reciboDiv.style.maxWidth = '600px';
+        reciboDiv.style.margin = '0 auto';
+        reciboDiv.style.backgroundColor = '#ffffff';
+        reciboDiv.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
+        reciboDiv.style.padding = '28px 24px';
+        reciboDiv.style.borderRadius = '28px';
+        reciboDiv.style.border = '1px solid #cce3f0';
+        reciboDiv.style.boxShadow = '0 0 0 2px #f5faff';
 
-        // Encabezado recibo
-        const headerRecibo = document.createElement('div');
-        headerRecibo.style.textAlign = 'center';
-        headerRecibo.style.borderBottom = '2px dashed #b8d4e8';
-        headerRecibo.style.paddingBottom = '16px';
-        headerRecibo.style.marginBottom = '20px';
-        headerRecibo.innerHTML = `
-            <h2 style="color: #0b3b5f; margin-bottom: 6px;">🧾 RECIBO DE COMPRA</h2>
-            <p style="font-size: 0.75rem; color: #2c6b8f;">Lista Visual - Fotos reales</p>
-            <p style="font-size: 0.7rem; color: #54809b;">${new Date().toLocaleString()}</p>
+        // Encabezado
+        const encabezado = document.createElement('div');
+        encabezado.style.textAlign = 'center';
+        encabezado.style.borderBottom = '2px dashed #b9d6ef';
+        encabezado.style.paddingBottom = '16px';
+        encabezado.style.marginBottom = '24px';
+        encabezado.innerHTML = `
+            <h2 style="color: #0f5d84; margin-bottom: 8px;">🧾 RECIBO DE COMPRA</h2>
+            <p style="font-size: 0.75rem; color: #267cac;">Lista Visual con Fotos</p>
+            <p style="font-size: 0.7rem; color: #5487a5;">${new Date().toLocaleString()}</p>
         `;
-        recibo.appendChild(headerRecibo);
+        reciboDiv.appendChild(encabezado);
 
-        // Tabla de productos
+        // Tabla de productos (incluye miniaturas reales)
         const tabla = document.createElement('table');
         tabla.style.width = '100%';
         tabla.style.borderCollapse = 'collapse';
-        tabla.style.marginBottom = '24px';
-        
-        // Cabecera
+        tabla.style.marginBottom = '28px';
+
         const thead = document.createElement('thead');
         const trHead = document.createElement('tr');
-        trHead.style.background = '#eef4fc';
-        trHead.style.borderBottom = '1px solid #cadeef';
-        const thFoto = document.createElement('th'); thFoto.innerText = 'Foto'; thFoto.style.padding = '12px 6px'; thFoto.style.textAlign = 'left';
+        trHead.style.backgroundColor = '#eaf3fc';
+        trHead.style.borderBottom = '1px solid #c2daef';
+        const thFoto = document.createElement('th'); thFoto.innerText = 'Producto'; thFoto.style.padding = '12px 6px'; thFoto.style.textAlign = 'left';
         const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '12px 6px'; thPrecio.style.textAlign = 'center';
         const thCant = document.createElement('th'); thCant.innerText = 'Cant.'; thCant.style.padding = '12px 6px'; thCant.style.textAlign = 'center';
         const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '12px 6px'; thSub.style.textAlign = 'right';
@@ -671,81 +652,82 @@
         for (let prod of productos) {
             const subtotal = prod.price * prod.quantity;
             const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid #e9f0f7';
-            
-            // Celda foto (miniatura)
+            row.style.borderBottom = '1px solid #ecf3fa';
+
+            // Celda foto + descripción visual
             const cellFoto = document.createElement('td');
             cellFoto.style.padding = '12px 6px';
             const imgMini = document.createElement('img');
             imgMini.src = prod.imageDataURL;
-            imgMini.style.width = '52px';
-            imgMini.style.height = '52px';
+            imgMini.style.width = '56px';
+            imgMini.style.height = '56px';
             imgMini.style.objectFit = 'cover';
-            imgMini.style.borderRadius = '14px';
-            imgMini.style.border = '1px solid #c5deef';
+            imgMini.style.borderRadius = '16px';
+            imgMini.style.border = '1px solid #bfd9ef';
+            imgMini.style.verticalAlign = 'middle';
             cellFoto.appendChild(imgMini);
-            
+
             const cellPrecio = document.createElement('td');
             cellPrecio.innerText = `$${prod.price.toFixed(2)}`;
             cellPrecio.style.padding = '8px 6px';
             cellPrecio.style.textAlign = 'center';
-            
+            cellPrecio.style.fontWeight = '500';
+
             const cellCant = document.createElement('td');
             cellCant.innerText = `${prod.quantity}`;
             cellCant.style.padding = '8px 6px';
             cellCant.style.textAlign = 'center';
-            
+
             const cellSub = document.createElement('td');
             cellSub.innerText = `$${subtotal.toFixed(2)}`;
             cellSub.style.padding = '8px 6px';
             cellSub.style.textAlign = 'right';
-            cellSub.style.fontWeight = '600';
-            
+            cellSub.style.fontWeight = 'bold';
+
             row.appendChild(cellFoto); row.appendChild(cellPrecio); row.appendChild(cellCant); row.appendChild(cellSub);
             tbody.appendChild(row);
         }
         tabla.appendChild(tbody);
-        recibo.appendChild(tabla);
+        reciboDiv.appendChild(tabla);
 
-        // Línea de total
-        const totalDiv = document.createElement('div');
-        totalDiv.style.display = 'flex';
-        totalDiv.style.justifyContent = 'flex-end';
-        totalDiv.style.alignItems = 'center';
-        totalDiv.style.gap = '20px';
-        totalDiv.style.borderTop = '2px solid #cadeef';
-        totalDiv.style.paddingTop = '16px';
-        totalDiv.style.marginTop = '8px';
-        totalDiv.style.fontWeight = 'bold';
-        totalDiv.innerHTML = `
-            <span style="font-size: 1rem;">TOTAL A PAGAR:</span>
-            <span style="font-size: 1.7rem; font-weight: 800; color: #0c4e6e;">$${total.toFixed(2)}</span>
+        // Total general
+        const totalContainer = document.createElement('div');
+        totalContainer.style.display = 'flex';
+        totalContainer.style.justifyContent = 'flex-end';
+        totalContainer.style.alignItems = 'center';
+        totalContainer.style.gap = '18px';
+        totalContainer.style.borderTop = '2px solid #bed9f0';
+        totalContainer.style.paddingTop = '18px';
+        totalContainer.style.marginTop = '8px';
+        totalContainer.innerHTML = `
+            <span style="font-size: 1rem; font-weight: 700; color: #1a536f;">TOTAL A PAGAR:</span>
+            <span style="font-size: 1.8rem; font-weight: 800; color: #0f5d84;">$${totalGeneral.toFixed(2)}</span>
         `;
-        recibo.appendChild(totalDiv);
+        reciboDiv.appendChild(totalContainer);
 
-        // Agradecimiento
-        const gracias = document.createElement('div');
-        gracias.style.textAlign = 'center';
-        gracias.style.marginTop = '28px';
-        gracias.style.fontSize = '0.75rem';
-        gracias.style.color = '#4f7e9e';
-        gracias.style.borderTop = '1px dashed #cde2f2';
-        gracias.style.paddingTop = '18px';
-        gracias.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados<br>Gracias por tu compra — productos registrados con foto.`;
-        recibo.appendChild(gracias);
+        // Pie de recibo
+        const pie = document.createElement('div');
+        pie.style.textAlign = 'center';
+        pie.style.marginTop = '32px';
+        pie.style.fontSize = '0.7rem';
+        pie.style.color = '#6189a8';
+        pie.style.borderTop = '1px dashed #cde2f2';
+        pie.style.paddingTop = '20px';
+        pie.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados.<br>Productos registrados con fotografía real. ¡Gracias por tu compra!`;
+        reciboDiv.appendChild(pie);
 
-        // Configuración y descarga
+        // Configuración de html2pdf para garantizar que las imágenes se rendericen bien
         const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
-            filename: `recibo_compras_${Date.now()}.pdf`,
-            image: { type: 'jpeg', quality: 0.92 },
-            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            margin: [0.6, 0.6, 0.6, 0.6],
+            filename: `recibo_compra_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: false, logging: false, letterRendering: true },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(recibo).save();
+        html2pdf().set(opt).from(reciboDiv).save();
     }
 
-    // Event listeners
+    // Eventos
     addBtn.addEventListener('click', agregarProducto);
     downloadBtn.addEventListener('click', generarReciboPDF);
     [priceInput, qtyInput].forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') agregarProducto(); }));
@@ -753,7 +735,11 @@
     // Inicializar
     cargarStorage();
     if (productos.length === 0) { nextId = 1; guardarStorage(); }
-    else { const maxId = productos.reduce((max, p) => (p.id > max ? p.id : max), 0); if (nextId <= maxId) nextId = maxId + 1; guardarStorage(); }
+    else {
+        const maxId = productos.reduce((max, p) => (p.id > max ? p.id : max), 0);
+        if (nextId <= maxId) nextId = maxId + 1;
+        guardarStorage();
+    }
     renderizarLista();
 </script>
 </body>
