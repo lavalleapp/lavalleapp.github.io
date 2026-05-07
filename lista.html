@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Lista Visual de Compras | Recibo con Fotos</title>
-    <!-- Libreria html2pdf.js mejorada para PDF con imágenes correctas -->
+    <title>Lista de Compras Visual | Recibo Completo</title>
+    <!-- html2pdf.js para PDF profesional -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
@@ -15,7 +15,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #cde5f5 0%, #b0d0e8 100%);
+            background: linear-gradient(135deg, #cbe4f5 0%, #aad0e9 100%);
             font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
             padding: 16px 12px 24px 12px;
             min-height: 100vh;
@@ -23,7 +23,7 @@
 
         /* Contenedor principal */
         .shopping-app {
-            max-width: 550px;
+            max-width: 600px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 36px;
@@ -31,12 +31,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: auto;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #126180, #1e6a96);
+            background: linear-gradient(135deg, #0f5b80, #1e7aaa);
             padding: 20px 18px 16px;
             text-align: center;
             color: white;
@@ -158,79 +157,69 @@
 
         .btn-add:active { transform: scale(0.97); background: #0f5880; }
 
-        /* LISTA DE PRODUCTOS - SCROLL VERTICAL CÓMODO EN MÓVIL */
+        /* ========== LISTA EN FILA: FOTO | PRECIO | CANTIDAD | TOTAL ========== */
         .products-list {
-            padding: 18px 14px;
+            padding: 16px 14px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            max-height: 42vh;
-            min-height: 180px;
+            gap: 12px;
+            max-height: 44vh;
+            min-height: 200px;
             overflow-y: auto;
             background: #ffffff;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Tarjetas compactas pero legibles */
-        .product-card {
-            background: #fefeff;
-            border-radius: 26px;
-            padding: 12px;
+        /* Tarjeta horizontal con elementos en línea */
+        .product-row {
+            background: white;
+            border-radius: 22px;
+            padding: 12px 14px;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid #d7e6f2;
-            flex-wrap: wrap;
-        }
-
-        .product-img-box {
-            width: 64px;
-            height: 64px;
-            border-radius: 20px;
-            background: #eef4fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 1px solid #c9dfef;
-        }
-
-        .product-img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-controls {
-            flex: 2;
-            display: flex;
-            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #d9e8f2;
+            flex-wrap: nowrap;
         }
 
-        .price-tag {
+        /* Columna foto */
+        .row-photo {
+            flex: 0 0 60px;
+        }
+        .product-img-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            object-fit: cover;
+            background: #eef3fa;
+            border: 1px solid #caddf0;
+        }
+
+        /* Columna precio */
+        .row-price {
+            flex: 1;
+            min-width: 70px;
             font-weight: 800;
-            font-size: 0.85rem;
-            background: #e3f0fa;
-            padding: 5px 12px;
-            border-radius: 50px;
-            color: #146b97;
+            font-size: 0.9rem;
+            color: #0f6b94;
+            background: #eaf3fc;
+            padding: 6px 10px;
+            border-radius: 40px;
+            text-align: center;
         }
 
-        .quantity-zone {
+        /* Columna cantidad con controles */
+        .row-quantity {
             display: flex;
             align-items: center;
             gap: 6px;
             background: #edf5fc;
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 50px;
         }
-
-        .qty-btn {
+        .qty-btn-sm {
             background: white;
             border: none;
             width: 32px;
@@ -241,35 +230,57 @@
             cursor: pointer;
             color: #176f9e;
         }
-        .qty-btn:active { transform: scale(0.92); }
-
-        .qty-number {
+        .qty-num {
             font-weight: 700;
-            min-width: 26px;
+            min-width: 28px;
             text-align: center;
             font-size: 0.95rem;
         }
 
-        .subtotal-amount {
-            font-weight: 700;
-            font-size: 0.85rem;
+        /* Columna subtotal */
+        .row-subtotal {
+            font-weight: 800;
+            font-size: 0.9rem;
             background: #e1eff9;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 40px;
             color: #0e5780;
+            min-width: 70px;
+            text-align: center;
         }
 
-        .delete-single {
+        /* Botón eliminar */
+        .row-delete {
             background: #ffe6e3;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 40px;
+            width: 38px;
+            height: 38px;
+            border-radius: 30px;
             font-size: 1rem;
             cursor: pointer;
             color: #bc3b2a;
+            flex-shrink: 0;
         }
-        .delete-single:active { background: #fccfcb; transform: scale(0.94); }
+        .row-delete:active { background: #fccfcb; transform: scale(0.94); }
+
+        /* Para móviles pequeños: si no entra, reducimos padding */
+        @media (max-width: 550px) {
+            .product-row {
+                padding: 10px 10px;
+                gap: 8px;
+            }
+            .row-price, .row-subtotal {
+                font-size: 0.8rem;
+                padding: 4px 6px;
+            }
+            .row-photo {
+                flex-basis: 50px;
+            }
+            .product-img-small {
+                width: 50px;
+                height: 50px;
+            }
+        }
 
         /* Total y PDF */
         .total-actions {
@@ -334,7 +345,6 @@
             border-top: 1px solid #dfecf5;
         }
 
-        /* scroll suave */
         .products-list::-webkit-scrollbar {
             width: 5px;
         }
@@ -347,17 +357,6 @@
             border-radius: 10px;
         }
 
-        @media (max-width: 500px) {
-            .product-controls {
-                width: 100%;
-                justify-content: space-evenly;
-                margin-top: 4px;
-            }
-            .product-img-box {
-                width: 58px;
-                height: 58px;
-            }
-        }
         input[type="file"] { display: none; }
         small { color: #3b7c9e; font-size: 0.65rem; }
     </style>
@@ -366,7 +365,7 @@
 <div class="shopping-app">
     <div class="header">
         <h1>📸 FotoCompra</h1>
-        <div class="sub">Saca foto · Precio · Cantidad · Recibo con imágenes</div>
+        <div class="sub">Saca foto · Precio · Cantidad · Subtotal en fila</div>
     </div>
 
     <div class="form-card">
@@ -375,7 +374,7 @@
                 <img id="previewImage" class="captured-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238db9d4'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E" alt="preview">
                 <input type="file" id="cameraInput" accept="image/*" capture="environment">
                 <button id="openCameraBtn" class="btn-camera">📷 Tomar foto / Galería</button>
-                <small>📱 Toca para capturar el producto</small>
+                <small>📱 Captura el producto</small>
             </div>
         </div>
 
@@ -390,9 +389,9 @@
         <button class="btn-add" id="addProductBtn">➕ Agregar a la lista</button>
     </div>
 
-    <!-- Lista con scroll cómodo -->
+    <!-- Lista en formato FILA: foto | precio | cantidad | subtotal | eliminar -->
     <div class="products-list" id="productsContainer">
-        <div class="empty-state">📸 Lista vacía<br>Saca una foto al producto, precio y cantidad</div>
+        <div class="empty-state">📸 Lista vacía<br>Saca una foto, precio y cantidad</div>
     </div>
 
     <div class="total-actions">
@@ -400,7 +399,7 @@
             <div class="total-label">TOTAL A PAGAR</div>
             <div class="total-price" id="globalTotal">$0.00</div>
         </div>
-        <button id="downloadPdfBtn" class="pdf-btn">🧾 RECIBO PDF</button>
+        <button id="downloadPdfBtn" class="pdf-btn">🧾 RECIBO COMPLETO PDF</button>
     </div>
     <footer>
         © 2026 Nahuel Mamani. Todos los derechos reservados.
@@ -408,7 +407,7 @@
 </div>
 
 <script>
-    // ---------- Modelo de datos ----------
+    // ---------- Modelo: solo foto, precio, cantidad ----------
     let productos = [];          // { id, imageDataURL, price, quantity }
     let nextId = 1;
     let currentImageDataURL = null;
@@ -424,7 +423,7 @@
     const openCameraBtn = document.getElementById('openCameraBtn');
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
-    // ----- Captura de foto (cámara o galería) -----
+    // ----- Captura de foto -----
     function handleImageSelected(file) {
         if (!file) return;
         if (!file.type.startsWith('image/')) {
@@ -476,33 +475,33 @@
     // ----- Persistencia -----
     function guardarStorage() {
         try {
-            localStorage.setItem('shopping_list_celeste_v2', JSON.stringify(productos));
-            localStorage.setItem('shopping_next_id_v2', nextId);
+            localStorage.setItem('shopping_list_row_final', JSON.stringify(productos));
+            localStorage.setItem('shopping_next_id_row', nextId);
         } catch(e) { console.warn(e); }
     }
 
     function cargarStorage() {
-        const data = localStorage.getItem('shopping_list_celeste_v2');
+        const data = localStorage.getItem('shopping_list_row_final');
         if (data) {
             try {
                 productos = JSON.parse(data);
-                const savedId = localStorage.getItem('shopping_next_id_v2');
+                const savedId = localStorage.getItem('shopping_next_id_row');
                 if (savedId) nextId = parseInt(savedId) || 1;
                 else nextId = productos.length ? Math.max(...productos.map(p => p.id), 0) + 1 : 1;
-                renderizarLista();
+                renderizarListaEnFila();
                 actualizarTotalUI();
             } catch(e) { console.warn(e); }
         } else {
             productos = [];
             nextId = 1;
-            renderizarLista();
+            renderizarListaEnFila();
             actualizarTotalUI();
             guardarStorage();
         }
     }
 
-    // ----- Render optimizado para móvil (scroll cómodo) -----
-    function renderizarLista() {
+    // ========== RENDERIZADO EN FILA: FOTO | PRECIO | CANTIDAD | SUBTOTAL | ELIMINAR ==========
+    function renderizarListaEnFila() {
         if (!productsContainer) return;
         if (productos.length === 0) {
             productsContainer.innerHTML = `<div class="empty-state">📸 Agrega tu primer producto<br>Sácale foto, precio y cantidad</div>`;
@@ -515,20 +514,18 @@
         for (let prod of productos) {
             const subtotal = prod.price * prod.quantity;
             html += `
-                <div class="product-card" data-id="${prod.id}">
-                    <div class="product-img-box">
-                        <img src="${prod.imageDataURL}" alt="producto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27 fill=%27%2390bbd4%27%3E%3Cpath d=%27M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z%27/%3E%3C/svg%3E'">
+                <div class="product-row" data-id="${prod.id}">
+                    <div class="row-photo">
+                        <img class="product-img-small" src="${prod.imageDataURL}" alt="foto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27 fill=%27%2390bbd4%27%3E%3Cpath d=%27M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z%27/%3E%3C/svg%3E'">
                     </div>
-                    <div class="product-controls">
-                        <div class="price-tag">$${prod.price.toFixed(2)}</div>
-                        <div class="quantity-zone">
-                            <button class="qty-btn decr-btn" data-id="${prod.id}">−</button>
-                            <span class="qty-number">${prod.quantity}</span>
-                            <button class="qty-btn incr-btn" data-id="${prod.id}">+</button>
-                        </div>
-                        <div class="subtotal-amount">$${subtotal.toFixed(2)}</div>
-                        <button class="delete-single" data-id="${prod.id}" title="Eliminar">🗑️</button>
+                    <div class="row-price">$${prod.price.toFixed(2)}</div>
+                    <div class="row-quantity">
+                        <button class="qty-btn-sm decr-btn" data-id="${prod.id}">−</button>
+                        <span class="qty-num">${prod.quantity}</span>
+                        <button class="qty-btn-sm incr-btn" data-id="${prod.id}">+</button>
                     </div>
+                    <div class="row-subtotal">$${subtotal.toFixed(2)}</div>
+                    <button class="row-delete" data-id="${prod.id}">🗑️</button>
                 </div>
             `;
         }
@@ -545,7 +542,7 @@
             btn.removeEventListener('click', decrHandler);
             btn.addEventListener('click', decrHandler);
         });
-        document.querySelectorAll('.delete-single').forEach(btn => {
+        document.querySelectorAll('.row-delete').forEach(btn => {
             btn.removeEventListener('click', deleteHandler);
             btn.addEventListener('click', deleteHandler);
         });
@@ -561,18 +558,18 @@
         const nueva = productos[idx].quantity + delta;
         if (nueva <= 0) { eliminarProducto(id); return; }
         productos[idx].quantity = nueva;
-        renderizarLista();
+        renderizarListaEnFila();
     }
 
     function eliminarProducto(id) {
         productos = productos.filter(p => p.id !== id);
-        renderizarLista();
+        renderizarListaEnFila();
     }
 
-    // Agregar producto con foto
+    // Agregar producto
     function agregarProducto() {
         if (!currentImageDataURL) {
-            alert("📸 Primero saca una foto del producto usando la cámara o galería.");
+            alert("📸 Primero saca una foto del producto usando la cámara.");
             return;
         }
         const precio = parseFloat(priceInput.value);
@@ -583,21 +580,20 @@
         const nuevo = { id: nextId++, imageDataURL: currentImageDataURL, price: precio, quantity: cantidad };
         productos.push(nuevo);
 
-        // Reset foto actual para próximo producto
+        // resetear foto para próximo producto
         currentImageDataURL = null;
         previewImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238db9d4'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E";
         previewImage.style.border = "3px solid #3d8ec0";
         priceInput.value = '';
         qtyInput.value = '1';
         cameraInput.value = '';
-        renderizarLista();
-        // Scroll automático al final
+        renderizarListaEnFila();
         setTimeout(() => {
             if (productsContainer.lastChild) productsContainer.lastChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 80);
+        }, 70);
     }
 
-    // ---------- GENERAR PDF TIPO RECIBO CON IMÁGENES VISIBLES ----------
+    // ========== PDF COMPLETO: RECIBO EN UNA SOLA PÁGINA SIN CORTES ==========
     async function generarReciboPDF() {
         if (productos.length === 0) {
             alert("No hay productos. Agrega al menos uno para generar el recibo.");
@@ -606,44 +602,45 @@
 
         const totalGeneral = calcularTotal();
 
-        // Contenedor principal del recibo
+        // Contenedor para el PDF - diseño compacto pero con todos los datos visibles
         const reciboDiv = document.createElement('div');
-        reciboDiv.style.maxWidth = '600px';
+        reciboDiv.style.maxWidth = '700px';
         reciboDiv.style.margin = '0 auto';
         reciboDiv.style.backgroundColor = '#ffffff';
         reciboDiv.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
-        reciboDiv.style.padding = '28px 24px';
-        reciboDiv.style.borderRadius = '28px';
-        reciboDiv.style.border = '1px solid #cce3f0';
-        reciboDiv.style.boxShadow = '0 0 0 2px #f5faff';
+        reciboDiv.style.padding = '24px 22px';
+        reciboDiv.style.borderRadius = '24px';
+        reciboDiv.style.border = '1px solid #d4e4f0';
 
         // Encabezado
-        const encabezado = document.createElement('div');
-        encabezado.style.textAlign = 'center';
-        encabezado.style.borderBottom = '2px dashed #b9d6ef';
-        encabezado.style.paddingBottom = '16px';
-        encabezado.style.marginBottom = '24px';
-        encabezado.innerHTML = `
-            <h2 style="color: #0f5d84; margin-bottom: 8px;">🧾 RECIBO DE COMPRA</h2>
+        const header = document.createElement('div');
+        header.style.textAlign = 'center';
+        header.style.borderBottom = '2px solid #c2def2';
+        header.style.paddingBottom = '14px';
+        header.style.marginBottom = '22px';
+        header.innerHTML = `
+            <h2 style="color: #0f5d84; margin-bottom: 6px;">🧾 RECIBO DE COMPRA</h2>
             <p style="font-size: 0.75rem; color: #267cac;">Lista Visual con Fotos</p>
             <p style="font-size: 0.7rem; color: #5487a5;">${new Date().toLocaleString()}</p>
         `;
-        reciboDiv.appendChild(encabezado);
+        reciboDiv.appendChild(header);
 
-        // Tabla de productos (incluye miniaturas reales)
+        // Tabla de productos (fila: foto, precio, cantidad, subtotal)
         const tabla = document.createElement('table');
         tabla.style.width = '100%';
         tabla.style.borderCollapse = 'collapse';
-        tabla.style.marginBottom = '28px';
+        tabla.style.marginBottom = '24px';
+        tabla.style.fontSize = '13px';
 
+        // Cabecera
         const thead = document.createElement('thead');
         const trHead = document.createElement('tr');
         trHead.style.backgroundColor = '#eaf3fc';
-        trHead.style.borderBottom = '1px solid #c2daef';
-        const thFoto = document.createElement('th'); thFoto.innerText = 'Producto'; thFoto.style.padding = '12px 6px'; thFoto.style.textAlign = 'left';
-        const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '12px 6px'; thPrecio.style.textAlign = 'center';
-        const thCant = document.createElement('th'); thCant.innerText = 'Cant.'; thCant.style.padding = '12px 6px'; thCant.style.textAlign = 'center';
-        const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '12px 6px'; thSub.style.textAlign = 'right';
+        trHead.style.borderBottom = '1px solid #bbd6ed';
+        const thFoto = document.createElement('th'); thFoto.innerText = 'Producto'; thFoto.style.padding = '10px 6px'; thFoto.style.textAlign = 'left';
+        const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '10px 6px'; thPrecio.style.textAlign = 'center';
+        const thCant = document.createElement('th'); thCant.innerText = 'Cantidad'; thCant.style.padding = '10px 6px'; thCant.style.textAlign = 'center';
+        const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '10px 6px'; thSub.style.textAlign = 'right';
         trHead.appendChild(thFoto); trHead.appendChild(thPrecio); trHead.appendChild(thCant); trHead.appendChild(thSub);
         thead.appendChild(trHead);
         tabla.appendChild(thead);
@@ -654,16 +651,16 @@
             const row = document.createElement('tr');
             row.style.borderBottom = '1px solid #ecf3fa';
 
-            // Celda foto + descripción visual
+            // Celda foto (miniatura)
             const cellFoto = document.createElement('td');
-            cellFoto.style.padding = '12px 6px';
+            cellFoto.style.padding = '10px 6px';
             const imgMini = document.createElement('img');
             imgMini.src = prod.imageDataURL;
-            imgMini.style.width = '56px';
-            imgMini.style.height = '56px';
+            imgMini.style.width = '52px';
+            imgMini.style.height = '52px';
             imgMini.style.objectFit = 'cover';
-            imgMini.style.borderRadius = '16px';
-            imgMini.style.border = '1px solid #bfd9ef';
+            imgMini.style.borderRadius = '14px';
+            imgMini.style.border = '1px solid #c2daef';
             imgMini.style.verticalAlign = 'middle';
             cellFoto.appendChild(imgMini);
 
@@ -690,38 +687,38 @@
         tabla.appendChild(tbody);
         reciboDiv.appendChild(tabla);
 
-        // Total general
-        const totalContainer = document.createElement('div');
-        totalContainer.style.display = 'flex';
-        totalContainer.style.justifyContent = 'flex-end';
-        totalContainer.style.alignItems = 'center';
-        totalContainer.style.gap = '18px';
-        totalContainer.style.borderTop = '2px solid #bed9f0';
-        totalContainer.style.paddingTop = '18px';
-        totalContainer.style.marginTop = '8px';
-        totalContainer.innerHTML = `
+        // Línea de total
+        const totalLine = document.createElement('div');
+        totalLine.style.display = 'flex';
+        totalLine.style.justifyContent = 'flex-end';
+        totalLine.style.alignItems = 'center';
+        totalLine.style.gap = '20px';
+        totalLine.style.borderTop = '2px solid #bed9f0';
+        totalLine.style.paddingTop = '16px';
+        totalLine.style.marginTop = '10px';
+        totalLine.innerHTML = `
             <span style="font-size: 1rem; font-weight: 700; color: #1a536f;">TOTAL A PAGAR:</span>
-            <span style="font-size: 1.8rem; font-weight: 800; color: #0f5d84;">$${totalGeneral.toFixed(2)}</span>
+            <span style="font-size: 1.6rem; font-weight: 800; color: #0f5d84;">$${totalGeneral.toFixed(2)}</span>
         `;
-        reciboDiv.appendChild(totalContainer);
+        reciboDiv.appendChild(totalLine);
 
-        // Pie de recibo
-        const pie = document.createElement('div');
-        pie.style.textAlign = 'center';
-        pie.style.marginTop = '32px';
-        pie.style.fontSize = '0.7rem';
-        pie.style.color = '#6189a8';
-        pie.style.borderTop = '1px dashed #cde2f2';
-        pie.style.paddingTop = '20px';
-        pie.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados.<br>Productos registrados con fotografía real. ¡Gracias por tu compra!`;
-        reciboDiv.appendChild(pie);
+        // Pie de página
+        const footerRecibo = document.createElement('div');
+        footerRecibo.style.textAlign = 'center';
+        footerRecibo.style.marginTop = '28px';
+        footerRecibo.style.fontSize = '0.7rem';
+        footerRecibo.style.color = '#6189a8';
+        footerRecibo.style.borderTop = '1px dashed #cde2f2';
+        footerRecibo.style.paddingTop = '16px';
+        footerRecibo.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados.<br>Productos registrados con fotografía real. ¡Gracias por tu compra!`;
+        reciboDiv.appendChild(footerRecibo);
 
-        // Configuración de html2pdf para garantizar que las imágenes se rendericen bien
+        // Configuración mejorada para evitar cortes y que se vea completo en el PDF
         const opt = {
-            margin: [0.6, 0.6, 0.6, 0.6],
-            filename: `recibo_compra_${Date.now()}.pdf`,
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { scale: 2, useCORS: false, logging: false, letterRendering: true },
+            margin: [0.5, 0.5, 0.5, 0.5],
+            filename: `recibo_lista_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2.2, useCORS: false, logging: false, letterRendering: true },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(reciboDiv).save();
@@ -732,7 +729,7 @@
     downloadBtn.addEventListener('click', generarReciboPDF);
     [priceInput, qtyInput].forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') agregarProducto(); }));
 
-    // Inicializar
+    // Inicialización
     cargarStorage();
     if (productos.length === 0) { nextId = 1; guardarStorage(); }
     else {
@@ -740,7 +737,7 @@
         if (nextId <= maxId) nextId = maxId + 1;
         guardarStorage();
     }
-    renderizarLista();
+    renderizarListaEnFila();
 </script>
 </body>
 </html>
