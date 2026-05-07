@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Lista Visual de Compras | Recibo con fotos</title>
+    <!-- Libreria html2pdf.js para generar PDF tipo recibo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #d4e6f1 0%, #b8d4e8 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 20px 14px 32px 14px;
+            min-height: 100vh;
+        }
+
+        /* Contenedor principal con tono celeste claro */
+        .shopping-app {
+            max-width: 580px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 42px;
+            box-shadow: 0 20px 40px rgba(0, 30, 60, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(1px);
+            transition: all 0.2s;
+        }
+
+        /* Header celeste */
+        .header {
+            background: linear-gradient(135deg, #0b3b5f, #1b5a8c);
+            padding: 24px 20px 18px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .header h1::before {
+            content: "📸";
+            font-size: 2rem;
+        }
+
+        .sub {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-top: 8px;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 60px;
+        }
+
+        /* Formulario con acento celeste */
+        .form-card {
+            background: #f4faff;
+            padding: 22px 20px;
+            border-bottom: 1px solid #cde2f0;
+        }
+
+        .camera-section {
+            background: #e6f0fa;
+            border-radius: 32px;
+            padding: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
+        }
+
+        .photo-preview-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .captured-photo {
+            width: 130px;
+            height: 130px;
+            border-radius: 28px;
+            object-fit: cover;
+            background: #e2edf7;
+            border: 3px solid #5fa3cf;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+            transition: 0.1s;
+        }
+
+        .btn-camera {
+            background: #1f6392;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-camera:active {
+            transform: scale(0.96);
+            background: #0f4a6e;
+        }
+
+        .input-field {
+            margin-bottom: 18px;
+        }
+
+        .input-field label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #176087;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.4px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #cde0ed;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            background: white;
+            transition: 0.2s;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #2c7cb6;
+            box-shadow: 0 0 0 3px rgba(44, 124, 182, 0.2);
+        }
+
+        .btn-add {
+            background: #176087;
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+            margin-top: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .btn-add:active {
+            transform: scale(0.97);
+            background: #0f4e6f;
+        }
+
+        /* Lista de productos con diseño moderno */
+        .products-list {
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 48vh;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+
+        .product-card {
+            background: #fefeff;
+            border-radius: 28px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 4px 12px rgba(44, 101, 138, 0.08);
+            border: 1px solid #d9e6f2;
+            transition: all 0.1s;
+        }
+
+        .product-img-box {
+            width: 70px;
+            height: 70px;
+            border-radius: 24px;
+            background: #eef3fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #cbe0ef;
+        }
+
+        .product-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-controls {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .price-tag {
+            font-weight: 800;
+            font-size: 0.9rem;
+            background: #e3f0fa;
+            padding: 6px 12px;
+            border-radius: 40px;
+            color: #0f5b87;
+        }
+
+        .quantity-zone {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ecf4fa;
+            padding: 4px 10px;
+            border-radius: 50px;
+        }
+
+        .qty-btn {
+            background: white;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #176087;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .qty-btn:active {
+            transform: scale(0.92);
+        }
+
+        .qty-number {
+            font-weight: 700;
+            min-width: 28px;
+            text-align: center;
+            color: #1e4663;
+        }
+
+        .subtotal-amount {
+            font-weight: 700;
+            font-size: 0.9rem;
+            background: #e0f0fe;
+            padding: 6px 12px;
+            border-radius: 40px;
+            color: #0d4b70;
+        }
+
+        .delete-single {
+            background: #ffe6e5;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #c23d2b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-single:active {
+            background: #ffcecc;
+            transform: scale(0.94);
+        }
+
+        /* Total y botón PDF estilo recibo */
+        .total-actions {
+            background: #1b4e72;
+            padding: 18px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            border-top: 2px solid #3482b0;
+        }
+
+        .total-box {
+            background: #0e3a55;
+            border-radius: 60px;
+            padding: 6px 18px;
+        }
+
+        .total-label {
+            color: #bdd9ed;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .total-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .pdf-btn {
+            background: #facc15;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 60px;
+            color: #1e2f3f;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .pdf-btn:active {
+            background: #eab308;
+            transform: scale(0.96);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #7fa1bc;
+            background: #fafdff;
+            border-radius: 32px;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #5482a0;
+            padding: 14px 0 12px;
+            background: white;
+            border-top: 1px solid #ddebf5;
+        }
+
+        @media (max-width: 550px) {
+            .product-card {
+                flex-wrap: wrap;
+            }
+            .product-controls {
+                width: 100%;
+                justify-content: space-evenly;
+            }
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+        small {
+            color: #2d6a8f;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+<div class="shopping-app">
+    <div class="header">
+        <h1>Compra Visual</h1>
+        <div class="sub">📸 Toma foto · Precio · Cantidad · Recibo final</div>
+    </div>
+
+    <div class="form-card">
+        <div class="camera-section">
+            <div class="photo-preview-area">
+                <img id="previewImage" class="captured-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='%239ac2db'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E" alt="Vista previa">
+                <input type="file" id="cameraInput" accept="image/*" capture="environment">
+                <button id="openCameraBtn" class="btn-camera">📷 Tomar foto / Elegir imagen</button>
+                <small>📸 Captura el producto con tu cámara</small>
+            </div>
+        </div>
+
+        <div class="input-field">
+            <label>💰 Precio unitario ($)</label>
+            <input type="number" id="priceInput" placeholder="Ej: 2.99" step="0.01" value="">
+        </div>
+        <div class="input-field">
+            <label>🔢 Cantidad</label>
+            <input type="number" id="qtyInput" placeholder="1" value="1" min="1" step="1">
+        </div>
+        <button class="btn-add" id="addProductBtn">➕ Agregar a la lista</button>
+    </div>
+
+    <div class="products-list" id="productsContainer">
+        <div class="empty-state">📸 Tu lista está vacía<br>Sácale una foto al producto, pon precio y cantidad</div>
+    </div>
+
+    <div class="total-actions">
+        <div class="total-box">
+            <div class="total-label">TOTAL A PAGAR</div>
+            <div class="total-price" id="globalTotal">$0.00</div>
+        </div>
+        <button id="downloadPdfBtn" class="pdf-btn">🧾 DESCARGAR RECIBO PDF</button>
+    </div>
+    <footer>
+        © 2026 Nahuel Mamani. Todos los derechos reservados. | Lista con fotos reales
+    </footer>
+</div>
+
+<script>
+    // ---------- Variables ----------
+    let productos = [];          // { id, imageDataURL, price, quantity }
+    let nextId = 1;
+    let currentImageDataURL = null;
+
+    // DOM elements
+    const productsContainer = document.getElementById('productsContainer');
+    const globalTotalSpan = document.getElementById('globalTotal');
+    const addBtn = document.getElementById('addProductBtn');
+    const priceInput = document.getElementById('priceInput');
+    const qtyInput = document.getElementById('qtyInput');
+    const previewImage = document.getElementById('previewImage');
+    const cameraInput = document.getElementById('cameraInput');
+    const openCameraBtn = document.getElementById('openCameraBtn');
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+
+    // ----- Manejo de captura de foto (celular / cámara) -----
+    function handleImageSelected(file) {
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert("Por favor selecciona una imagen válida.");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentImageDataURL = e.target.result;
+            previewImage.src = currentImageDataURL;
+            previewImage.style.border = "3px solid #2c7cb6";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    cameraInput.addEventListener('change', (e) => {
+        if (cameraInput.files && cameraInput.files.length > 0) {
+            handleImageSelected(cameraInput.files[0]);
+        }
+    });
+
+    openCameraBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.capture = 'environment';
+        input.style.display = 'none';
+        input.onchange = (e) => {
+            if (input.files && input.files.length > 0) {
+                handleImageSelected(input.files[0]);
+            }
+            document.body.removeChild(input);
+        };
+        document.body.appendChild(input);
+        input.click();
+    });
+
+    // ---- Funciones de total y persistencia ----
+    function calcularTotal() {
+        let total = 0;
+        for (let p of productos) total += p.price * p.quantity;
+        return total;
+    }
+
+    function actualizarTotalUI() {
+        globalTotalSpan.innerText = `$${calcularTotal().toFixed(2)}`;
+    }
+
+    function guardarStorage() {
+        try {
+            localStorage.setItem('shopping_list_celeste', JSON.stringify(productos));
+            localStorage.setItem('shopping_next_id_celeste', nextId);
+        } catch(e) { console.warn(e); }
+    }
+
+    function cargarStorage() {
+        const data = localStorage.getItem('shopping_list_celeste');
+        if (data) {
+            try {
+                productos = JSON.parse(data);
+                const savedId = localStorage.getItem('shopping_next_id_celeste');
+                if (savedId) nextId = parseInt(savedId) || 1;
+                else nextId = productos.length ? Math.max(...productos.map(p => p.id), 0) + 1 : 1;
+                renderizarLista();
+                actualizarTotalUI();
+            } catch(e) { console.warn(e); }
+        } else {
+            productos = [];
+            nextId = 1;
+            renderizarLista();
+            actualizarTotalUI();
+            guardarStorage();
+        }
+    }
+
+    // Render lista con fotos reales
+    function renderizarLista() {
+        if (!productsContainer) return;
+        if (productos.length === 0) {
+            productsContainer.innerHTML = `<div class="empty-state">📸 Agrega tu primer artículo<br>Sácale una foto, precio y cantidad</div>`;
+            actualizarTotalUI();
+            guardarStorage();
+            return;
+        }
+
+        let html = '';
+        for (let prod of productos) {
+            const subtotal = prod.price * prod.quantity;
+            html += `
+                <div class="product-card" data-id="${prod.id}">
+                    <div class="product-img-box">
+                        <img src="${prod.imageDataURL}" alt="producto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27 viewBox=%270 0 24 24%27 fill=%27%238bb9d1%27%3E%3Cpath d=%27M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z%27/%3E%3C/svg%3E'">
+                    </div>
+                    <div class="product-controls">
+                        <div class="price-tag">$${prod.price.toFixed(2)}</div>
+                        <div class="quantity-zone">
+                            <button class="qty-btn decr-btn" data-id="${prod.id}">−</button>
+                            <span class="qty-number" id="qty-${prod.id}">${prod.quantity}</span>
+                            <button class="qty-btn incr-btn" data-id="${prod.id}">+</button>
+                        </div>
+                        <div class="subtotal-amount">$${subtotal.toFixed(2)}</div>
+                        <button class="delete-single" data-id="${prod.id}" title="Eliminar">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }
+        productsContainer.innerHTML = html;
+        actualizarTotalUI();
+        guardarStorage();
+
+        document.querySelectorAll('.incr-btn').forEach(btn => {
+            btn.removeEventListener('click', incrHandler);
+            btn.addEventListener('click', incrHandler);
+        });
+        document.querySelectorAll('.decr-btn').forEach(btn => {
+            btn.removeEventListener('click', decrHandler);
+            btn.addEventListener('click', decrHandler);
+        });
+        document.querySelectorAll('.delete-single').forEach(btn => {
+            btn.removeEventListener('click', deleteHandler);
+            btn.addEventListener('click', deleteHandler);
+        });
+    }
+
+    function incrHandler(e) { modificarCantidad(parseInt(e.currentTarget.dataset.id), 1); }
+    function decrHandler(e) { modificarCantidad(parseInt(e.currentTarget.dataset.id), -1); }
+    function deleteHandler(e) { eliminarProducto(parseInt(e.currentTarget.dataset.id)); }
+
+    function modificarCantidad(id, delta) {
+        const idx = productos.findIndex(p => p.id === id);
+        if (idx === -1) return;
+        const nueva = productos[idx].quantity + delta;
+        if (nueva <= 0) { eliminarProducto(id); return; }
+        productos[idx].quantity = nueva;
+        renderizarLista();
+    }
+
+    function eliminarProducto(id) {
+        productos = productos.filter(p => p.id !== id);
+        renderizarLista();
+    }
+
+    // Agregar producto con la foto capturada
+    function agregarProducto() {
+        if (!currentImageDataURL) {
+            alert("📸 Primero saca una foto del producto usando la cámara.");
+            return;
+        }
+        const precio = parseFloat(priceInput.value);
+        const cantidad = parseInt(qtyInput.value);
+        if (isNaN(precio) || precio <= 0) { alert("💰 Ingresa un precio válido."); return; }
+        if (isNaN(cantidad) || cantidad < 1) { alert("🔢 Cantidad mínima 1."); return; }
+
+        const nuevo = { id: nextId++, imageDataURL: currentImageDataURL, price: precio, quantity: cantidad };
+        productos.push(nuevo);
+
+        // Resetear foto capturada para próximo producto
+        currentImageDataURL = null;
+        previewImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='%239ac2db'%3E%3Cpath d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E";
+        previewImage.style.border = "3px solid #5fa3cf";
+        priceInput.value = '';
+        qtyInput.value = '1';
+        cameraInput.value = '';
+        renderizarLista();
+        setTimeout(() => { if(productsContainer.lastChild) productsContainer.lastChild.scrollIntoView({ behavior: 'smooth', block: 'nearest'}); }, 60);
+    }
+
+    // ========== GENERAR PDF COMO RECIBO PROFESIONAL ==========
+    async function generarReciboPDF() {
+        if (productos.length === 0) {
+            alert("No hay productos para generar el recibo. Agrega al menos uno.");
+            return;
+        }
+
+        const total = calcularTotal();
+
+        // Contenedor del recibo con estilo tipo ticket
+        const recibo = document.createElement('div');
+        recibo.style.maxWidth = '550px';
+        recibo.style.margin = '0 auto';
+        recibo.style.backgroundColor = '#ffffff';
+        recibo.style.fontFamily = "'Segoe UI', 'Roboto', system-ui, sans-serif";
+        recibo.style.padding = '24px 22px';
+        recibo.style.borderRadius = '24px';
+        recibo.style.boxShadow = '0 0 0 1px #e2eff9';
+
+        // Encabezado recibo
+        const headerRecibo = document.createElement('div');
+        headerRecibo.style.textAlign = 'center';
+        headerRecibo.style.borderBottom = '2px dashed #b8d4e8';
+        headerRecibo.style.paddingBottom = '16px';
+        headerRecibo.style.marginBottom = '20px';
+        headerRecibo.innerHTML = `
+            <h2 style="color: #0b3b5f; margin-bottom: 6px;">🧾 RECIBO DE COMPRA</h2>
+            <p style="font-size: 0.75rem; color: #2c6b8f;">Lista Visual - Fotos reales</p>
+            <p style="font-size: 0.7rem; color: #54809b;">${new Date().toLocaleString()}</p>
+        `;
+        recibo.appendChild(headerRecibo);
+
+        // Tabla de productos
+        const tabla = document.createElement('table');
+        tabla.style.width = '100%';
+        tabla.style.borderCollapse = 'collapse';
+        tabla.style.marginBottom = '24px';
+        
+        // Cabecera
+        const thead = document.createElement('thead');
+        const trHead = document.createElement('tr');
+        trHead.style.background = '#eef4fc';
+        trHead.style.borderBottom = '1px solid #cadeef';
+        const thFoto = document.createElement('th'); thFoto.innerText = 'Foto'; thFoto.style.padding = '12px 6px'; thFoto.style.textAlign = 'left';
+        const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '12px 6px'; thPrecio.style.textAlign = 'center';
+        const thCant = document.createElement('th'); thCant.innerText = 'Cant.'; thCant.style.padding = '12px 6px'; thCant.style.textAlign = 'center';
+        const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '12px 6px'; thSub.style.textAlign = 'right';
+        trHead.appendChild(thFoto); trHead.appendChild(thPrecio); trHead.appendChild(thCant); trHead.appendChild(thSub);
+        thead.appendChild(trHead);
+        tabla.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        for (let prod of productos) {
+            const subtotal = prod.price * prod.quantity;
+            const row = document.createElement('tr');
+            row.style.borderBottom = '1px solid #e9f0f7';
+            
+            // Celda foto (miniatura)
+            const cellFoto = document.createElement('td');
+            cellFoto.style.padding = '12px 6px';
+            const imgMini = document.createElement('img');
+            imgMini.src = prod.imageDataURL;
+            imgMini.style.width = '52px';
+            imgMini.style.height = '52px';
+            imgMini.style.objectFit = 'cover';
+            imgMini.style.borderRadius = '14px';
+            imgMini.style.border = '1px solid #c5deef';
+            cellFoto.appendChild(imgMini);
+            
+            const cellPrecio = document.createElement('td');
+            cellPrecio.innerText = `$${prod.price.toFixed(2)}`;
+            cellPrecio.style.padding = '8px 6px';
+            cellPrecio.style.textAlign = 'center';
+            
+            const cellCant = document.createElement('td');
+            cellCant.innerText = `${prod.quantity}`;
+            cellCant.style.padding = '8px 6px';
+            cellCant.style.textAlign = 'center';
+            
+            const cellSub = document.createElement('td');
+            cellSub.innerText = `$${subtotal.toFixed(2)}`;
+            cellSub.style.padding = '8px 6px';
+            cellSub.style.textAlign = 'right';
+            cellSub.style.fontWeight = '600';
+            
+            row.appendChild(cellFoto); row.appendChild(cellPrecio); row.appendChild(cellCant); row.appendChild(cellSub);
+            tbody.appendChild(row);
+        }
+        tabla.appendChild(tbody);
+        recibo.appendChild(tabla);
+
+        // Línea de total
+        const totalDiv = document.createElement('div');
+        totalDiv.style.display = 'flex';
+        totalDiv.style.justifyContent = 'flex-end';
+        totalDiv.style.alignItems = 'center';
+        totalDiv.style.gap = '20px';
+        totalDiv.style.borderTop = '2px solid #cadeef';
+        totalDiv.style.paddingTop = '16px';
+        totalDiv.style.marginTop = '8px';
+        totalDiv.style.fontWeight = 'bold';
+        totalDiv.innerHTML = `
+            <span style="font-size: 1rem;">TOTAL A PAGAR:</span>
+            <span style="font-size: 1.7rem; font-weight: 800; color: #0c4e6e;">$${total.toFixed(2)}</span>
+        `;
+        recibo.appendChild(totalDiv);
+
+        // Agradecimiento
+        const gracias = document.createElement('div');
+        gracias.style.textAlign = 'center';
+        gracias.style.marginTop = '28px';
+        gracias.style.fontSize = '0.75rem';
+        gracias.style.color = '#4f7e9e';
+        gracias.style.borderTop = '1px dashed #cde2f2';
+        gracias.style.paddingTop = '18px';
+        gracias.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados<br>Gracias por tu compra — productos registrados con foto.`;
+        recibo.appendChild(gracias);
+
+        // Configuración y descarga
+        const opt = {
+            margin: [0.5, 0.5, 0.5, 0.5],
+            filename: `recibo_compras_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.92 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(recibo).save();
+    }
+
+    // Event listeners
+    addBtn.addEventListener('click', agregarProducto);
+    downloadBtn.addEventListener('click', generarReciboPDF);
+    [priceInput, qtyInput].forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') agregarProducto(); }));
+
+    // Inicializar
+    cargarStorage();
+    if (productos.length === 0) { nextId = 1; guardarStorage(); }
+    else { const maxId = productos.reduce((max, p) => (p.id > max ? p.id : max), 0); if (nextId <= maxId) nextId = maxId + 1; guardarStorage(); }
+    renderizarLista();
+</script>
+</body>
+</html>
