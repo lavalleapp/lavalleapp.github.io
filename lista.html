@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Lista de Compras Visual | Recibo Completo</title>
-    <!-- html2pdf.js para PDF profesional -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Lista Visual de Compras | Descargar como Imagen</title>
+    <!-- Libreria html2canvas para capturar la lista como imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -263,7 +263,7 @@
         }
         .row-delete:active { background: #fccfcb; transform: scale(0.94); }
 
-        /* Para móviles pequeños: si no entra, reducimos padding */
+        /* Para móviles pequeños */
         @media (max-width: 550px) {
             .product-row {
                 padding: 10px 10px;
@@ -282,7 +282,7 @@
             }
         }
 
-        /* Total y PDF */
+        /* Total y botón IMAGEN */
         .total-actions {
             background: #135e85;
             padding: 16px 18px;
@@ -312,7 +312,7 @@
             line-height: 1;
         }
 
-        .pdf-btn {
+        .image-btn {
             background: #f9b81b;
             border: none;
             padding: 10px 20px;
@@ -325,7 +325,7 @@
             gap: 8px;
             cursor: pointer;
         }
-        .pdf-btn:active { background: #e5a50e; transform: scale(0.96); }
+        .image-btn:active { background: #e5a50e; transform: scale(0.96); }
 
         .empty-state {
             text-align: center;
@@ -365,7 +365,7 @@
 <div class="shopping-app">
     <div class="header">
         <h1>📸 FotoCompra</h1>
-        <div class="sub">Saca foto · Precio · Cantidad · Subtotal en fila</div>
+        <div class="sub">Saca foto · Precio · Cantidad · Descarga tu lista como imagen</div>
     </div>
 
     <div class="form-card">
@@ -399,7 +399,7 @@
             <div class="total-label">TOTAL A PAGAR</div>
             <div class="total-price" id="globalTotal">$0.00</div>
         </div>
-        <button id="downloadPdfBtn" class="pdf-btn">🧾 RECIBO COMPLETO PDF</button>
+        <button id="downloadImageBtn" class="image-btn">🖼️ DESCARGAR COMO IMAGEN</button>
     </div>
     <footer>
         © 2026 Nahuel Mamani. Todos los derechos reservados.
@@ -421,7 +421,7 @@
     const previewImage = document.getElementById('previewImage');
     const cameraInput = document.getElementById('cameraInput');
     const openCameraBtn = document.getElementById('openCameraBtn');
-    const downloadBtn = document.getElementById('downloadPdfBtn');
+    const downloadImageBtn = document.getElementById('downloadImageBtn');
 
     // ----- Captura de foto -----
     function handleImageSelected(file) {
@@ -475,17 +475,17 @@
     // ----- Persistencia -----
     function guardarStorage() {
         try {
-            localStorage.setItem('shopping_list_row_final', JSON.stringify(productos));
-            localStorage.setItem('shopping_next_id_row', nextId);
+            localStorage.setItem('shopping_list_row_img', JSON.stringify(productos));
+            localStorage.setItem('shopping_next_id_img', nextId);
         } catch(e) { console.warn(e); }
     }
 
     function cargarStorage() {
-        const data = localStorage.getItem('shopping_list_row_final');
+        const data = localStorage.getItem('shopping_list_row_img');
         if (data) {
             try {
                 productos = JSON.parse(data);
-                const savedId = localStorage.getItem('shopping_next_id_row');
+                const savedId = localStorage.getItem('shopping_next_id_img');
                 if (savedId) nextId = parseInt(savedId) || 1;
                 else nextId = productos.length ? Math.max(...productos.map(p => p.id), 0) + 1 : 1;
                 renderizarListaEnFila();
@@ -500,7 +500,7 @@
         }
     }
 
-    // ========== RENDERIZADO EN FILA: FOTO | PRECIO | CANTIDAD | SUBTOTAL | ELIMINAR ==========
+    // ========== RENDERIZADO EN FILA ==========
     function renderizarListaEnFila() {
         if (!productsContainer) return;
         if (productos.length === 0) {
@@ -593,140 +593,156 @@
         }, 70);
     }
 
-    // ========== PDF COMPLETO: RECIBO EN UNA SOLA PÁGINA SIN CORTES ==========
-    async function generarReciboPDF() {
+    // ========== DESCARGAR LA LISTA COMPLETA COMO IMAGEN (FOTO) ==========
+    async function descargarListaComoImagen() {
         if (productos.length === 0) {
-            alert("No hay productos. Agrega al menos uno para generar el recibo.");
+            alert("No hay productos en la lista. Agrega al menos uno para generar la imagen.");
             return;
         }
 
-        const totalGeneral = calcularTotal();
+        // Mostrar un mensaje de carga
+        const originalBtnText = downloadImageBtn.innerHTML;
+        downloadImageBtn.innerHTML = "⏳ Generando imagen...";
+        downloadImageBtn.disabled = true;
 
-        // Contenedor para el PDF - diseño compacto pero con todos los datos visibles
-        const reciboDiv = document.createElement('div');
-        reciboDiv.style.maxWidth = '700px';
-        reciboDiv.style.margin = '0 auto';
-        reciboDiv.style.backgroundColor = '#ffffff';
-        reciboDiv.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
-        reciboDiv.style.padding = '24px 22px';
-        reciboDiv.style.borderRadius = '24px';
-        reciboDiv.style.border = '1px solid #d4e4f0';
+        try {
+            // Crear un contenedor temporal que clona visualmente toda la sección de la lista + total
+            const captureContainer = document.createElement('div');
+            captureContainer.style.backgroundColor = '#ffffff';
+            captureContainer.style.padding = '24px 22px';
+            captureContainer.style.borderRadius = '32px';
+            captureContainer.style.maxWidth = '600px';
+            captureContainer.style.margin = '0 auto';
+            captureContainer.style.fontFamily = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+            captureContainer.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
 
-        // Encabezado
-        const header = document.createElement('div');
-        header.style.textAlign = 'center';
-        header.style.borderBottom = '2px solid #c2def2';
-        header.style.paddingBottom = '14px';
-        header.style.marginBottom = '22px';
-        header.innerHTML = `
-            <h2 style="color: #0f5d84; margin-bottom: 6px;">🧾 RECIBO DE COMPRA</h2>
-            <p style="font-size: 0.75rem; color: #267cac;">Lista Visual con Fotos</p>
-            <p style="font-size: 0.7rem; color: #5487a5;">${new Date().toLocaleString()}</p>
-        `;
-        reciboDiv.appendChild(header);
+            // Título de la captura
+            const titulo = document.createElement('div');
+            titulo.style.textAlign = 'center';
+            titulo.style.marginBottom = '20px';
+            titulo.style.borderBottom = '2px solid #cde1ef';
+            titulo.style.paddingBottom = '12px';
+            titulo.innerHTML = `
+                <h2 style="color: #0f5b80; margin-bottom: 6px;">📸 Mi Lista de Compras</h2>
+                <p style="font-size: 0.75rem; color: #267cac;">${new Date().toLocaleString()}</p>
+            `;
+            captureContainer.appendChild(titulo);
 
-        // Tabla de productos (fila: foto, precio, cantidad, subtotal)
-        const tabla = document.createElement('table');
-        tabla.style.width = '100%';
-        tabla.style.borderCollapse = 'collapse';
-        tabla.style.marginBottom = '24px';
-        tabla.style.fontSize = '13px';
+            // Tabla de productos (estilo recibo)
+            const tabla = document.createElement('table');
+            tabla.style.width = '100%';
+            tabla.style.borderCollapse = 'collapse';
+            tabla.style.marginBottom = '20px';
+            tabla.style.fontSize = '13px';
 
-        // Cabecera
-        const thead = document.createElement('thead');
-        const trHead = document.createElement('tr');
-        trHead.style.backgroundColor = '#eaf3fc';
-        trHead.style.borderBottom = '1px solid #bbd6ed';
-        const thFoto = document.createElement('th'); thFoto.innerText = 'Producto'; thFoto.style.padding = '10px 6px'; thFoto.style.textAlign = 'left';
-        const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '10px 6px'; thPrecio.style.textAlign = 'center';
-        const thCant = document.createElement('th'); thCant.innerText = 'Cantidad'; thCant.style.padding = '10px 6px'; thCant.style.textAlign = 'center';
-        const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '10px 6px'; thSub.style.textAlign = 'right';
-        trHead.appendChild(thFoto); trHead.appendChild(thPrecio); trHead.appendChild(thCant); trHead.appendChild(thSub);
-        thead.appendChild(trHead);
-        tabla.appendChild(thead);
+            // Cabecera
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            trHead.style.backgroundColor = '#eaf3fc';
+            trHead.style.borderBottom = '1px solid #bbd6ed';
+            const thFoto = document.createElement('th'); thFoto.innerText = 'Foto'; thFoto.style.padding = '10px 6px'; thFoto.style.textAlign = 'left';
+            const thPrecio = document.createElement('th'); thPrecio.innerText = 'Precio'; thPrecio.style.padding = '10px 6px'; thPrecio.style.textAlign = 'center';
+            const thCant = document.createElement('th'); thCant.innerText = 'Cant.'; thCant.style.padding = '10px 6px'; thCant.style.textAlign = 'center';
+            const thSub = document.createElement('th'); thSub.innerText = 'Subtotal'; thSub.style.padding = '10px 6px'; thSub.style.textAlign = 'right';
+            trHead.appendChild(thFoto); trHead.appendChild(thPrecio); trHead.appendChild(thCant); trHead.appendChild(thSub);
+            thead.appendChild(trHead);
+            tabla.appendChild(thead);
 
-        const tbody = document.createElement('tbody');
-        for (let prod of productos) {
-            const subtotal = prod.price * prod.quantity;
-            const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid #ecf3fa';
+            const tbody = document.createElement('tbody');
+            for (let prod of productos) {
+                const subtotal = prod.price * prod.quantity;
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid #ecf3fa';
 
-            // Celda foto (miniatura)
-            const cellFoto = document.createElement('td');
-            cellFoto.style.padding = '10px 6px';
-            const imgMini = document.createElement('img');
-            imgMini.src = prod.imageDataURL;
-            imgMini.style.width = '52px';
-            imgMini.style.height = '52px';
-            imgMini.style.objectFit = 'cover';
-            imgMini.style.borderRadius = '14px';
-            imgMini.style.border = '1px solid #c2daef';
-            imgMini.style.verticalAlign = 'middle';
-            cellFoto.appendChild(imgMini);
+                // Foto miniatura
+                const cellFoto = document.createElement('td');
+                cellFoto.style.padding = '10px 6px';
+                const imgMini = document.createElement('img');
+                imgMini.src = prod.imageDataURL;
+                imgMini.style.width = '52px';
+                imgMini.style.height = '52px';
+                imgMini.style.objectFit = 'cover';
+                imgMini.style.borderRadius = '14px';
+                imgMini.style.border = '1px solid #c2daef';
+                cellFoto.appendChild(imgMini);
 
-            const cellPrecio = document.createElement('td');
-            cellPrecio.innerText = `$${prod.price.toFixed(2)}`;
-            cellPrecio.style.padding = '8px 6px';
-            cellPrecio.style.textAlign = 'center';
-            cellPrecio.style.fontWeight = '500';
+                const cellPrecio = document.createElement('td');
+                cellPrecio.innerText = `$${prod.price.toFixed(2)}`;
+                cellPrecio.style.padding = '8px 6px';
+                cellPrecio.style.textAlign = 'center';
+                cellPrecio.style.fontWeight = '500';
 
-            const cellCant = document.createElement('td');
-            cellCant.innerText = `${prod.quantity}`;
-            cellCant.style.padding = '8px 6px';
-            cellCant.style.textAlign = 'center';
+                const cellCant = document.createElement('td');
+                cellCant.innerText = `${prod.quantity}`;
+                cellCant.style.padding = '8px 6px';
+                cellCant.style.textAlign = 'center';
 
-            const cellSub = document.createElement('td');
-            cellSub.innerText = `$${subtotal.toFixed(2)}`;
-            cellSub.style.padding = '8px 6px';
-            cellSub.style.textAlign = 'right';
-            cellSub.style.fontWeight = 'bold';
+                const cellSub = document.createElement('td');
+                cellSub.innerText = `$${subtotal.toFixed(2)}`;
+                cellSub.style.padding = '8px 6px';
+                cellSub.style.textAlign = 'right';
+                cellSub.style.fontWeight = 'bold';
 
-            row.appendChild(cellFoto); row.appendChild(cellPrecio); row.appendChild(cellCant); row.appendChild(cellSub);
-            tbody.appendChild(row);
+                row.appendChild(cellFoto); row.appendChild(cellPrecio); row.appendChild(cellCant); row.appendChild(cellSub);
+                tbody.appendChild(row);
+            }
+            tabla.appendChild(tbody);
+            captureContainer.appendChild(tabla);
+
+            // Total
+            const totalGeneral = calcularTotal();
+            const totalDiv = document.createElement('div');
+            totalDiv.style.display = 'flex';
+            totalDiv.style.justifyContent = 'flex-end';
+            totalDiv.style.alignItems = 'center';
+            totalDiv.style.gap = '18px';
+            totalDiv.style.borderTop = '2px solid #bed9f0';
+            totalDiv.style.paddingTop = '16px';
+            totalDiv.style.marginTop = '8px';
+            totalDiv.innerHTML = `
+                <span style="font-size: 1rem; font-weight: 700; color: #1a536f;">TOTAL A PAGAR:</span>
+                <span style="font-size: 1.6rem; font-weight: 800; color: #0f5d84;">$${totalGeneral.toFixed(2)}</span>
+            `;
+            captureContainer.appendChild(totalDiv);
+
+            // Footer
+            const footerImg = document.createElement('div');
+            footerImg.style.textAlign = 'center';
+            footerImg.style.marginTop = '24px';
+            footerImg.style.fontSize = '0.7rem';
+            footerImg.style.color = '#6189a8';
+            footerImg.style.borderTop = '1px dashed #cde2f2';
+            footerImg.style.paddingTop = '14px';
+            footerImg.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados.<br>Lista generada desde FotoCompra`;
+            captureContainer.appendChild(footerImg);
+
+            // Usar html2canvas para capturar el contenedor como imagen
+            const canvas = await html2canvas(captureContainer, {
+                scale: 2.5,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: false,
+                allowTaint: false
+            });
+
+            // Crear enlace de descarga
+            const link = document.createElement('a');
+            link.download = `lista_compras_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+        } catch (error) {
+            console.error("Error al generar imagen:", error);
+            alert("Hubo un error al generar la imagen. Intenta nuevamente.");
+        } finally {
+            downloadImageBtn.innerHTML = originalBtnText;
+            downloadImageBtn.disabled = false;
         }
-        tabla.appendChild(tbody);
-        reciboDiv.appendChild(tabla);
-
-        // Línea de total
-        const totalLine = document.createElement('div');
-        totalLine.style.display = 'flex';
-        totalLine.style.justifyContent = 'flex-end';
-        totalLine.style.alignItems = 'center';
-        totalLine.style.gap = '20px';
-        totalLine.style.borderTop = '2px solid #bed9f0';
-        totalLine.style.paddingTop = '16px';
-        totalLine.style.marginTop = '10px';
-        totalLine.innerHTML = `
-            <span style="font-size: 1rem; font-weight: 700; color: #1a536f;">TOTAL A PAGAR:</span>
-            <span style="font-size: 1.6rem; font-weight: 800; color: #0f5d84;">$${totalGeneral.toFixed(2)}</span>
-        `;
-        reciboDiv.appendChild(totalLine);
-
-        // Pie de página
-        const footerRecibo = document.createElement('div');
-        footerRecibo.style.textAlign = 'center';
-        footerRecibo.style.marginTop = '28px';
-        footerRecibo.style.fontSize = '0.7rem';
-        footerRecibo.style.color = '#6189a8';
-        footerRecibo.style.borderTop = '1px dashed #cde2f2';
-        footerRecibo.style.paddingTop = '16px';
-        footerRecibo.innerHTML = `© 2026 Nahuel Mamani · Todos los derechos reservados.<br>Productos registrados con fotografía real. ¡Gracias por tu compra!`;
-        reciboDiv.appendChild(footerRecibo);
-
-        // Configuración mejorada para evitar cortes y que se vea completo en el PDF
-        const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
-            filename: `recibo_lista_${Date.now()}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2.2, useCORS: false, logging: false, letterRendering: true },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(reciboDiv).save();
     }
 
     // Eventos
     addBtn.addEventListener('click', agregarProducto);
-    downloadBtn.addEventListener('click', generarReciboPDF);
+    downloadImageBtn.addEventListener('click', descargarListaComoImagen);
     [priceInput, qtyInput].forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') agregarProducto(); }));
 
     // Inicialización
